@@ -24,9 +24,9 @@ usage: ./SPdel.py path_to_files/ fasta_file -a n -distance p
 usage: ./SPdel.py path_to_files/ fasta_file -a nptgbs -T tree_file -B BIN_file
 usage: ./SPdel.py path_to_files/ fasta_file -a ptg -C p,t,g
 
-Options:
-    -a           Specify the type of analisys to be performed, include n for nominal, p for PTP, t for bPTP, b for BIN, s for Spider, c for Compare, x for external MOTU list, and d for Diagnostic character.
+Options:   
 
+    -a           Specify the type of analisys to be performed, include n for nominal, p for PTP, t for bPTP, b for BIN, s for Spider, c for Compare, x for external MOTU list, and d for Diagnostic character.
     -distance    Substitution model, k for K2p or p for p-distance (default=k)
     -T           Specify the name of the input newick tree for PTP, bPTP and GMYC analysis.
 
