@@ -9,42 +9,14 @@ C:\path\to\Anaconda3\Library\bin
 
 Open Anaconda prompt and install dependences:
  
-#conda update -n base conda (conda update conda)
-#conda install setuptools numpy
-#conda install scipy lxml matplotlib
-
-
-conda install mysql-python (conda install -c anaconda mysql-python)
-
-#conda install biopython
-pip install plotly (conda install -c plotly plotly)
-
-
-Install R
-You need to check if bin folder is in your PATH. PATH. Control Panel -> Security and System -> System -> Advanced settings -> Environment Variables -> PATH 
-C:\path\to\R-3.3.2\bin\x64
-
-Install Spider in R
-install.packages("spider", repos="http://R-Forge.R-project.org")
-
-Install Beauti for R
-install.packages("devtools")
-devtools::install_github("richelbilderbeek/beautier")
-install.packages("testthat")
+conda update -n base conda # conda update conda
+conda install numpy
+conda install matplotlib
+conda install biopython
+pip install plotly (conda install -c plotly plotl
 
 
 
 
 
 
-
-
-
-
-
-
-pip install rpy2==2.3.0
-
-
-
-conda install -c conda-forge cufflinks-py

@@ -1,18 +1,12 @@
-#SPdel v 2.1
+#SPdel v 1.0
 try:
     import sys
     import os
-    #import numpy as np
-    from subprocess import call
     from Bio import SeqIO
     from ete3 import TextFace, RectFace, Tree, TreeStyle, NodeStyle
     from ete3.treeview.faces import add_face_to_node
-    import PTP
-    import bPTP
-    import GMYC
     import Diagnoser
     import Matrian
-    import subprocess
     import random
     import colorsys
 except ImportError:
@@ -62,6 +56,24 @@ def rename_NomList(path,fasta,NomList,tree=None):
         #                print line
                         newfasta.write(line)
                         
+def rename_MOTUList(path,fasta,List,NomList,outfile):  
+    if not os.path.exists(path+'tmp_file/'):
+        os.makedirs(path+'tmp_file/')
+    newpath=path+'tmp_file/'                      
+    with open(path+fasta, newline='') as fasta, open(path+NomList, newline='') as newnames, open(path+List, newline='') as PL, open(newpath+outfile, 'w+') as newPL:
+        for line in PL:
+            new_line_PL=line
+#            print(new_line_PL)
+            fasta.seek(0)
+            newnames.seek(0)
+            for line in fasta:
+                if line.startswith('>'):
+                    new_name= newnames.readline().strip().replace(' ','_')
+                    newline=line.replace('>','').split(' ')
+                    new_line_PL=new_line_PL.replace(newline[0].strip(),(new_name+'_'+newline[0].strip()))
+#                print(new_line_PL)
+            newPL.write(new_line_PL)                       
+                        
 def random_color(h=None, l=None, s=None):
     """ returns the RGB code of a random color. Hue (h), Lightness (l)
     and Saturation (s) of the generated color could be fixed using the
@@ -85,9 +97,6 @@ class sorting_fasta:
         self.fasta=open(path+fasta, newline='')
         self.outname=outname
         self.typeCODE=typeCODE
-#        self.fasta_checked=self.check_fasta()
-#        self.fasta_described=self.describe_fasta()
-#        self.fasta_sorted=self.sort_fasta()
 
     def check_fasta(self):
         print('checking if sequences are aligned')
@@ -253,89 +262,19 @@ class check_tree:
         t.set_outgroup(R)
         return t
         
-class Build_Tree:
-    def __init__(self,path,fasta,m,chain,store,o=[]): 
-        if not os.path.exists(path+'tmp_file/'):
-            os.makedirs(path+'tmp_file/')
-#        self.path=path
-#        print m
-        if m=='raxml':
-            self.raxml=self.build_ref_tree(path+fasta,path)
-        if m=='beast':
-            self.Beauti_run_tmp=self.Beauti_run(path,fasta,chain,store)
-            self.BEAST_run=self.BEAST_run(path,o)
-            self.annotate=self.tree_annotator(path,fasta)
-
-        
-    def Beauti_run(self,path,fasta,chain,store):
-        command = 'Rscript.exe'
-        path_fasta=path+fasta
-        basepath = os.path.dirname(os.path.abspath(__file__))
-        path2script = basepath+'/Beauti.R'
-        chain_length = str(chain) 
-        store_every =  str(store)
-        args = [path_fasta, fasta, chain_length,store_every]
-        cmd = [command, path2script] + args
-        x = subprocess.check_output(cmd, universal_newlines=True)
-        return x
-    
-    def BEAST_run(self,path, o):
-        xml=path+'tmp_file/my_beast.xml'
-        basepath = os.path.dirname(os.path.abspath(__file__))
-        cmd = ['java','-jar',basepath + "/bin/BEASTv2/lib/beast.jar",'-working', xml]
-        cmd = cmd+o
-        call(cmd)
-
-    def tree_annotator(self,path,fasta):
-        fasta=fasta.split('.')
-        fasta=fasta[:-1]
-#        print 'tree name'
-        tree_name=''
-#        print tree_name
-        for i in fasta:
-            tree_name=tree_name+i
-        tree=path+'tmp_file/'+tree_name+'.trees'
-        new_tree=path+'tmp_file/tree_temp_beast.tre'
-        basepath = os.path.dirname(os.path.abspath(__file__))
-        call([basepath + "/bin/BEASTv1.8.4/bin/treeannotator.cmd",'-burninTrees', '1',tree,new_tree])
-                         
-#####code modified from PTP#####
-    def build_ref_tree(self,nfin, path, num_thread = "1"):  #nfin = aln
-        nfout = "tree_temp_raxml"
-        if os.path.exists(path + nfout + ".tre"):
-        		print("Using existing reference tree !!")
-    #    		os.rename(nfolder + "RAxML_bestTree."+nfout, nfolder + nfout + ".tre")
-        		return path + nfout + ".tre"
-        basepath = os.path.dirname(os.path.abspath(__file__))
-    #    print basepath
-        print([  basepath + "/bin/raxmlHPC-PTHREADS-SSE3","-m","GTRGAMMA","-s",nfin,"-n",nfout,"-p", "1234", "-T", num_thread, "-w", path] )
-        call([  basepath + "/bin/raxmlHPC-PTHREADS-SSE3","-m","GTRGAMMA","-s",nfin,"-n",nfout,"-p", "1234", "-T", num_thread, "-w", path] ) #, stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-    #    os.remove(nfolder + nfout + ".tre")    
-        os.rename(path + "RAxML_bestTree."+nfout, path + nfout + ".tre")
-        os.remove(path + "RAxML_info." + nfout)
-        os.remove(path + "RAxML_log." + nfout)
-        os.remove(path + "RAxML_parsimonyTree." + nfout)
-        os.remove(path + "RAxML_result." + nfout)
-        return path + nfout + ".tre"    
-#########################################   
-    
     
 class MOTU_PTP:
-    def __init__(self,path,fasta,outptp='PTP',tree=None):
+    def __init__(self,path,fasta,outfile,outptp='PTP'):
         if not os.path.exists(path+'PTP/'):
             os.makedirs(path+'PTP/')
-        self.path=path+'PTP/'
+        self.path=path
         self.fasta_sorted=open(path+fasta, newline='')
+        self.outfile=outfile
         self.outptp=outptp
-        self.tree=path+tree
         self.fasta_PTP=self.MOTU_renameFasta()
-        
-    def ptp(self):
-        PTP.main(['-t', self.tree, '-o', self.path+self.outptp,'-r'])
-        
+              
     def MOTU_listPTP(self):
-        self.ptp()
-        listPTP=open(self.path+self.outptp+'.PTPhSupportPartition.txt')
+        listPTP=open(self.path+self.outfile)
         listPTP.seek(0)
         name=[]
         for line in listPTP:
@@ -350,9 +289,9 @@ class MOTU_PTP:
         return name
     
     def print_MOTU_PTP(self):
-        listPTP=open(self.path+self.outptp+'.PTPhSupportPartition.txt')
+        listPTP=open(self.path+self.outfile)
         listPTP.seek(0)
-        listPTP_txt=open(self.path+self.outptp+'.MOTU_list.txt', 'w+')
+        listPTP_txt=open(self.path+'PTP/'+self.outptp+'.MOTU_list.txt', 'w+')
         for line in listPTP:
             line = line.strip()
             if not line.strip(): continue
@@ -370,13 +309,13 @@ class MOTU_PTP:
 
     def MOTU_renameFasta(self):
         self.fasta_sorted.seek(0)
-        newfasta= open(self.path+'PTP_MOTU.fasta', 'w+')
+        newfasta= open(self.path+'PTP/'+'PTP_MOTU.fasta', 'w+')
         a=0
         for i in self.MOTU_listPTP():   
             sps= i
             sp=sps.split(',')
             sp.sort()
-#            print sp
+#            print(sp)
             for j in sp:
 #                print j
                 for line in self.fasta_sorted:
@@ -396,8 +335,6 @@ class MOTU_PTP:
                         pass
                 self.fasta_sorted.seek(0)               
             a+=1
-#        self.fasta_sorted.close()
-#        newfasta.close()
 #checking fasta size number of sequences
         self.fasta_sorted.seek(0)
         newfasta.seek(0)
@@ -405,18 +342,17 @@ class MOTU_PTP:
         n_aln_sorted=0
         for seq in SeqIO.parse(self.fasta_sorted, "fasta"):
             n_aln+=1
-#        print n_aln
+#        print(n_aln)
         for seq in SeqIO.parse(newfasta, "fasta"):
             n_aln_sorted+=1
-#        print n_aln_sorted
+#        print(n_aln_sorted)
         if n_aln == n_aln_sorted:
-#            print 'Fasta file sorted successfuly'
+#            print('Fasta file sorted successfuly')
             pass
         else:
             print('error renaming fasta')
-#            self.MOTU_renameFasta()
-#hceking fasta for bp size
-        newfasta_check=sorting_fasta(self.path,'PTP_MOTU.fasta')   #Checking fasta PROVISIONALLY!!!
+#cheking fasta for bp size
+        newfasta_check=sorting_fasta(self.path+'PTP/','PTP_MOTU.fasta')   #Checking fasta PROVISIONALLY!!!
         if newfasta_check.check_fasta() is False:
             sys.exit("Error: different length sequences, please check your alignment")
         #
@@ -424,24 +360,17 @@ class MOTU_PTP:
         return newfasta    
     
 class MOTU_bPTP:
-    def __init__(self,path,fasta,outbptp='bPTP',tree=None,niter='10000',sample='100',burnin='0.1'):
+    def __init__(self,path,fasta,outfile,outbptp='bPTP'):
         if not os.path.exists(path+'bPTP/'):
             os.makedirs(path+'bPTP/')
-        self.path=path+'bPTP/'
+        self.path=path
         self.fasta_sorted=open(path+fasta, newline='')
         self.outptp=outbptp
-        self.tree=path+tree
-        self.niter=niter
-        self.sample=sample
-        self.burnin=burnin
+        self.outfile=outfile
         self.fasta_bPTP=self.MOTU_renameFasta2()
-
-    def bptp(self):
-        bPTP.main(['-t', self.tree, '-o', self.path+self.outptp,'-s','1234','-r','-i',self.niter,'-n',self.sample,'-b',self.burnin])
-        
+     
     def MOTU_listbPTP(self):
-        self.bptp()
-        listPTP=open(self.path+self.outptp+'.PTPhSupportPartition.txt')
+        listPTP=open(self.path+self.outfile)
         listPTP.seek(0)
         name=[]
         for line in listPTP:
@@ -456,9 +385,9 @@ class MOTU_bPTP:
         return name
 
     def print_MOTU_bPTP(self):
-        listPTP=open(self.path+self.outptp+'.PTPhSupportPartition.txt')
+        listPTP=open(self.path+self.outfile)
         listPTP.seek(0)
-        listPTP_txt=open(self.path+self.outptp+'.MOTU_list.txt', 'w+')
+        listPTP_txt=open(self.path+'bPTP/'+self.outptp+'.MOTU_list.txt', 'w+')
         for line in listPTP:
             line = line.strip()
             if not line.strip(): continue
@@ -476,7 +405,7 @@ class MOTU_bPTP:
 
     def MOTU_renameFasta2(self):
         self.fasta_sorted.seek(0)
-        newfasta= open(self.path+'bPTP_MOTU.fasta', 'w+')
+        newfasta= open(self.path+'bPTP/'+'bPTP_MOTU.fasta', 'w+')
         a=0
         for i in self.MOTU_listbPTP():   
             sps= i
@@ -525,20 +454,16 @@ class MOTU_bPTP:
         return newfasta    
     
 class MOTU_GMYC:
-    def __init__(self,path,fasta,tree=None,):
+    def __init__(self,path,fasta,outfile):
         if not os.path.exists(path+'GMYC/'):
             os.makedirs(path+'GMYC/')
-        self.path=path+'GMYC/'
+        self.path=path
         self.fasta_sorted=open(path+fasta, newline='')
-        self.tree=path+tree
+        self.outfile=outfile
         self.fasta_gmyc=self.MOTU_renameFasta_gmyc()
         
-    def gmyc_run(self):
-        GMYC.main(['-t', self.tree, '-ps'])
-        
     def MOTU_listGMYC(self):
-        self.gmyc_run()
-        listGMYC=open(self.path+'GMYC_MOTU.txt')
+        listGMYC=open(self.path+self.outfile)
         listGMYC.seek(0)
         name=[]
         for line in listGMYC:
@@ -554,9 +479,9 @@ class MOTU_GMYC:
         return name
     
     def print_MOTU_GMYC(self):
-        listGMYC=open(self.path+'GMYC_MOTU.txt')
+        listGMYC=open(self.path+self.outfile)
         listGMYC.seek(0)
-        listGMYC_txt=open(self.path+'MOTU_list.txt', 'w+')
+        listGMYC_txt=open(self.path+'GMYC/'+'MOTU_list.txt', 'w+')
         for line in listGMYC:
             line = line.strip()
             if not line.strip(): continue
@@ -572,7 +497,7 @@ class MOTU_GMYC:
 
     def MOTU_renameFasta_gmyc(self):
         self.fasta_sorted.seek(0)
-        newfasta= open(self.path+'GMYC_MOTU.fasta', 'w+')
+        newfasta= open(self.path+'GMYC/'+'GMYC_MOTU.fasta', 'w+')
         a=0
         for i in self.MOTU_listGMYC():   
             sps= i
@@ -680,13 +605,6 @@ class MOTU_BIN:
     def MOTU_renameFasta_bin(self):
         self.fasta.seek(0)
         with open(self.BinList) as newnames, open(self.path+'BIN_MOTU.fasta', 'w+') as newfasta:
-#            newfasta.seek(0)
-#            newnames.seek(0)
-#            a=0   ###########
-#            for line in self.fasta:###########
-#                a+=1###########
-#            print a###########
-#            self.fasta.seek(0)###########
             for line in self.fasta:
                 if line.startswith('>'):
                     bin_name=newnames.readline().strip()
@@ -695,38 +613,10 @@ class MOTU_BIN:
                     newfasta.write(new_name)
                 else:
                     newfasta.write(line)
-##                print line
-#            newfasta.seek(0)
-#            a=0
-#            for line in newfasta:
-#                a+=1
-#            print a
-#            newfasta.seek(0)
-##            for line in newfasta:
-##                print line#[:-1]
         newfasta2=sorting_fasta(self.path,'BIN_MOTU.fasta',outname='BIN_MOTU_sorted.fasta')   #Checking fasta
         if newfasta2.check_fasta() is False:
             sys.exit("Error: different length sequences, please check your alignment")            
         newfasta2.sort_fasta()          #sorting fasta
-#checking fasta size
-#        self.fasta.seek(0)
-#        newfasta3= open(self.path+'BIN_MOTU.fasta', 'w+')
-##        newfasta.seek(0)
-#        n_aln=0
-#        n_aln_sorted=0
-#        for seq in SeqIO.parse(self.fasta, "fasta"):
-#            n_aln+=1
-##        print n_aln
-#        for seq in SeqIO.parse(newfasta3, "fasta"):
-#            n_aln_sorted+=1
-##        print n_aln_sorted
-#        if n_aln == n_aln_sorted:
-##            print 'Fasta file sorted successfuly'
-#            pass
-#        else:
-#            print 'error renaming fasta'
-##            self.MOTU_renameFasta_bin(self)
-#
         return newfasta2
 
 
@@ -832,95 +722,6 @@ class MOTU_nominal:
                         member.append(j)
 #                print ('%s' % ', '.join(map(str, member))+'\n')
                 allList.write('%s' % ', '.join(map(str, member))+'\n')                        
-
-
-class OT:
-    def __init__(self,path,fasta): 
-        if not os.path.exists(path+'OT/'):
-            os.makedirs(path+'OT/')
-        self.path=path
-        self.fasta=open(path+fasta, newline='')
-        self.OT_run_tmp=self.OT_run(path+fasta)
-        self.MOTU_listOT=self.extract_OT(self.OT_run_tmp)
-        self.fasta_OT=self.MOTU_renameFasta_OT()
-        
-    def OT_run(self,fasta):
-        command = 'Rscript.exe'
-        basepath = os.path.dirname(os.path.abspath(__file__))
-        path2script = basepath+'/Spider.R'
-        args = [fasta]
-        cmd = [command, path2script] + args
-#        print cmd
-        x = subprocess.check_output(cmd, universal_newlines=True)
-        return x
-    
-    def extract_OT(self,OT):
-#        print OT
-        OT=OT.replace('\n',' ')
-        tmp=OT.split(' ')
-#        print tmp
-        pos=0
-        for j in tmp:
-            if not j.startswith('[['):
-                pos+=1
-            else:
-                break
-#        print pos
-        thres=float(tmp[1])*100
-        print(('\nOptimun Threshold for distance is '+str(thres)))
-        print('\n### Delimited MOTUs ###\n')
-        with open(self.path+'OT/OT_MOTU_list.txt', 'w+') as OTList:
-            tmp=tmp[pos:]
-            tmp=[x for x in tmp if x!='']
-            n=1
-#            print tmp
-#            OT_list=[]
-            for ind, i in enumerate(tmp):
-                if i.startswith('[['):
-                    if ind==0:
-                        OTList.write('MOTU '+str(n)+'\n')
-#                        OT_list.append('MOTU '+str(n))
-                    else:
-                        OTList.write('\n'+'MOTU '+str(n)+'\n')
-#                        OT_list.append('MOTU '+str(n))
-                    n+=1
-                if i.startswith('"'):
-                    if ind+1==len(tmp):
-                        OTList.write(i.replace('"',''))                    
-                    elif tmp[ind+1].startswith('[['):
-                        OTList.write(i.replace('"',''))
-                    else:
-                        OTList.write(i.replace('"','')+', ')
-        with open(self.path+'OT/OT_MOTU_list.txt', newline='') as OTList:
-            for line in OTList:
-                if line.startswith('MOTU'):
-                    print(line.strip())
-                else:
-                    print(line)
-            print('\n')
-#        return OT_list
-#                      
-    def MOTU_renameFasta_OT(self):
-        self.fasta.seek(0)
-        with open(self.path+'OT/OT_MOTU_list.txt', newline='') as OT_file, open(self.path+'OT/OT_MOTU.fasta', 'w+') as newfasta:
-            for line in OT_file:
-                if line.startswith('MOTU'):
-                    new_name=line.replace(' ','_').strip()
-                else:
-                    line=line.replace(' ','').strip().split(',')
-                    for i in line:
-                        self.fasta.seek(0)
-                        s=SeqIO.parse(self.fasta, "fasta")
-                        for seq in s:
-#                            print seq.id
-                            if seq.id==i:
-                                newfasta.write('>'+new_name+'_'+i+'\n')
-#                                print seq.seq
-                                newfasta.write(str(seq.seq)+'\n')
-#        newfasta2=sorting_fasta(self.path,'OT/OT_MOTU.fasta',outname='OT/OT_MOTU_sorted.fasta')   #Checking fasta
-#        if newfasta2.check_fasta() is False:
-#            sys.exit("Error: different length sequences, please check your alignment")            
-#        newfasta2.sort_fasta()          #sorting fasta
                                 
 class Compare:
     def __init__(self,path,fasta,CompList):
@@ -1384,10 +1185,6 @@ class plot_compare_tree:  #cambiar nombres y cursiva, mostrar texto nominal?,
                             for i in lists:
                                 dicts[name][i]=color
                                 
-    #    print motus_name
-    #    print color_used
-#        print(dicts['bPTP'])
-#        print(dicts)
         return dicts
                            
     def layout_tree_compare(self,node):
@@ -1398,25 +1195,6 @@ class plot_compare_tree:  #cambiar nombres y cursiva, mostrar texto nominal?,
             for k in self.dic_color:
                 n+=1
                 add_face_to_node(RectFace(10,10, 'FFFFFF', self.dic_color[k][name]), node, n, aligned=True)
-
-
-
-###para cambiar los nombres segun una lista de nominales###
-#from ete2 import Tree, TreeStyle, faces, AttrFace
-#def mylayout(node):
-#    if node.is_leaf():
-#        nameFace = AttrFace("name", fsize=30, fgcolor='red')
-#        faces.add_face_to_node(nameFace, node, 0, position="branch-right")
-#        nameFace.background.color = '#eeeeee'
-#        nameFace.border.width = 1
-#t = Tree()
-#t.populate(10)
-#
-#ts = TreeStyle()
-#ts.show_leaf_name = False # disable default leaf name drawing
-#ts.layout_fn = mylayout # set our custom config
-#t.show(tree_style=ts)
-
 
             
     def plot_tree_con(self):          
@@ -1445,55 +1223,35 @@ class plot_compare_tree:  #cambiar nombres y cursiva, mostrar texto nominal?,
         self.tree_loaded.render(self.path+"Compare/compare_tree.pdf", tree_style=ts,dpi=300)
 
 
-#    if node.is_leaf():
-#        faces.add_face_to_node(AttrFace("name"), node, column=0)
-
-#def diagnostic(path,fasta):
-##    y=0
-##    alignment = AlignIO(path+fasta,"fasta")
-##    for r in range(0,len(alignment[1].seq)):
-##        if alignment[0,r] != alignment[1,r]:
-##            if alignment[0,r] != "-" and alignment[1,r] != "-":
-##                y=y+1
-##                print r, alignment[0,r], alignment[1,r], y
-##            else:
-##                y=0
-    #code from Jufisawa
-
 def print_options():
     print('')
     print('SPdel v1.0 - Species delimitation and statistics for DNA Barcoding data sets')
     print('')
     print('The sequences name should be separate for "_" (e.g. Genus_species_individual) or use -N option for rename sequences')
     print('')        
-    print('usage: ./SPdel.py path_to_files/ fasta_file -a nptgs -T tree_file -X SC_MOTUList1.txt,SC_MOTUList2.txt -C n,p,t,g,s,MOTUList1,SC_MOTUList2 -code VER')
+    print('usage: ./SPdel.py path_to_files/ fasta_file -a n -P PTP_File -t tree_file -X MOTUList1.txt,MOTUList2.txt -C p,MOTUList1,SC_MOTUList2 -code VER')
     print('usage: ./SPdel.py path_to_files/ fasta_file -a n -distance p')
-    print('usage: ./SPdel.py path_to_files/ fasta_file -a nptgbs -T tree_file -B BIN_file')
+    print('usage: ./SPdel.py path_to_files/ fasta_file -a -P PTP_File -G GMYC_File -T bPTP_File -t tree_file -B BIN_file')
     print('usage: ./SPdel.py path_to_files/ fasta_file -a ptg\n')
     print("Options:")
-    print("    -a           Specify the type of analisys to be performed, include n for nominal, p for PTP, t for bPTP, b for BIN, s for Spider, c for Compare, x for external MOTU list, and d for Diagnostic character.\n")
+    print("    -n           For nominal analysis.\n")
     print("    -distance    Substitution model, k for K2p or p for p-distance (default=k)")
-    print("    -T           Specify the name of the input newick tree for PTP, bPTP and GMYC analysis.\n")
+    print("    -t           Specify the name of the input newick tree for PTP, bPTP and GMYC analysis.\n")
     print("    -N           Specify the text file including the nominal names for rename the sequences.\n")
-    print("    -B           Specify the text file including the BIN names obtained from BOLD, mandatory b option.\n")
-    print("    -X           Specify the text file including the MOTUs names obtained from any external method, mandatory x option.\n")
+    print("    -P           Specify the PTP output file.\n")
+    print("    -G           Specify the GMYC output file.\n") 
+    print("    -T           Specify the bPTP output file.\n")     
+    print("    -B           Specify the text file including the BIN names obtained from BOLD.\n")
+    print("    -X           Specify the text file including the MOTUs names obtained from any external method.\n")
+    print("    -D           For Diagnostic character analysis.\n")
+    print("    -C           Specify the type of analisys to be compared, include n for nominal, p for PTP, t for bPTP, b for BIN, and any filename used in X option for external MOTU list.\n")    
     print("    -code        Specify the genetic code used to test stop codon, VER or INV.\n")    
     print("Options for nominal: \n")
     print('    -gen         Position of the genus name in the sequence name when split by "_" (default=1).\n')
     print('    -sp          Position of the species name in the sequence name when split by "_" (default=2)\n')
-    print("Options for bPTP: \n")
-    print("    -n_iter       Number of iteration for bPTP analysis (default=10000)\n")
-    print("    -sample      Number of sampling for bPTP analysis (default=100)\n")
-    print("    -burnin      Burnin for bPTP analysis (default=0.1)\n")
     print("Options for diagnostic character: \n")
     print("    -n_ind       Minimum number of individuals for species to be considered in the diagnostic character analysis (default=3)\n")
-    print("Options for build tree: \n")
-    print("    -m           Method used for build reference tree, use raxml or beast (default='raxml')\n")
-    print("    -chain       Number of MCMC chain for Beast reference tree (default='raxml')\n")
-    print("    -store       Number of sampling for Beast reference tree (default='raxml')\n")
 
-#chuecos reservados
-            
     
 def main(argu=None):
 #    orig_stdout = sys.stdout
@@ -1513,24 +1271,20 @@ def main(argu=None):
     sp=2
     tree=None
     dis='k'
-    niter='10000'
-    sample='100'
-    burnin='0.1'
     BinList=None
     XList=None
     NomList=None
     CompList=None
+    PTPList=None
+    GMYCList=None
+    bPTPList=None
     n_ind=3
-    m='raxml'
-    chain=10000000
-    store=1000
     CODE=None
     
     for i in range(len(sys.argv)):
-        if sys.argv[i] =='-a':
-            i=i+1
-            a=sys.argv[i]
-        elif sys.argv[i] =='-T':
+        if sys.argv[i] =='-n':
+            a+='n'
+        elif sys.argv[i] =='-t':
             i=i+1
             tree=sys.argv[i]
         elif sys.argv[i] =='-distance':
@@ -1538,9 +1292,25 @@ def main(argu=None):
             dis=sys.argv[i]
         elif sys.argv[i] =='-B':
             i=i+1
+            a+='b'
             BinList=sys.argv[i]
+        elif sys.argv[i] =='-D':
+            a+='d'
+        elif sys.argv[i] =='-P':
+            i=i+1
+            a+='p'
+            PTPList=sys.argv[i]
+        elif sys.argv[i] =='-G':
+            i=i+1
+            a+='g'
+            GMYCList=sys.argv[i]
+        elif sys.argv[i] =='-T':
+            i=i+1
+            a+='t'
+            bPTPList=sys.argv[i]            
         elif sys.argv[i] =='-X':
             i=i+1
+            a+='x'            
             XList=sys.argv[i]
         elif sys.argv[i] =='-N':
             i=i+1
@@ -1551,27 +1321,9 @@ def main(argu=None):
         elif sys.argv[i] =='-sp':
             i=i+1
             sp=sys.argv[i]            
-        elif sys.argv[i] =='-n_iter':
-            i=i+1
-            niter=sys.argv[i]            
-        elif sys.argv[i] =='-sample':
-            i=i+1
-            sample=sys.argv[i]
-        elif sys.argv[i] =='-burnin':
-            i=i+1
-            burnin=sys.argv[i]
         elif sys.argv[i] =='-n_ind':
             i=i+1
             n_ind=sys.argv[i]
-        elif sys.argv[i] =='-m':
-            i=i+1
-            m=sys.argv[i]
-        elif sys.argv[i] =='-chain':
-            i=i+1
-            chain=sys.argv[i]
-        elif sys.argv[i] =='-store':
-            i=i+1
-            store=sys.argv[i]
         elif sys.argv[i] =='-code':
             i=i+1
             CODE=sys.argv[i]
@@ -1588,7 +1340,7 @@ def main(argu=None):
         os.makedirs(path+'tmp_file/')
     if not os.path.exists(path+'Nominal/'):
         os.makedirs(path+'Nominal/')
-    if any(x in a for x in ('n','p','t','g','s','b','x')):
+    if any(x in a for x in ('n','p','t','g','b','x')):
         if NomList!=None:
             check_file=check_list(path,fasta,NomList)
             if check_file==True:
@@ -1596,6 +1348,15 @@ def main(argu=None):
             else:
                 sys.exit('Different number of individuals in Nominal List provided')                
             print('Renaming sequences using nominal list provided')
+            if PTPList!=None:
+                rename_MOTUList(path,fasta,PTPList,NomList,'MOTU_PTP_List_renamed.txt')
+                PTPList='tmp_file/MOTU_PTP_List_renamed.txt'            
+            if bPTPList!=None:
+                rename_MOTUList(path,fasta,bPTPList,NomList,'MOTU_bPTP_List_renamed.txt')
+                bPTPList='tmp_file/MOTU_bPTP_List_renamed.txt' 
+            if GMYCList!=None:
+                rename_MOTUList(path,fasta,GMYCList,NomList,'MOTU_GMYC_List_renamed.txt')
+                GMYCList='tmp_file/MOTU_GMYC_List_renamed.txt'                 
             if tree!=None:
                 rename_NomList(path,fasta,NomList,tree)
                 tree='tmp_file/tree_renamed.nwk'
@@ -1626,28 +1387,16 @@ def main(argu=None):
         MOTU_nominal(path,'Nominal/sorted.fasta')
         if 'd' in a:
             Diagnoser.main(path+'Nominal/','sorted.fasta',n_ind)
-    if any(x in a for x in ('p','t','g')):
-        if tree==None:
-#            print tree
-            print('')
-            print('building reference tree')
-            print('')
-            Build_Tree(path,fasta,m,chain,store)
-            if m == 'raxml':
-                tree='tree_temp_raxml.tre'
-            if m == 'beast':
-                tree='tree_temp_beast.tre'
-#            print tree  
-        else:
-            ch_tr=check_tree(path,fasta,tree)
-            if ch_tr.check() is False: 
-               sys.exit("Error: different names in tree, please check your tree and alignment")
+    if tree!=None:
+        ch_tr=check_tree(path,fasta,tree)
+        if ch_tr.check() is False: 
+           sys.exit("Error: different names in tree, please check your tree and alignment")
 #            new_tree=ch_tr.root_midle() ####### test
     if 'p' in a:
         print(('\n'+tex+'PTP MOTUs\n'+tex))
 #        print tree
         sys.argv=[sys.argv[0]]
-        PTP_analize=MOTU_PTP(path,'Nominal/sorted.fasta',tree=tree)   #tree=new_tree) test rooted tree
+        PTP_analize=MOTU_PTP(path,'Nominal/sorted.fasta',PTPList)   #tree=new_tree) test rooted tree
         print('\n### Delimited MOTUs ###')
         PTP_analize.print_MOTU_PTP()
         print('')
@@ -1657,7 +1406,7 @@ def main(argu=None):
     if 't' in a:
         print(('\n'+tex+'bPTP MOTUs\n'+tex))         
         sys.argv=[sys.argv[0]]
-        bPTP_analize=MOTU_bPTP(path,'Nominal/sorted.fasta',tree=tree,niter=niter,sample=sample,burnin=burnin)
+        bPTP_analize=MOTU_bPTP(path,'Nominal/sorted.fasta',bPTPList)
         print('')
         bPTP_analize.print_MOTU_bPTP()
         print('\n### Delimited MOTUs ###')
@@ -1667,7 +1416,7 @@ def main(argu=None):
     if 'g' in a:
         print(('\n'+tex+'GMYC MOTUs\n'+tex))
         sys.argv=[sys.argv[0]]
-        gmyc_analize=MOTU_GMYC(path,'Nominal/sorted.fasta',tree=tree)
+        gmyc_analize=MOTU_GMYC(path,'Nominal/sorted.fasta',GMYCList)
         print('\n### Delimited MOTUs ###')
         gmyc_analize.print_MOTU_GMYC()
         print('')
@@ -1714,12 +1463,7 @@ def main(argu=None):
             Matrian.main(path+i_folder+'/','X_MOTU_sorted.fasta',gen,sp,dis)
             if 'd' in a:
                 Diagnoser.main(path+i_folder+'/','X_MOTU_sorted.fasta',n_ind)
-    if 's' in a:
-        print(('\n'+tex+'OT Spider MOTUs\n'+tex))
-        OT(path,fasta)
-        Matrian.main(path+'OT/','OT_MOTU.fasta',gen,sp,dis)
-        if 'd' in a:
-            Diagnoser.main(path+'OT/','OT_MOTU.fasta',n_ind)
+
     if CompList!=None:     
         print(('\n'+tex+'Concordant MOTUs\n'+tex))
         comp_analize=Compare(path,fasta,CompList)
@@ -1740,10 +1484,7 @@ if __name__ == "__main__":
 #    basepath = os.path.dirname(os.path.abspath(__file__))
     main()    
 
-
-#hacer que cree arboles  ###mejorar
-    ###probar beast R
-    
+   
 #optimizar matrian
     #revisar total distancia
     #usar split para patron
@@ -1757,8 +1498,6 @@ if __name__ == "__main__":
 # test N or gaps
 #testar reenraizar a la mitad?
 
-
 #separar opcion compare
-    #dar lista para renombrar secuencias en el arbol
     #casos en que mi sobre posicion no se da bien....cada analisis una delimit
     
