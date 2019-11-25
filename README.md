@@ -14,6 +14,8 @@ conda install matplotlib
 conda install biopython
 pip install plotly #conda install -c plotly plotly
 
+The pipeline can interpretate output files from PTP and bPTP web server (https://species.h-its.org/) or python distribution (https://github.com/zhangjiajie/PTP). For GMYC the pipeline works with the outfile from python version (https://github.com/zhangjiajie/pGMYC), but you can use R version or web server (https://species.h-its.org/gmyc/) and include your results using -X option. Please check the example files included. 
+
 How to Use:
 
 The sequences name should be separate for "_" (e.g. Genus_species_individual) or use -N option for rename sequences
