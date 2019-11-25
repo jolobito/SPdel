@@ -19,9 +19,12 @@ How to Use:
 The sequences name should be separate for "_" (e.g. Genus_species_individual) or use -N option for rename sequences
 
    
-usage: ./SPdel.py path_to_files/ fasta_file -n -P PTP_File -t tree_file -X MOTUList1.txt,MOTUList2.txt -C p,MOTUList1,SC_MOTUList2 
+usage: ./SPdel.py path_to_files/ fasta_file -n -P PTP_File -t tree_file -X MOTUList1.txt,MOTUList2.txt -C p,MOTUList1,SC_MOTUList2
+
 usage: ./SPdel.py path_to_files/ fasta_file -n -distance p -code VER
+
 usage: ./SPdel.py path_to_files/ fasta_file -P PTP_File -G GMYC_File -T bPTP_File -t tree_file -B BIN_file
+
 
 Options:   
 
