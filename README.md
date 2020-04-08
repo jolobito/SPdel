@@ -7,13 +7,13 @@ Installation:
 You need to have installed python 3. You can install Anaconda (Python 3) from https://www.anaconda.com/download/#windows and select the option to put Anaconda in your Path.
 
 Open Anaconda prompt and install dependences:
- 
+``` 
 conda update -n base conda
 conda install numpy
 conda install matplotlib
 conda install biopython
 pip install plotly #conda install -c plotly plotly
-
+```
 The pipeline can interpretate output files from PTP and bPTP web server (https://species.h-its.org/) or python distribution (https://github.com/zhangjiajie/PTP). For GMYC the pipeline works with the outfile from python version (https://github.com/zhangjiajie/pGMYC), but you can use R version or web server (https://species.h-its.org/gmyc/) and include your results using -X option. Please check the example files included. 
 
 How to Use:
