@@ -1,6 +1,6 @@
 SPDel: Comparing Species delimitation and statistics for DNA Barcoding datasets
 
-We developed SPdel a pipeline to integrate different single-gene species delimitation methods. SPdel is designed to calculate statistics and compare MOTUs obtained by different methods (GMYC, PTP, bPTP, BIN, etc).
+SPdel is a pipeline to integrate different single-gene species delimitation methods. SPdel is designed to calculate statistics and compare MOTUs obtained by different methods (e.g. GMYC, PTP, bPTP, BIN, etc).
 
 Installation:
 
@@ -35,7 +35,7 @@ Calculates genetics distances from MOTUs delimited for PTP, bPTP and GMYC using 
 ```
 python ./SPdel.py path_to_files/ fasta_file -P PTP_File -G GMYC_File -T bPTP_File -t tree_file
 ```
-Compare analyses previously calculates
+Compare analyses previously calculated
 ```
 usage: ./SPdel.py path_to_files/ fasta_file -C n,p,t,g -t tree_file
 ```
