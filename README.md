@@ -4,7 +4,7 @@ We developed SPdel a pipeline to integrate different single-gene species delimit
 
 Installation:
 
-You need to have installed python 3. You can install Anaconda (Python 3) from https://www.anaconda.com/download/#windows and select the option to put Anaconda in your Path.
+You need to have installed python 3. You can install Anaconda (Python 3) from https://www.anaconda.com/download/ and select the option to put Anaconda in your Path.
 
 Open Anaconda prompt and install dependences:
 ``` 
