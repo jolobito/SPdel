@@ -14,19 +14,31 @@ conda install matplotlib
 conda install biopython
 pip install plotly #conda install -c plotly plotly
 ```
-The pipeline can interpretate output files from PTP and bPTP web server (https://species.h-its.org/) or python distribution (https://github.com/zhangjiajie/PTP). For GMYC the pipeline works with the outfile from python version (https://github.com/zhangjiajie/pGMYC), but you can use R version or web server (https://species.h-its.org/gmyc/) and include your results using -X option. Please check the example files included. 
+
+The pipeline SPdel can run PTP, BPTP and GMYC analyses locally in your computer using original codes and then parse the results. Also, SPdel can interpretate output files from PTP and bPTP web server (https://species.h-its.org/) or python distribution (https://github.com/zhangjiajie/PTP). For GMYC the pipeline works with the outfile from python version (https://github.com/zhangjiajie/pGMYC), but you can use the R version or the web server (https://species.h-its.org/gmyc/) and include your results using -X option. Please check the example files included. 
+
+Please cite original authors of each species delimitation used.
 
 How to Use:
 
 The sequences name should be separate for "_" (e.g. Genus_species_individual) or use -N option for rename sequences
 
-   
-usage: ./SPdel.py path_to_files/ fasta_file -n -P PTP_File -t tree_file -X MOTUList1.txt,MOTUList2.txt -C p,MOTUList1,MOTUList2
-
-usage: ./SPdel.py path_to_files/ fasta_file -n -distance p -code VER
-
-usage: ./SPdel.py path_to_files/ fasta_file -P PTP_File -G GMYC_File -T bPTP_File -t tree_file -B BIN_file
-
+Calculates genetic distances for nominal species
+```
+python ./SPdel.py path_to_files/ fasta_file -n
+```
+Calculate PTP, bPTP and GMYC locally and perfom genetic distances analyses
+```
+python ./SPdel.py path_to_files/ fasta_file -n -P -T -G -t tree_file
+```
+Calculates genetics distances from MOTUs delimited for PTP, bPTP and GMYC using outfiles calculated outside the pipeline
+```
+python ./SPdel.py path_to_files/ fasta_file -P PTP_File -G GMYC_File -T bPTP_File -t tree_file
+```
+Compare analyses previously calculates
+```
+usage: ./SPdel.py path_to_files/ fasta_file -C n,p,t,g -t tree_file
+```
 
 Options:   
 
@@ -46,8 +58,14 @@ Options:
 Options for nominal:
 
     -gen         Position of the genus name in the sequence name when split by "_" (default=1).
-
-    -sp          Position of the species name in the sequence name when split by "_" (default=2)
+    -sp          Position of the species name in the sequence name when split by "_" (default=2)   
+    
+Options for bPTP
+```
+    -n_iter       Number of iteration for bPTP analysis (default=10000)
+    -sample      Number of sampling for bPTP analysis (default=100)
+    -burnin      Burnin for bPTP analysis (default=0.1)     
+```
 
 Options for diagnostic character:
 
