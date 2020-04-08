@@ -4,24 +4,29 @@ We developed SPdel a pipeline to integrate different single-gene species delimit
 
 Installation:
 
-You need to have installed python 3. You can install Anaconda (Python 3) from https://www.anaconda.com/download/#windows and select the option to put Anaconda in your Path.
+You need to have installed python 3. You can install Anaconda (Python 3) from https://www.anaconda.com/download/ and select the option to put Anaconda in your Path.
 
 Open Anaconda prompt and install dependences:
- 
+``` 
 conda update -n base conda
 conda install numpy
 conda install matplotlib
 conda install biopython
 pip install plotly #conda install -c plotly plotly
+```
+The pipeline can interpretate output files from PTP and bPTP web server (https://species.h-its.org/) or python distribution (https://github.com/zhangjiajie/PTP). For GMYC the pipeline works with the outfile from python version (https://github.com/zhangjiajie/pGMYC), but you can use R version or web server (https://species.h-its.org/gmyc/) and include your results using -X option. Please check the example files included. 
 
 How to Use:
 
 The sequences name should be separate for "_" (e.g. Genus_species_individual) or use -N option for rename sequences
 
    
-usage: ./SPdel.py path_to_files/ fasta_file -n -P PTP_File -t tree_file -X MOTUList1.txt,MOTUList2.txt -C p,MOTUList1,SC_MOTUList2 
+usage: ./SPdel.py path_to_files/ fasta_file -n -P PTP_File -t tree_file -X MOTUList1.txt,MOTUList2.txt -C p,MOTUList1,MOTUList2
+
 usage: ./SPdel.py path_to_files/ fasta_file -n -distance p -code VER
+
 usage: ./SPdel.py path_to_files/ fasta_file -P PTP_File -G GMYC_File -T bPTP_File -t tree_file -B BIN_file
+
 
 Options:   
 
