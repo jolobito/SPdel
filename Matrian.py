@@ -10,7 +10,7 @@ import seaborn as sns
 import pandas as pd
 #import numpy as np
 from math import log, sqrt
-
+import logging
 
 class matrian: #lower matrix
     def __init__(self,path,fasta,gen,sp,distance):
@@ -72,7 +72,7 @@ class matrian: #lower matrix
         q = float(tv_count) / length
         try: d = -0.5 * log( (1 - 2*p - q) * sqrt( 1 - 2*q ) )*100
         except ValueError: 
-            print("Tried to take log of a negative number")
+            logging.info("Tried to take log of a negative number")
             return None
         return d 
 
@@ -92,9 +92,9 @@ class matrian: #lower matrix
     
     def matrix(self,distance): #genera la matriz de distancia
         if distance == 'k':
-            print('Using k2p distance\n')
+            logging.info('Using k2p distance\n')
         else:
-            print('Using p-distance\n')
+            logging.info('Using p-distance\n')
         m=[[None] * self.ncol for i in range(self.ncol)]
         A=self.fasta_seq()
         for i in range(self.ncol):
@@ -541,7 +541,7 @@ class matrian: #lower matrix
         return float(m/t)
 
     def analyze(self): #hace analisis en bloque
-        print('Summary table (Name, mean intra, max intra, NN, distance to NN) in percentage')   
+        logging.info('Summary table (Name, mean intra, max intra, NN, distance to NN) in percentage')   
         a,b,c,d,e=[],[],[],[],[]  
         II=self.inter_intra_all_name()
         mima=self.min_max_ALL_name()
@@ -558,9 +558,9 @@ class matrian: #lower matrix
         summ['Max']=c
         summ['NN']=d
         summ['DtoNN']=e
-        print(summ.to_string(index=False))          
-        print('')
-        print('min interspecific and max intraspecific by group')    
+        logging.info(summ.to_string(index=False))          
+        logging.info('')
+        logging.info('min interspecific and max intraspecific by group')    
         mima=self.min_max_ALL_name()
         x=[]
         y=[]
@@ -580,9 +580,9 @@ class matrian: #lower matrix
         df['intra']=y2
         df['intra2']=y
         df1=df[['name','inter','intra']].copy()
-        print(df1.to_string(index=False))
+        logging.info(df1.to_string(index=False))
         
-        print('') 
+        logging.info('') 
         tra=[]
         ter=[]
         total=[]
@@ -600,8 +600,8 @@ class matrian: #lower matrix
         tab['']=title
         tab['intra']=tra
         tab['inter']=ter
-        tab['total']=total
-        print(tab.transpose().to_string(header=False))
+#        tab['total']=total
+        logging.info(tab.transpose().to_string(header=False))
 
 
 
@@ -623,15 +623,17 @@ class matrian: #lower matrix
         self.plot_freq()
         
     def geoanalyze(self): #hace analisis geobarcode
-        print('valores inter')
+        logging.info('valores inter')
         ter=self.inter_geo()
         for i in ter:        
-            print(i)
+            logging.info(i)
         ter2=self.cont_inter_geo()
         for k,v in list(ter2.items()):
-            print(k,v)
+            logging.info(k,v)
             
 def main(path,fasta,gen,sp,distance,out_name=None,n=False):
+#    targets = logging.StreamHandler(sys.stdout), logging.FileHandler(path+'SPdel_output.log') # from https://stackoverflow.com/questions/24204898/python-output-on-both-console-and-file/24206109#24206109
+#    logging.basicConfig(format='%(message)s', level=logging.INFO, handlers=targets)
     tmp=matrian(path,fasta,gen,sp,distance)
     tmp.analyze()
     if n==True:

@@ -13,6 +13,7 @@ conda install numpy
 conda install matplotlib
 conda install biopython
 pip install plotly #conda install -c plotly plotly
+conda install toytree -c eaton-lab
 ```
 
 The pipeline SPdel can run PTP, BPTP and GMYC analyses locally in your computer using original codes and then parse the results. Also, SPdel can interpretate output files from PTP and bPTP web server (https://species.h-its.org/) or python distribution (https://github.com/zhangjiajie/PTP). For GMYC the pipeline works with the outfile from python version (https://github.com/zhangjiajie/pGMYC), but you can use the R version or the web server (https://species.h-its.org/gmyc/) and include your results using -X option. Please check the example files included. 

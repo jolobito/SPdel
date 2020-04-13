@@ -12,8 +12,13 @@ try:
     import Matrian
     import random
     import colorsys
+    import logging
+    import toytree
+    import toyplot
+    import toyplot.svg 
+    import toyplot.pdf
 except ImportError:
-	print("Please install all dependences first.")
+	logging.info("Please install all dependences first.")
 	sys.exit()
 
 def check_list(path,fasta,fileList):
@@ -66,7 +71,7 @@ def rename_MOTUList(path,fasta,List,NomList,outfile):
     with open(path+fasta, newline='') as fasta, open(path+NomList, newline='') as newnames, open(path+List, newline='') as PL, open(newpath+outfile, 'w+') as newPL:
         for line in PL:
             new_line_PL=line
-#            print(new_line_PL)
+#            logging.info(new_line_PL)
             fasta.seek(0)
             newnames.seek(0)
             for line in fasta:
@@ -74,7 +79,7 @@ def rename_MOTUList(path,fasta,List,NomList,outfile):
                     new_name= newnames.readline().strip().replace(' ','_')
                     newline=line.replace('>','').split(' ')
                     new_line_PL=new_line_PL.replace(newline[0].strip(),(new_name+'_'+newline[0].strip()))
-#                print(new_line_PL)
+#                logging.info(new_line_PL)
             newPL.write(new_line_PL)                       
                         
 def random_color(h=None, l=None, s=None):
@@ -102,7 +107,7 @@ class sorting_fasta:
         self.typeCODE=typeCODE
 
     def check_fasta(self):
-        print('checking if sequences are aligned')
+        logging.info('checking if sequences are aligned')
         self.fasta.seek(0)
         handle = self.fasta
         n=len(next(SeqIO.parse(handle, "fasta")))
@@ -125,11 +130,11 @@ class sorting_fasta:
         n_seq=0
         for seq in SeqIO.parse(handle, "fasta"):
                 n_seq+=1
-        print('Fasta file with',n_seq,'sequences and',n,'base pairs')
+        logging.info('Fasta file with '+str(n_seq)+' sequences and '+str(n)+' base pairs')
         
 
     def stop_codon(self):    #modified from https://stackoverflow.com/questions/34009041/python-code-to-find-coding-dna-with-start-and-stop-codons      
-        print('checking stop codons using '+self.typeCODE+' genetic code' )
+        logging.info('checking stop codons using '+self.typeCODE+' genetic code' )
         allcheck=True
         if self.typeCODE=='VER':
             codon_list = ["AGA", "TAA", "TAG", "AGG"] #The Vertebrate Mitochondrial Code (transl_table=2)
@@ -155,23 +160,23 @@ class sorting_fasta:
                             if seq.seq[i+j+1:i+j-2:-1] in codon_list_RC:
                                 found_codon_positions.append(i+j+1)
                 if found_codon_positions!=[]:
-#                    print('found stop codons at indices {}'.format(found_codon_positions)+' in ORF',i,'at '+seq.id)                 
+#                    logging.info('found stop codons at indices {}'.format(found_codon_positions)+' in ORF',i,'at '+seq.id)                 
                     codonPass.append(1)
                 else:
                     codonPass.append(0)                            
-#            print(codonPass)
+#            logging.info(codonPass)
             if 0 in codonPass:
                 pass
             else:
                 allcheck=False
-                print('WARNING: No ORF without stop codon were found in sequence '+seq.id)
+                logging.info('WARNING: No ORF without stop codon were found in sequence '+seq.id)
         if allcheck==True:
-            print('All sequences have at least one ORF without stop codons')
+            logging.info('All sequences have at least one ORF without stop codons')
            
         
             
     def sort_fasta(self):
-        print('sorting fasta')
+        logging.info('sorting fasta')
         self.fasta.seek(0)
         handle = self.fasta
         l = SeqIO.parse(handle, "fasta")
@@ -184,7 +189,7 @@ class sorting_fasta:
 #            return s.description
 #            print str(s.seq)
             file_sorted.write(str(s.seq)+'\n')
-        print('checking if sorting was ok')
+        logging.info('checking if sorting was ok')
         handle.seek(0)
         file_sorted.seek(0)
         n_aln=0
@@ -196,7 +201,7 @@ class sorting_fasta:
             n_aln_sorted+=1
 #        print n_aln_sorted
         if n_aln == n_aln_sorted:
-            print('Fasta file sorted successfuly')
+            logging.info('Fasta file sorted successfuly')
             pass
         else:
             self.sort_fasta(self)
@@ -233,15 +238,15 @@ class check_tree:
 #        print len(name_leaf)
 #        print len(name_fasta)
         if len(name_leaf) != len(name_fasta):
-            print('Different number of individuals in tree and fasta')
-            print('Names found in tree: '+'%s' % ', '.join(map(str, list(set(name_leaf) - set(name_fasta)))))
-            print('Names found in fasta: '+'%s' % ', '.join(map(str, list(set(name_fasta) - set(name_leaf)))))              
+            logging.info('Different number of individuals in tree and fasta')
+            logging.info('Names found in tree: '+'%s' % ', '.join(map(str, list(set(name_leaf) - set(name_fasta)))))
+            logging.info('Names found in fasta: '+'%s' % ', '.join(map(str, list(set(name_fasta) - set(name_leaf)))))              
             return False
         comp=set(name_leaf) & set(name_fasta)
 #        print len(comp)
         if len(comp) != len(name_leaf):
-            print('Names found in tree: '+'%s' % ', '.join(map(str, list(set(name_leaf) - set(name_fasta)))))
-            print('Names found in fasta: '+'%s' % ', '.join(map(str, list(set(name_fasta) - set(name_leaf)))))              
+            logging.info('Names found in tree: '+'%s' % ', '.join(map(str, list(set(name_leaf) - set(name_fasta)))))
+            logging.info('Names found in fasta: '+'%s' % ', '.join(map(str, list(set(name_fasta) - set(name_leaf)))))              
             return False
       
     def root_midle(self):
@@ -296,13 +301,13 @@ class MOTU_PTP:
             if line.startswith("#"):
                 pass
             elif line.startswith("Species"):
-                print('')
+                logging.info('')
                 line = line.replace("Species","MOTU")
-                print(line)
+                logging.info(line)
                 listPTP_txt.write(line+'\n')
             else:
                 line = line.replace(",",", ")
-                print(line)
+                logging.info(line)
                 listPTP_txt.write(line+'\n')
 
     def MOTU_renameFasta(self):
@@ -348,7 +353,7 @@ class MOTU_PTP:
 #            print('Fasta file sorted successfuly')
             pass
         else:
-            print('error renaming fasta')
+            logging.info('error renaming fasta')
 #cheking fasta for bp size
         newfasta_check=sorting_fasta(self.path+'PTP/','PTP_MOTU.fasta')   #Checking fasta PROVISIONALLY!!!
         if newfasta_check.check_fasta() is False:
@@ -404,13 +409,13 @@ class MOTU_bPTP:
             if line.startswith("#"):
                 pass
             elif line.startswith("Species"):
-                print('')
+                logging.info('')
                 line = line.replace("Species","MOTU")
-                print(line)
+                logging.info(line)
                 listPTP_txt.write(line+'\n')
             else:
                 line = line.replace(",",", ")
-                print(line)
+                logging.info(line)
                 listPTP_txt.write(line+'\n')
 
     def MOTU_renameFasta2(self):
@@ -457,7 +462,7 @@ class MOTU_bPTP:
 #            print 'Fasta file sorted successfuly'
             pass
         else:
-            print('error renaming fasta')
+            logging.info('error renaming fasta')
 #            self.MOTU_renameFasta2()
 #
         newfasta.seek(0)
@@ -505,13 +510,13 @@ class MOTU_GMYC:
             line = line.strip()
             if not line.strip(): continue
             if line.startswith("Species"):
-                print('')
+                logging.info('')
                 line = line.replace("Species","MOTU")
-                print(line)
+                logging.info(line)
                 listGMYC_txt.write(line+'\n')
             else:
                 line = line[:-1]
-                print(line)
+                logging.info(line)
                 listGMYC_txt.write(line+'\n')
 
     def MOTU_renameFasta_gmyc(self):
@@ -558,7 +563,7 @@ class MOTU_GMYC:
 #            print 'Fasta file sorted successfuly'
             pass
         else:
-            print('error renaming fasta')
+            logging.info('error renaming fasta')
 #            self.MOTU_renameFasta_gmyc(self)
 #
         newfasta.seek(0)
@@ -605,7 +610,7 @@ class MOTU_BIN:
                     name_list.append(x)
             for i in motu_list:
                 member=[]
-                print(('MOTU '+i))
+                logging.info('MOTU '+i)
                 listBIN_txt.write('MOTU '+i+'\n')
                 for j in name_list:
 #                    print j
@@ -617,9 +622,9 @@ class MOTU_BIN:
                             ind=ind+j[a]+'_'
                             a+=1
                         member.append(ind[:-1])
-                print('%s' % ', '.join(map(str, member)))
+                logging.info('%s' % ', '.join(map(str, member)))
                 listBIN_txt.write('%s' % ', '.join(map(str, member))+'\n')
-                print('')
+                logging.info('')
 
     def MOTU_renameFasta_bin(self):
         self.fasta.seek(0)
@@ -675,7 +680,7 @@ class MOTU_X:
                     name_list.append(x)
             for i in motu_list:
                 member=[]
-                print(('MOTU '+i))
+                logging.info('MOTU '+i)
                 listBIN_txt.write('MOTU '+i+'\n')
                 for j in name_list:
 #                    print j
@@ -687,9 +692,9 @@ class MOTU_X:
                             ind=ind+j[a]+'_'
                             a+=1
                         member.append(ind[:-1])
-                print('%s' % ', '.join(map(str, member)))
+                logging.info('%s' % ', '.join(map(str, member)))
                 listBIN_txt.write('%s' % ', '.join(map(str, member))+'\n')
-                print('')
+                logging.info('')
 
     def MOTU_renameFasta_X(self):
         self.fasta.seek(0)
@@ -732,7 +737,7 @@ class MOTU_nominal:
             for i in listnominal_txt:
                 i=i.strip()
                 n+=1
-#                print('Species '+str(n)+' '+i)
+#                logging.info('Species '+str(n)+' '+i)
                 allList.write('MOTU '+str(n)+' '+i+'\n')
                 member=[]
                 i=i+'_'
@@ -914,7 +919,7 @@ class Compare:
                         if line.startswith('MOTU') and '(NOM)' in line:
                             n_used=0
                             n_used=len(line.strip().split("&"))-1
-#                            print(n_used,n_analysis,n_analysis/float(2)) ###############
+#                            logging.info(n_used,n_analysis,n_analysis/float(2)) ###############
                             if n_used==n_analysis:
                                 motus_name_TC.append(line)
                                 lists_TC.append(next(compare_file))
@@ -924,7 +929,7 @@ class Compare:
                         if line.startswith('MOTU') and not '(NOM)' in line:
                             n_used=0
                             n_used=len(line.strip().split("&"))
-#                            print(n_used,n_analysis,n_analysis/float(2)) ###############
+#                            logging.info(n_used,n_analysis,n_analysis/float(2)) ###############
                             if n_used==n_analysis:
                                 motus_name_TD.append(line)
                                 lists_TD.append(next(compare_file))
@@ -933,43 +938,43 @@ class Compare:
     #                            print line
                                 lists_MD.append(next(compare_file))                                             
                     
-                    print(('\n'+'### MOTUs totally agree with taxonomy ###\n'))
+                    logging.info('\n'+'### MOTUs totally agree with taxonomy ###\n')
                     summary_file.write('\n'+a+'MOTUs totally agree with taxonomy\n'+a+'\n')
                     for i in range(len(motus_name_TC)):
-                        print('Consensus MOTU '+str(num_motu)+' ['+motus_name_TC[i].strip()+']')
+                        logging.info('Consensus MOTU '+str(num_motu)+' ['+motus_name_TC[i].strip()+']')
                         summary_file.write('Consensus MOTU '+str(num_motu)+' ['+motus_name_TC[i].strip()+']\n')
                         out_list.write('MOTU '+str(num_motu)+'\n')
-                        print(lists_TC[i])
+                        logging.info(lists_TC[i])
                         summary_file.write(lists_TC[i]+'\n')
                         out_list.write(lists_TC[i])
                         num_motu+=1
-                    print(('\n'+'### MOTUs mostly agree with taxonomy ###\n'))
+                    logging.info('\n'+'### MOTUs mostly agree with taxonomy ###\n')
                     summary_file.write('\n'+a+'MOTUs Mostly agree with taxonomy\n'+a+'\n')
                     for i in range(len(motus_name_MC)):
-                        print('Consensus MOTU '+str(num_motu)+' ['+motus_name_MC[i].strip()+']')
+                        logging.info('Consensus MOTU '+str(num_motu)+' ['+motus_name_MC[i].strip()+']')
                         summary_file.write('Consensus MOTU '+str(num_motu)+' ['+motus_name_MC[i].strip()+']\n')
                         out_list.write('MOTU '+str(num_motu)+'\n')
-                        print(lists_MC[i])
+                        logging.info(lists_MC[i])
                         summary_file.write(lists_MC[i]+'\n')
                         out_list.write(lists_MC[i])
                         num_motu+=1                            
-                    print(('\n'+'### MOTUs totally disagree with taxonomy ###\n'))
+                    logging.info('\n'+'### MOTUs totally disagree with taxonomy ###\n')
                     summary_file.write('\n'+a+'MOTUs totally disagree with taxonomy\n'+a+'\n')
                     for i in range(len(motus_name_TD)):
-                        print('Consensus MOTU '+str(num_motu)+' ['+motus_name_TD[i].strip()+']')
+                        logging.info('Consensus MOTU '+str(num_motu)+' ['+motus_name_TD[i].strip()+']')
                         summary_file.write('Consensus MOTU '+str(num_motu)+' ['+motus_name_TD[i].strip()+']\n')
                         out_list.write('MOTU '+str(num_motu)+'\n')
-                        print(lists_TD[i])
+                        logging.info(lists_TD[i])
                         summary_file.write(lists_TD[i]+'\n')
                         out_list.write(lists_TD[i])
                         num_motu+=1
-                    print(('\n'+'### MOTUs mostly disagree with taxonomy ###\n'))
+                    logging.info('\n'+'### MOTUs mostly disagree with taxonomy ###\n')
                     summary_file.write('\n'+a+'MOTUs mostly dagree with taxonomy\n'+a+'\n')
                     for i in range(len(motus_name_MD)):
-                        print('Consensus MOTU '+str(num_motu)+' ['+motus_name_MD[i].strip()+']')
+                        logging.info('Consensus MOTU '+str(num_motu)+' ['+motus_name_MD[i].strip()+']')
                         summary_file.write('Consensus MOTU '+str(num_motu)+' ['+motus_name_MD[i].strip()+']\n')
                         out_list.write('MOTU '+str(num_motu)+'\n')
-                        print(lists_MD[i])
+                        logging.info(lists_MD[i])
                         summary_file.write(lists_MD[i]+'\n')
                         out_list.write(lists_MD[i])
                         num_motu+=1
@@ -979,7 +984,7 @@ class Compare:
                         if line.startswith('MOTU'):
                             n_used=0
                             n_used=len(line.strip().split("&"))
-#                            print(n_used,n_analysis,n_analysis/float(2)) ###############
+#                            logging.info(n_used,n_analysis,n_analysis/float(2)) ###############
                             if n_used==n_analysis:
                                 motus_name_TC.append(line)
                                 lists_TC.append(next(compare_file))
@@ -987,23 +992,23 @@ class Compare:
                                 motus_name_MC.append(line)
                                 lists_MC.append(next(compare_file))
  
-                    print(('\n'+'### MOTUs totally agree ###\n'))
+                    logging.info('\n'+'### MOTUs totally agree ###\n')
                     summary_file.write('\n'+a+'MOTUs totally agree\n'+a+'\n')
                     for i in range(len(motus_name_TC)):
                         summary_file.write('Consensus MOTU '+str(num_motu)+' ['+motus_name_TC[i].strip()+']\n')
                         out_list.write('MOTU '+str(num_motu)+'\n')
-                        print('Consensus MOTU '+str(num_motu)+' ['+motus_name_TC[i].strip()+']')
+                        logging.info('Consensus MOTU '+str(num_motu)+' ['+motus_name_TC[i].strip()+']')
                         summary_file.write(lists_TC[i]+'\n')
                         out_list.write(lists_TC[i])
-                        print(lists_TC[i])
+                        logging.info(lists_TC[i])
                         num_motu+=1
-                    print(('\n'+'### MOTUs mostly agree ###\n'))
+                    logging.info('\n'+'### MOTUs mostly agree ###\n')
                     summary_file.write('\n'+a+'MOTUs mostly agree\n'+a+'\n')
                     for i in range(len(motus_name_MC)):
-                        print('Consensus MOTU '+str(num_motu)+' ['+motus_name_MC[i].strip()+']')
+                        logging.info('Consensus MOTU '+str(num_motu)+' ['+motus_name_MC[i].strip()+']')
                         summary_file.write('Consensus MOTU '+str(num_motu)+' ['+motus_name_MC[i].strip()+']\n')
                         out_list.write('MOTU '+str(num_motu)+'\n')
-                        print(lists_MC[i])
+                        logging.info(lists_MC[i])
                         summary_file.write(lists_MC[i]+'\n')
                         out_list.write(lists_MC[i])
                         num_motu+=1
@@ -1029,25 +1034,25 @@ class Compare:
                             lists_W.append([i,j]) 
                             
             if lists_W != []:
-                print(('\n'+'### WARNING: overlapping MOTUS  ###\n'))
+                logging.info('\n'+'### WARNING: overlapping MOTUS  ###\n')
                 summary_file.write('\n'+a+'WARNING: overlapping MOTUS\n'+a+'\n')
                 n=0
                 for i in lists_W:
                     n+=1
-                    print(('\n'+'Overlapping consensus MOTUs '+str(n)+'\n'))
+                    logging.info('\n'+'Overlapping consensus MOTUs '+str(n)+'\n')
                     summary_file.write('\n'+'Overlapping consensus MOTUs '+str(n)+'\n')
-                    print(motus_name_W[i[0]].strip())
+                    logging.info(motus_name_W[i[0]].strip())
                     summary_file.write(motus_name_W[i[0]])
-                    print(motus_memb_W[i[0]])
+                    logging.info(motus_memb_W[i[0]])
                     summary_file.write(motus_memb_W[i[0]]+'\n')
-                    print(motus_name_W[i[1]].strip())
+                    logging.info(motus_name_W[i[1]].strip())
                     summary_file.write(motus_name_W[i[1]])
-                    print(motus_memb_W[i[1]])
+                    logging.info(motus_memb_W[i[1]])
                     summary_file.write(motus_memb_W[i[1]]+'\n')
 
                 warn_chos=str(input('Do you want to choice between the overlapping MOTUs before calculate DNA barcoding statistics? (Y/N)').strip())
                 while warn_chos!='Y' and warn_chos!='y'and warn_chos!='n'and warn_chos!='N':
-                    print('Error: Answer must be Y or N')
+                    logging.info('Error: Answer must be Y or N')
                     warn_chos=str(input('Do you want to chose between the overlapping MOTUs before calculate DNA barcoding statistics? (Y/N)').strip())
                 if warn_chos == 'Y' or warn_chos == 'y':
                     rmvd,acpt,num_del=[],[],[]
@@ -1057,9 +1062,9 @@ class Compare:
                         text_cho='1)'+motuA+' or 2)'+motuB+' (1/2)'
                         motu_cho=int(input(text_cho))
                         while motu_cho!=1 and motu_cho!=2:
-                            print('Error: Answer must be 1 or 2')
+                            logging.info('Error: Answer must be 1 or 2')
                             motu_cho=int(input(text_cho))
-                        print('\nMOTU chosen '+motus_name_W[i[motu_cho-1]]+'\n')
+                        logging.info('\nMOTU chosen '+motus_name_W[i[motu_cho-1]]+'\n')
                         summary_file.write('MOTU chosen '+motus_name_W[i[motu_cho-1]]+'\n')
                         if motu_cho-1 == 0:
                             motu_del=1
@@ -1070,7 +1075,7 @@ class Compare:
                         num_del.append(motu_del)
                         
                     while set(rmvd) & set(acpt) != set([]):
-                        print('You cant remove and acepted the same MOTU!!!!\n')
+                        logging.info('You cant remove and acepted the same MOTU!!!!\n')
                         
                         rmvd,acpt=[],[]
                         for i in lists_W:
@@ -1079,9 +1084,9 @@ class Compare:
                             text_cho='1)'+motuA+' or 2)'+motuB+' (1/2)'
                             motu_cho=int(input(text_cho))
                             while motu_cho!=1 and motu_cho!=2:
-                                print('Error: Answer must be 1 or 2')
+                                logging.info('Error: Answer must be 1 or 2')
                                 motu_cho=int(input(text_cho))
-                            print('\nMOTU chosen '+motus_name_W[i[motu_cho-1]]+'\n')
+                            logging.info('\nMOTU chosen '+motus_name_W[i[motu_cho-1]]+'\n')
                             summary_file.write('MOTU chosen '+motus_name_W[i[motu_cho-1]]+'\n')
                             if motu_cho-1 == 0:
                                 motu_del=1
@@ -1105,7 +1110,7 @@ class Compare:
                                         out_list.write(new_line)
     
                 elif warn_chos == 'N' or warn_chos == 'n':
-                    print('You need to choice a consensus MOTUS to calculate distances and graphs')
+                    logging.info('You need to choice a consensus MOTUS to calculate distances and graphs')
                     exit()
 
 
@@ -1128,13 +1133,15 @@ class Compare:
                                 newfasta.write(str(seq.seq)+'\n')
                         
                 
-class plot_compare_tree:  #cambiar nombres y cursiva, mostrar texto nominal?,
+class plot_compare_tree:  
     def __init__(self,path,tree,names=True):    #names=False for hide names leaf
         self.path=path
         self.tree_loaded=Tree(path+tree)
+        self.tree2=toytree.tree(path+tree)#,tree_format=1)
         self.names=names
         self.dic_color=self.dic_motu_color()
         self.plot_tree_con()
+        self.plot_tree_con_line()
 
     def dic_motu_color(self):
         color_used=['#e6194b','#3cb44b','#ffe119','#0082c8','#f58231','#911eb4','#46f0f0','#f032e6','#d2f53c','#fabebe','#008080','#e6beff','#aa6e28','#fffac8','#800000','#aaffc3','#808000','#ffd8b1','#000080','#808080','#FFFFFF','#000000']
@@ -1207,6 +1214,7 @@ class plot_compare_tree:  #cambiar nombres y cursiva, mostrar texto nominal?,
         return dicts
                            
     def layout_tree_compare(self,node):
+#        print(self.dic_color)
         node.collapsed = False
         n=0
         if node.is_leaf():
@@ -1240,6 +1248,95 @@ class plot_compare_tree:  #cambiar nombres y cursiva, mostrar texto nominal?,
             n.set_style(nstyle)
 #        self.tree_loaded.show(tree_style=ts)      #delete?? kernel died every twice 
         self.tree_loaded.render(self.path+"Compare/compare_tree.pdf", tree_style=ts,dpi=300)
+
+    def plot_tree_con_line(self):
+        tree=self.tree2
+        tree = tree.mod.node_scale_root_height(2*len(self.dic_color))
+        tips=(tree.get_tip_labels())
+        canvas, axes = tree.draw(
+            width=800,
+            height=30*len(tips),
+            tip_labels=False,  #hide labels  
+            tip_labels_align=True,
+            tip_labels_style={"-toyplot-anchor-shift": "80px"},
+            scalebar=True,
+        );
+        xsep=0.5
+        n=0
+        #add rectangles for delimitation
+        for k in self.dic_color:
+            n+=1
+            coord=tree.get_tip_coordinates(axis='y')
+            coor_start=[coord[0]]
+            coor_end=[]
+            for i,j in enumerate(tips):
+                if i<len(tips)-1:
+                    if self.dic_color[k].get(j) != self.dic_color[k].get(tips[i+1]):
+                        coor_end.append(coord[i])
+                        coor_start.append(coord[i+1])
+            coor_end.append(coord[len(tips)-1])
+            for i in range(len(coor_start)):
+                if k=='NOM':
+                    axes.rectangle(xsep*n,xsep*n+0.2,
+                                   coor_start[i]-0.35,
+                                   coor_end[i]+0.35,
+                                   color='#0000ff',
+                    );
+                elif k=='CONSENSUS':
+                    axes.rectangle(xsep*n,xsep*n+0.2,
+                                   coor_start[i]-0.35,
+                                   coor_end[i]+0.35,
+                                   color='#ff0000',
+                    );
+                else:
+                    axes.rectangle(xsep*n,xsep*n+0.2,
+                                   coor_start[i]-0.35,
+                                   coor_end[i]+0.35,
+                                   color='#00000',
+                    );
+        #add tip labels
+        ypos = range(len(tree))
+        xpos = [xsep*n+0.5] * len(tips) 
+        
+        tipstyle = {"font-size": "12px",
+                    "text-anchor":"start", 
+                    "fill": "#00000"}
+        axes.text(xpos, ypos, tips,
+                  style=tipstyle,
+        )
+        #add analyses names
+        labels = [k for k in self.dic_color]
+        tipstyle = {"text-anchor":"start", "-toyplot-anchor-shift":"0"}
+        for i in labels:                           
+                axes.text(
+                    [(x+1)*xsep+0.1 for x in range(len(labels))], 
+                    [len(tips)] * len(labels), 
+                    labels,
+                    angle=90,
+                    color='#00000',
+                    style=tipstyle
+                    )   
+        if 'NOM' in self.dic_color:
+            num_tax=[]
+            num_contigous=[]
+            num_con=0
+            for v in self.dic_color['NOM'].values():
+                if v not in num_tax:
+                    num_tax.append(v)
+                if v in num_contigous:
+                    pass
+                else:
+                    num_contigous=[v]
+                    num_con+=1
+            if len(coor_start) == num_con:
+                toyplot.svg.render(canvas, self.path+"Compare/compare_tree_lines.svg")
+#                toyplot.pdf.render(canvas, self.path+"Compare/compare_tree_lines.pdf")
+            else:
+                logging.info('#####\nNominal species not contigous in tree to draw compare tree with lines. You can try to flip some nodes to make it contigous\n#####\n')
+        else:
+            toyplot.svg.render(canvas, self.path+"Compare/compare_tree_lines.svg")
+#            toyplot.pdf.render(canvas, self.path+"Compare/compare_tree_lines.pdf")
+
 
 
 def print_options():
@@ -1381,6 +1478,7 @@ def main(argu=None):
             CODE=sys.argv[i]
         elif sys.argv[i] =='-C':
             i=i+1
+            a+='C'
             CompList=sys.argv[i] 
            
     tex='#####################\n'
@@ -1388,18 +1486,23 @@ def main(argu=None):
         pass
     else:
         path=path+'/'
+    targets = logging.StreamHandler(sys.stdout), logging.FileHandler(path+'SPdel_output.log') # from https://stackoverflow.com/questions/24204898/python-output-on-both-console-and-file/24206109#24206109
+    logging.basicConfig(format='%(message)s', level=logging.INFO, handlers=targets)
+    logging.info('\n\n############################################################################\n')
+    logging.info('SPdel v1.0 - Species delimitation and statistics for DNA Barcoding data sets\n')
+    logging.info('############################################################################\n')    
     if not os.path.exists(path+'tmp_file/'):
         os.makedirs(path+'tmp_file/')
     if not os.path.exists(path+'Nominal/'):
         os.makedirs(path+'Nominal/')
-    if any(x in a for x in ('n','p','t','g','b','x','e')):
+    if any(x in a for x in ('n','p','t','g','b','x','e','C')):
         if NomList!=None:
             check_file=check_list(path,fasta,NomList)
             if check_file==True:
                 pass
             else:
-                sys.exit('Different number of individuals in Nominal List provided')                
-            print('Renaming sequences using nominal list provided')
+                sys.exit('Different number of individuals in Nominal List provided')
+            logging.info('Renaming sequences using nominal list provided')                
             if PTPList!=None:
                 rename_MOTUList(path,fasta,PTPList,NomList,'MOTU_PTP_List_renamed.txt')
                 PTPList='tmp_file/MOTU_PTP_List_renamed.txt'            
@@ -1434,7 +1537,7 @@ def main(argu=None):
     if 'n' in a:
         if check.check_pattern()==False:
             sys.exit('Please rename your file using "genera_especies_individual" format or provide a nominal list file')
-        print(('\n'+tex+'Nominal species\n'+tex))
+        logging.info('\n'+tex+'Nominal species\n'+tex)
         Matrian.main(path+'Nominal/','sorted.fasta',gen,sp,dis,path+'tmp_file/nominal_list.txt',n=True)
         MOTU_nominal(path,'Nominal/sorted.fasta')
         if 'd' in a:
@@ -1445,33 +1548,33 @@ def main(argu=None):
            sys.exit("Error: different names in tree, please check your tree and alignment")
 #            new_tree=ch_tr.root_midle() ####### test
     if 'p' in a:
-        print(('\n'+tex+'PTP MOTUs\n'+tex))
+        logging.info('\n'+tex+'PTP MOTUs\n'+tex)
 #        print tree
         sys.argv=[sys.argv[0]]
         PTP_analize=MOTU_PTP(path,'Nominal/sorted.fasta',PTPList,tree=tree)   #tree=new_tree) test rooted tree
-        print('\n### Delimited MOTUs ###')
+        logging.info('\n### Delimited MOTUs ###')
         PTP_analize.print_MOTU_PTP()
-        print('')
+        logging.info('')
         Matrian.main(path+'PTP/','PTP_MOTU.fasta',gen,sp,dis)
         if 'd' in a:
             Diagnoser.main(path+'PTP/','PTP_MOTU.fasta',n_ind)
     if 't' in a:
-        print(('\n'+tex+'bPTP MOTUs\n'+tex))         
+        logging.info('\n'+tex+'bPTP MOTUs\n'+tex)
         sys.argv=[sys.argv[0]]
         bPTP_analize=MOTU_bPTP(path,'Nominal/sorted.fasta',bPTPList,tree=tree,niter=niter,sample=sample,burnin=burnin)
-        print('')
+        logging.info('')
         bPTP_analize.print_MOTU_bPTP()
-        print('\n### Delimited MOTUs ###')
+        logging.info('\n### Delimited MOTUs ###')
         Matrian.main(path+'bPTP/','bPTP_MOTU.fasta',gen,sp,dis)
         if 'd' in a:
             Diagnoser.main(path+'bPTP/','bPTP_MOTU.fasta',n_ind)
     if 'g' in a:
-        print(('\n'+tex+'GMYC MOTUs\n'+tex))
+        logging.info('\n'+tex+'GMYC MOTUs\n'+tex)
         sys.argv=[sys.argv[0]]
         gmyc_analize=MOTU_GMYC(path,'Nominal/sorted.fasta',GMYCList,tree=tree)
-        print('\n### Delimited MOTUs ###')
+        logging.info('\n### Delimited MOTUs ###')
         gmyc_analize.print_MOTU_GMYC()
-        print('')
+        logging.info('')
         Matrian.main(path+'GMYC/','GMYC_MOTU.fasta',gen,sp,dis)
         if 'd' in a:
             Diagnoser.main(path+'GMYC/','GMYC_MOTU.fasta',n_ind)
@@ -1483,12 +1586,12 @@ def main(argu=None):
             pass
         else:
             sys.exit('Different number of individuals in BIN List provided') 
-        print(('\n'+tex+'BIN MOTUs\n'+tex))
+        logging.info('\n'+tex+'BIN MOTUs\n'+tex)
         sys.argv=[sys.argv[0]]
         bin_analize=MOTU_BIN(path,fasta,BinList=BinList)
-        print('\n### Delimited MOTUs ###')
+        logging.info('\n### Delimited MOTUs ###')
         bin_analize.print_MOTU_bin()
-        print('')
+        logging.info('')
         Matrian.main(path+'BIN/','BIN_MOTU_sorted.fasta',gen,sp,dis)
         if 'd' in a:
             Diagnoser.main(path+'BIN/','BIN_MOTU_sorted.fasta',n_ind)
@@ -1505,19 +1608,19 @@ def main(argu=None):
                 sys.exit('Different number of individuals in MOTUs List provided')
 
             i_folder=i.split('.')[0]        
-            print(('\n'+tex+i_folder+' MOTUs\n'+tex))
+            logging.info('\n'+tex+i_folder+' MOTUs\n'+tex)
             sys.argv=[sys.argv[0]]
             
             X_analize=MOTU_X(path,fasta,i_folder,BinList=i)
-            print('\n### Delimited MOTUs ###')
+            logging.info('\n### Delimited MOTUs ###')
             X_analize.print_MOTU_X()
-            print('')
+            logging.info('')
             Matrian.main(path+i_folder+'/','X_MOTU_sorted.fasta',gen,sp,dis)
             if 'd' in a:
                 Diagnoser.main(path+i_folder+'/','X_MOTU_sorted.fasta',n_ind)
 
     if CompList!=None:     
-        print(('\n'+tex+'Concordant MOTUs\n'+tex))
+        logging.info('\n'+tex+'Concordant MOTUs\n'+tex)
         comp_analize=Compare(path,fasta,CompList)
         comp_analize.Compare_warning()
         comp_analize.MOTU_renameFasta_Compare()
@@ -1544,7 +1647,7 @@ if __name__ == "__main__":
 #tk
 
 #output print to file #HTML?
-
+#cambiar nombres y cursiva, mostrar texto nominal?,
 #path fasta
 
 # test N or gaps
