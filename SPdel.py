@@ -1650,7 +1650,6 @@ if __name__ == "__main__":
 #cambiar nombres y cursiva, mostrar texto nominal?,
 #path fasta
 
-# test N or gaps
 #testar reenraizar a la mitad?
 
 #separar opcion compare

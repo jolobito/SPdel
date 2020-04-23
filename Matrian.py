@@ -59,7 +59,7 @@ class matrian: #lower matrix
     def K2Pdistance(self,seq1,seq2):  #adapted from https://github.com/kgori/python_tools_on_github/blob/master/pairwise_distances.py
         pairs = []
         for x in zip(seq1,seq2):
-            if '-' not in x: pairs.append(x)     
+            if '-' not in x and 'N' not in x: pairs.append(x)     
         ts_count=0
         tv_count=0
         length = len(pairs)        
@@ -67,7 +67,7 @@ class matrian: #lower matrix
         transversions = [ "AC", "CA", "AT", "TA","GC", "CG", "GT", "TG" ]    
         for (x,y) in pairs:
             if x+y in transitions: ts_count += 1 
-            elif x+y in transversions: tv_count += 1      
+            elif x+y in transversions: tv_count += 1
         p = float(ts_count) / length
         q = float(tv_count) / length
         try: d = -0.5 * log( (1 - 2*p - q) * sqrt( 1 - 2*q ) )*100
