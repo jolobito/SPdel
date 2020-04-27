@@ -5,18 +5,16 @@ from distutils.core import setup
 
 dependencies = [
                 "biopython",
-                "ete3",
                 "scipy",
                 "matplotlib",
                 "seaborn",
-                "nexus",
                 "pandas",
                 "scipy",
                 "plotly",
                 "numpy",
-                "toytree",
-                "toyplot",
-                "PyQt5"
+#                "toytree",
+#                "toyplot",
+#                "PyQt5"
                 ]
 
 scripts = [
@@ -33,11 +31,6 @@ setup(
     version  = "1.0",
     packages = ["spdelib"],
     package_dir={"spdelib": "spdelib"},
-    # entry_points = {
-    #     'console_scripts': [
-    #         'SPdel  = fishlifescript.joinexonfiles:main'
-    #         ]
-    # },
     scripts = scripts,
     install_requires = dependencies,
     classifiers = [

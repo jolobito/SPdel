@@ -10,8 +10,8 @@ try:
 	from ete3 import Tree, SeqGroup #########
 	from subprocess import call
 	from nexus import NexusReader
-	from PTPLLH import lh_ratio_test, exp_distribution, species_setting, exponential_mixture, showTree
-	from summary import partitionparser
+	from spdelib.PTPLLH import lh_ratio_test, exp_distribution, species_setting, exponential_mixture, showTree
+	from spdelib.summary import partitionparser
 except ImportError:
 	print("Please install the scipy and other dependent package first.")
 	print("If your OS is ubuntu or has apt installed, you can try the following:") 

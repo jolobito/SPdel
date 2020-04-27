@@ -2,23 +2,23 @@
 
 #SPdel v 1.0
 try:
-    import sys
-    import os
-    from Bio import SeqIO
-    # from ete3 import TextFace, RectFace, Tree, TreeStyle, NodeStyle
-    from ete3.treeview.faces import add_face_to_node
-    from spdelib import PTP
-    from spdelib import bPTP
-    from spdelib import GMYC    
-    from spdelib import Diagnoser
-    from spdelib import Matrian
-    import random
-    import colorsys
-    import logging
-    import toytree
-    import toyplot
-    import toyplot.svg 
-    import toyplot.pdf
+	import sys
+	import os
+	from Bio import SeqIO
+	from ete3 import TextFace, RectFace, Tree, TreeStyle, NodeStyle
+	from ete3.treeview.faces import add_face_to_node
+	from spdelib import PTP
+	from spdelib import bPTP
+	from spdelib import GMYC    
+	from spdelib import Diagnoser
+	from spdelib import Matrian
+	import random
+	import colorsys
+	import logging
+	import toytree
+	import toyplot
+	import toyplot.svg 
+	import toyplot.pdf
 except ImportError:
 	logging.info("Please install all dependences first.")
 	sys.exit()

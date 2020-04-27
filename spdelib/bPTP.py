@@ -7,8 +7,8 @@ try:
 	import os
 	from ete3 import Tree
 	from nexus import NexusReader
-	from summary import partitionparser
-	from PTPLLH import lh_ratio_test, exp_distribution, species_setting, exponential_mixture
+	from spdelib.summary import partitionparser
+	from spdelib.PTPLLH import lh_ratio_test, exp_distribution, species_setting, exponential_mixture
 	import matplotlib.pyplot as plt
 except ImportError:
 	print("Please install the matplotlib and other dependent package first.")

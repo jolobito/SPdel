@@ -2,19 +2,19 @@ SPDel: Comparing Species delimitation and statistics for DNA Barcoding datasets
 
 SPdel is a pipeline to integrate different single-gene species delimitation methods. SPdel is designed to calculate statistics and compare MOTUs obtained by different methods (e.g. GMYC, PTP, bPTP, BIN, etc).
 
-Installation:
+### Requirement:
 
-You need to have installed python 3. You can install Anaconda (Python 3) from https://www.anaconda.com/download/ and select the option to put Anaconda in your Path.
+* [Anaconda](https://www.anaconda.com/download/); and select the option to put Anaconda in your Path.
 
-Open Anaconda prompt and install dependences:
-``` 
-conda update -n base conda
-conda install numpy
-conda install matplotlib
-conda install biopython
-pip install plotly #conda install -c plotly plotly
-conda install toytree -c eaton-lab
+
+### Installation:
+
+Open Anaconda prompt or terminal:
 ```
+conda env create -f environment.yml
+source activate SPdel 
+```
+### Overview
 
 The pipeline SPdel can run PTP, BPTP and GMYC analyses locally in your computer using original codes and then parse the results. Also, SPdel can interpretate output files from PTP and bPTP web server (https://species.h-its.org/) or python distribution (https://github.com/zhangjiajie/PTP). For GMYC the pipeline works with the outfile from python version (https://github.com/zhangjiajie/pGMYC), but you can use the R version or the web server (https://species.h-its.org/gmyc/) and include your results using -X option. Please check the example files included. 
 
@@ -26,15 +26,15 @@ The sequences name should be separate for "_" (e.g. Genus_species_individual) or
 
 Calculates genetic distances for nominal species
 ```
-python ./SPdel.py path_to_files/ fasta_file -n
+SPdel.py path_to_files/ fasta_file -n
 ```
 Calculate PTP, bPTP and GMYC locally and perfom genetic distances analyses
 ```
-python ./SPdel.py path_to_files/ fasta_file -n -P -T -G -t tree_file
+SPdel.py path_to_files/ fasta_file -n -P -T -G -t tree_file
 ```
 Calculates genetics distances from MOTUs delimited for PTP, bPTP and GMYC using outfiles calculated outside the pipeline
 ```
-python ./SPdel.py path_to_files/ fasta_file -P PTP_File -G GMYC_File -T bPTP_File -t tree_file
+SPdel.py path_to_files/ fasta_file -P PTP_File -G GMYC_File -T bPTP_File -t tree_file
 ```
 Compare analyses previously calculated
 ```

@@ -5,7 +5,7 @@ try:
 	import argparse
 	import os
 	import numpy
-	from PTPLLH import species_setting, showTree
+	from spdelib.PTPLLH import species_setting, showTree
 except ImportError:
 	print("Please install the scipy and other dependent package first.")
 	print("If your OS is ubuntu or has apt installed, you can try the following:") 
