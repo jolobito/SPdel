@@ -1,4 +1,4 @@
-SPDel: Comparing Species delimitation and statistics for DNA Barcoding datasets
+## SPDel: Comparing Species delimitation and statistics for DNA Barcoding datasets
 
 SPdel is a pipeline to integrate different single-gene species delimitation methods. SPdel is designed to calculate statistics and compare MOTUs obtained by different methods (e.g. GMYC, PTP, bPTP, BIN, etc).
 
@@ -12,7 +12,7 @@ SPdel is a pipeline to integrate different single-gene species delimitation meth
 Open Anaconda prompt or terminal:
 ```
 conda env create -f environment.yml
-source activate SPdel 
+source activate spdel 
 ```
 ### Overview
 
