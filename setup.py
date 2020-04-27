@@ -9,12 +9,8 @@ dependencies = [
                 "matplotlib",
                 "seaborn",
                 "pandas",
-                "scipy",
                 "plotly",
-                "numpy",
-#                "toytree",
-#                "toyplot",
-#                "PyQt5"
+                "numpy"
                 ]
 
 scripts = [
