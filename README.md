@@ -5,14 +5,14 @@ SPdel is a pipeline to integrate different single-gene species delimitation meth
 ### Requirement:
 
 * [Anaconda](https://www.anaconda.com/download/); and select the option to put Anaconda in your Path.
-
+* [Git](https://git-scm.com/downloads/)
 
 ### Installation:
 
 Open Anaconda prompt or terminal:
 ```
 conda env create -f environment.yml
-source activate spdel 
+conda activate spdel 
 ```
 ### Overview
 
