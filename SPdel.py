@@ -1334,7 +1334,8 @@ class plot_compare_tree:
                 toyplot.svg.render(canvas, self.path+"Compare/compare_tree_lines.svg")
 #                toyplot.pdf.render(canvas, self.path+"Compare/compare_tree_lines.pdf")
             else:
-                logging.info('#####\nNominal species not contigous in tree to draw compare tree with lines. You can try to flip some nodes to make it contigous\n#####\n')
+                logging.info('#####\nWarning: Nominal species not contigous in the tree.\n#####\n')
+                toyplot.svg.render(canvas, self.path+"Compare/compare_tree_lines.svg")
         else:
             toyplot.svg.render(canvas, self.path+"Compare/compare_tree_lines.svg")
 #            toyplot.pdf.render(canvas, self.path+"Compare/compare_tree_lines.pdf")
