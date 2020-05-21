@@ -11,5 +11,5 @@ dependencies:
   - toytree
   - pip:
     - git+https://github.com/shh-dlce/python-nexus.git#python-nexus[complete]
-    - git+https://github.com/Ulises-Rosas/SPdel.git#spdel
+    - git+https://github.com/jolobito/SPdel.git#spdel
 
