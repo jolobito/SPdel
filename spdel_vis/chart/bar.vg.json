@@ -1,0 +1,11 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v4.json",
+
+  "data": {"name": "distances", "url": "data/Compare_MOTU.csv", "format":  {"type": "csv"}},
+  "mark": "bar",
+  "encoding": {
+    "x": {"field": "name", "type": "nominal"},
+    "y": {"field": "MOTU_1_LS_afcon_L286", "type": "quantitative"}
+  }
+
+}

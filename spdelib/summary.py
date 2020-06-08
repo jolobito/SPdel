@@ -1,11 +1,18 @@
 #! /usr/bin/env python
 try:
-	import matplotlib.pyplot as plt
+	from sys import platform as sys_pf
+	if sys_pf == 'darwin':
+		import matplotlib
+
+		matplotlib.use("Qt5Agg")
+
+	from matplotlib import pyplot as plt
 	import sys
 	import argparse
 	import os
 	import numpy
 	from spdelib.PTPLLH import species_setting, showTree
+
 except ImportError:
 	print("Please install the scipy and other dependent package first.")
 	print("If your OS is ubuntu or has apt installed, you can try the following:") 
