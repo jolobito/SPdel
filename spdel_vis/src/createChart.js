@@ -70,6 +70,13 @@ function buildMatrixChart(){
             type: "rect",
             from: {"data": "individuals"},
             encode: {
+                enter:{
+                    tooltip:  {
+                        signal: "{'title': datum.id, " +
+                            "'group': datum.group," +
+                            "'species': datum.species}"
+                    }
+                },
                 update: {
                     "x": {"offset": -15},
                     "y": {"scale": "position", "field": "id", "offset": 2},
@@ -89,6 +96,13 @@ function buildMatrixChart(){
             type: "rect",
             from: {"data": "individuals"},
             encode: {
+                enter:{
+                    tooltip:  {
+                        signal: "{'title': datum.id, " +
+                            "'group': datum.group," +
+                            "'species': datum.species}"
+                    }
+                },
                 "update": {
                     "x": {"scale": "position", "field": "id", "offset": 2},
                     "y": {"offset": -15},
@@ -109,12 +123,19 @@ function buildMatrixChart(){
             name: "columns",
             from: {"data": "individuals"},
             encode: {
+                enter:{
+                    tooltip:  {
+                        signal: "{'title': datum.id, " +
+                            "'group': datum.group," +
+                            "'species': datum.species}"
+                    }
+                },
                 "update": {
                     "x": {"scale": "position", "field": "id", "band": 0.5},
                     "y": {"offset": -25},
                     "text": {"field": "id"},
-                    "fontSize": {"scale": "position", "band": 0.8},
-                    "angle": {"value": -90},
+                    "fontSize": {"scale": "position", "band": 0.7},
+                    "angle": {"value": -50},
                     "align": {"value": "left"},
                     "baseline": {"value": "middle"},
                     "fill": [
@@ -134,6 +155,13 @@ function buildMatrixChart(){
             name: "rows",
             from: {"data": "individuals"},
             encode: {
+                enter:{
+                    tooltip:  {
+                        signal: "{'title': datum.id, " +
+                            "'group': datum.group," +
+                            "'species': datum.species}"
+                    }
+                },
                 "update": {
                     "x": {"offset": -25},
                     "y": {"scale": "position", "field": "id", "band": 0.8},
