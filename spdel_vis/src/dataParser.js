@@ -15,13 +15,13 @@ DataParser.prototype = {
         individual.id = name;
         if(split[0] === 'MOTU'){
             individual.groupping = split[0];
-            individual.group = split[1];
+            individual.group =  split[0] + " " + split[1];
             individual.genre = split[2];
             individual.species = split[3];
             individual.code = split[4];
         }else{
             individual.groupping = split[0];
-            individual.group = split[1];
+            individual.group =  split[0] + " " + split[1];
             individual.genre = split[0];
             individual.species = split[1];
             individual.code = split[3];

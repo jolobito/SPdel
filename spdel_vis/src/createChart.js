@@ -38,18 +38,18 @@ function buildMatrixChart(){
                     y: {"scale": "position", "field": "targetNode.id"},
                     width: {"scale": "position", "band": 1, "offset": -1},
                     height: {"scale": "position", "band": 1, "offset": -1},
-                    fill: [
-                        {test: "datum.sourceNode.group != datum.targetNode.group",
-                            scale: "distance", "field": "distance"},
-                        {scale: "distance_intra", "field": "distance"}
-                        ],
                     tooltip:  {
                         signal: "{'there is a distance of ': datum.distance, " +
                             "'between': datum.sourceNode.id, " +
                             "'and': datum.targetNode.id}"
-                    }
+                    },
                 },
                 update: {
+                    fill: [
+                        {test: "datum.sourceNode.group != datum.targetNode.group",
+                            scale: "distance", "field": "distance"},
+                        {scale: "distance_intra", "field": "distance"}
+                    ],
                     opacity:[
                         {test: " (!length(data('selected_dist'))  && !length(data('selected')) ) ||" +
                                 "((  length(data('selected_dist')) &&" +
@@ -63,7 +63,8 @@ function buildMatrixChart(){
                             value: 0.9},
                         {"value": 0.15}
                     ],
-                }
+                },
+                "hover": { "fill": {"value": "firebrick"} },
             }
         },
         {
@@ -329,7 +330,10 @@ function minmaxChart(){
                 enter: {
                     size: {value: 50},
                     tooltip:  {
-                        signal: "{'group': datum['sourceNode\\.group'] }"
+                        signal: "{'group': datum['sourceNode\\.group']," +
+                            "'max inter distance': datum['max_intra']," +
+                            "'min inter distance': datum['min_inter']" +
+                            "}"
                     }
                 },
                 update: {
@@ -610,7 +614,7 @@ async function buildCharts(fileName) {
         {
             name: "distance_intra",
             type: "linear",
-            range: {scheme: "browns"},
+            range: {scheme: "reds"},
             domain: {
                 "fields": [
                     {"data": "distances", "field": "distance"},
