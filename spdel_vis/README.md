@@ -1,4 +1,4 @@
-## SPDel Interactive visualization
+## SPdel Interactive Visualization
 
 ![SPDel Vis](img/vis.png "SPDel Vis")
 
