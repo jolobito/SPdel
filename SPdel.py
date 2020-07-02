@@ -962,8 +962,8 @@ class Compare:
                                 #                            print line
                                 lists_MD.append(next(compare_file))
 
-                    logging.info('\n' + '### MOTUs totally agree with taxonomy ###\n')
-                    summary_file.write('\n' + a + 'MOTUs totally agree with taxonomy\n' + a + '\n')
+                    logging.info('### All MOTUs match with the taxonomy ###\n')
+                    summary_file.write('\n' + a + 'All MOTUs agree with the taxonomy\n' + a + '\n')
                     for i in range(len(motus_name_TC)):
                         logging.info('Consensus MOTU ' + str(num_motu) + ' [' + motus_name_TC[i].strip() + ']')
                         summary_file.write('Consensus MOTU ' + str(num_motu) + ' [' + motus_name_TC[i].strip() + ']\n')
@@ -972,8 +972,8 @@ class Compare:
                         summary_file.write(lists_TC[i] + '\n')
                         out_list.write(lists_TC[i])
                         num_motu += 1
-                    logging.info('\n' + '### MOTUs mostly agree with taxonomy ###\n')
-                    summary_file.write('\n' + a + 'MOTUs Mostly agree with taxonomy\n' + a + '\n')
+                    logging.info('### Most MOTUs agree with the taxonomy ###\n')
+                    summary_file.write('\n' + a + 'Most MOTUs agree with the taxonomy\n' + a + '\n')
                     for i in range(len(motus_name_MC)):
                         logging.info('Consensus MOTU ' + str(num_motu) + ' [' + motus_name_MC[i].strip() + ']')
                         summary_file.write('Consensus MOTU ' + str(num_motu) + ' [' + motus_name_MC[i].strip() + ']\n')
@@ -982,8 +982,8 @@ class Compare:
                         summary_file.write(lists_MC[i] + '\n')
                         out_list.write(lists_MC[i])
                         num_motu += 1
-                    logging.info('\n' + '### MOTUs totally disagree with taxonomy ###\n')
-                    summary_file.write('\n' + a + 'MOTUs totally disagree with taxonomy\n' + a + '\n')
+                    logging.info('### All MOTUs do not match the taxonomy###\n')
+                    summary_file.write('\n' + a + 'All MOTUs do not match the taxonomy\n' + a + '\n')
                     for i in range(len(motus_name_TD)):
                         logging.info('Consensus MOTU ' + str(num_motu) + ' [' + motus_name_TD[i].strip() + ']')
                         summary_file.write('Consensus MOTU ' + str(num_motu) + ' [' + motus_name_TD[i].strip() + ']\n')
@@ -992,8 +992,8 @@ class Compare:
                         summary_file.write(lists_TD[i] + '\n')
                         out_list.write(lists_TD[i])
                         num_motu += 1
-                    logging.info('\n' + '### MOTUs mostly disagree with taxonomy ###\n')
-                    summary_file.write('\n' + a + 'MOTUs mostly dagree with taxonomy\n' + a + '\n')
+                    logging.info('### Most MOTUs do not match the taxonomy ###\n')
+                    summary_file.write('\n' + a + 'Most MOTUs do not match the taxonomy\n' + a + '\n')
                     for i in range(len(motus_name_MD)):
                         logging.info('Consensus MOTU ' + str(num_motu) + ' [' + motus_name_MD[i].strip() + ']')
                         summary_file.write('Consensus MOTU ' + str(num_motu) + ' [' + motus_name_MD[i].strip() + ']\n')
@@ -1016,8 +1016,8 @@ class Compare:
                                 motus_name_MC.append(line)
                                 lists_MC.append(next(compare_file))
 
-                    logging.info('\n' + '### MOTUs totally agree ###\n')
-                    summary_file.write('\n' + a + 'MOTUs totally agree\n' + a + '\n')
+                    logging.info('### MOTUs totally agree ###\n')
+                    summary_file.write('\n' + a + 'All MOTUs match the same delimitation\n' + a + '\n')
                     for i in range(len(motus_name_TC)):
                         summary_file.write('Consensus MOTU ' + str(num_motu) + ' [' + motus_name_TC[i].strip() + ']\n')
                         out_list.write('MOTU ' + str(num_motu) + '\n')
@@ -1026,7 +1026,7 @@ class Compare:
                         out_list.write(lists_TC[i])
                         logging.info(lists_TC[i])
                         num_motu += 1
-                    logging.info('\n' + '### MOTUs mostly agree ###\n')
+                    logging.info('### Most MOTUs match the same delimitation ###\n')
                     summary_file.write('\n' + a + 'MOTUs mostly agree\n' + a + '\n')
                     for i in range(len(motus_name_MC)):
                         logging.info('Consensus MOTU ' + str(num_motu) + ' [' + motus_name_MC[i].strip() + ']')
@@ -1262,6 +1262,8 @@ class plot_compare_tree:
         ts.title.add_face(TextFace("Species delimitation comparision", ftype='Arial', fsize=10), column=0)
         n = 0
         for k in self.dic_color:
+            if k == 'NOM':
+                k='NOMINAL'
             F = TextFace(k, fsize=7)
             F.rotation = 270
             n += 1
@@ -1331,7 +1333,12 @@ class plot_compare_tree:
                   style=tipstyle,
                   )
         # add analyses names
-        labels = [k for k in self.dic_color]
+        # labels = [k for k in self.dic_color]
+        labels=[]
+        for k in self.dic_color:
+            if k == 'NOM':
+                k='NOMINAL'            
+            labels.append(k)
         tipstyle = {"text-anchor": "start", "-toyplot-anchor-shift": "0"}
         for i in labels:
             axes.text(
@@ -1346,7 +1353,8 @@ class plot_compare_tree:
             num_tax = []
             num_contigous = []
             num_con = 0
-            for v in self.dic_color['NOM'].values():
+            for v in tips:
+                v=v.split('_')[:2]
                 if v not in num_tax:
                     num_tax.append(v)
                 if v in num_contigous:
@@ -1354,7 +1362,7 @@ class plot_compare_tree:
                 else:
                     num_contigous = [v]
                     num_con += 1
-            if len(coor_start) == num_con:
+            if len(num_tax) == num_con:
                 toyplot.svg.render(canvas, self.path + "Compare/compare_tree_lines.svg")
             #                toyplot.pdf.render(canvas, self.path+"Compare/compare_tree_lines.pdf")
             else:
@@ -1654,7 +1662,7 @@ def main(argu=None):
                 Diagnoser.main(path + i_folder + '/', 'X_MOTU_sorted.fasta', n_ind)
 
     if CompList != None:
-        logging.info('\n' + tex + 'Concordant MOTUs\n' + tex)
+        logging.info('\n' + tex + 'Consensus MOTUs\n' + tex)
         comp_analize = Compare(path, fasta, CompList)
         comp_analize.Compare_warning()
         comp_analize.MOTU_renameFasta_Compare()
