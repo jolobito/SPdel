@@ -3,6 +3,7 @@ channels:
   - eaton-lab
   - etetoolkit
   - bioconda
+  - conda-forge
   - defaults
 dependencies:
   - python=3
