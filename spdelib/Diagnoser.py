@@ -17,8 +17,8 @@ from Bio import AlignIO
 from Bio.Seq import Seq
 from Bio.Align import MultipleSeqAlignment
 from Bio.SeqRecord import SeqRecord
-from Bio.Alphabet import IUPAC, Gapped
-alphabet = Gapped(IUPAC.ambiguous_dna)
+# from Bio.Alphabet import IUPAC, Gapped
+# alphabet = Gapped(IUPAC.ambiguous_dna)
 
         
 def snper(path,fasta):   #code modified from Jufisawa blog
@@ -29,7 +29,8 @@ def snper(path,fasta):   #code modified from Jufisawa blog
     bases = s_bases + d_bases
     alig = AlignIO.read(path+fasta, 'fasta')
     list_n_pos=[]
-    snp = [SeqRecord(Seq('', s.seq.alphabet), id=s.id, description=s.description) for s in alig]
+    # snp = [SeqRecord(Seq('', s.seq.alphabet), id=s.id, description=s.description) for s in alig]
+    snp = [SeqRecord(Seq(''), id=s.id, description=s.description) for s in alig]
     snp = MultipleSeqAlignment(snp)
     for i in range(alig.get_alignment_length()):
         col = alig[:,i]
@@ -221,10 +222,10 @@ def plot_DC(path,list_var,cod_color,spec_list,list_n_pos):
                 seq_snp[i][j]=''
             else:
                 seq_snp[i][j]=list_var[j][i][0]
-#    print seq_snp
-#    print pos_cc_ls
-#    print cod_color
-#    print list_n_pos
+    # print(seq_snp)
+    # print(pos_cc_ls)
+    # print(cod_color)
+    # print(list_n_pos)
               
 #    Code for do the tables with the data prepared above       
     n_div=20
@@ -232,7 +233,7 @@ def plot_DC(path,list_var,cod_color,spec_list,list_n_pos):
     div=int(ceil(len(pos_cc_ls)/float(n_div)))
     n_col=6+((len(spec_list)+1)*div)
     fct=1/float(n_col)
-    sz=1-(6*fct)
+    sz=round(1-(6*fct),2)
     for i in range(int(ceil(len(pos_cc_ls)/float(n_div)))): #0 1 2
         if i+1 < len(pos_cc_ls)/float(n_div): # i < 2.1
             seq_snp_tmp=seq_snp[n_div*i:(n_div*(i+1))]
@@ -275,10 +276,15 @@ def plot_DC(path,list_var,cod_color,spec_list,list_n_pos):
             
         width_1=200
         width_2=40
+        yvalue=(sz-((len(spec_list)+1)*fct))
+        # print(yvalue)
+        # print(sz)
+        if yvalue <0:
+            yvalue=0
         trace = go.Table(
             type = 'table',
             columnwidth = [width_1,width_2],
-            domain=dict(x=[0,float(width_1+(width_2*len(list_n_pos_tmp)))/(width_1+(width_2*n_div))],y=[sz-((len(spec_list)+1)*fct),sz-0.02]), ####
+            domain=dict(x=[0,float(width_1+(width_2*len(list_n_pos_tmp)))/(width_1+(width_2*n_div))],y=[yvalue,sz-0.02]), ####
             header=dict(values=head,
                         line = dict(color='#506784'),
                         fill = dict(color='white'),
@@ -290,9 +296,9 @@ def plot_DC(path,list_var,cod_color,spec_list,list_n_pos):
                        align = ['left','center'],
                        font = dict(color = 'black', size = 11)))
         
-        lists_data[i]=trace                         
+        lists_data[i]=trace
+        print([0,float(width_1+(width_2*len(list_n_pos_tmp)))/(width_1+(width_2*n_div))],[yvalue,sz-0.02])                         
         sz=sz-((len(spec_list)+1)*fct)
-        
         
     data_lgnd={'color':['','','','',''],'Legend':['Diagnostic Character','Diagnostic or Partial Character','Partial Character','Partial or Uninformative Character','Invalid Character']}       
     df2 = pd.DataFrame(data_lgnd)
@@ -300,7 +306,7 @@ def plot_DC(path,list_var,cod_color,spec_list,list_n_pos):
     trace_legend = go.Table(
         type = 'table',
         columnwidth = [width_2,400],
-        domain=dict(x=[0,0.35],y=[1-(6*fct),1]), ######
+        domain=dict(x=[0,0.35],y=[round(1-(6*fct),2),1]), ######
         header=dict(values=['','<b>Legend</b>'],
                     line = dict(color='#506784'),
                     fill = dict(color='white'),
@@ -311,7 +317,7 @@ def plot_DC(path,list_var,cod_color,spec_list,list_n_pos):
                    fill = dict(color = [['red','#ff5b00','orange','yellow','#feffca'],'white']),
                    align = ['center'],
                    font = dict(color = 'black', size = 11)))
-
+    print([0,0.35],[round(1-(6*fct),2),1])
     height_per=(len(spec_list)+1)*30*div+div*10+6*30
     lists_data=[trace_legend]+lists_data
 
