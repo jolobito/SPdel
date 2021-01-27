@@ -33,6 +33,19 @@ except ImportError:
 
 
 def check_list(path, fasta, fileList):
+    """A function to check if the nominal list and fasta file have same number of individuals.
+    Parameters
+    ----------
+    path: str
+        The path to folder with the input file.
+    fasta: str
+        The name of fasta file.
+    fileList: str
+        The name of norminal list file.        
+    Returns
+    -------
+    True if the files have same numeber of individuals.
+    """
     with open(path + fasta, newline='') as fasta, open(path + fileList, newline='') as filelist:
         n_line = 0
         n_seq = 0
@@ -46,6 +59,18 @@ def check_list(path, fasta, fileList):
 
 
 def rename_NomList(path, fasta, NomList, tree=None):
+    """A function to rename fasta and tree file using a nominal list. Tree file is optional
+    Parameters
+    ----------
+    path: str
+        The path to folder with the input file.
+    fasta: str
+        The name of fasta file.
+    NomList: str
+        The name of norminal list file.
+    tree: str
+        The name of tree file.        
+    """
     if not os.path.exists(path + 'tmp_file/'):
         os.makedirs(path + 'tmp_file/')
     newpath = path + 'tmp_file/'
@@ -79,6 +104,20 @@ def rename_NomList(path, fasta, NomList, tree=None):
 
 
 def rename_MOTUList(path, fasta, List, NomList, outfile):
+    """A function to rename delimitation lists if provided and not calulated using a nominal list
+    Parameters
+    ----------
+    path: str
+        The path to folder with the input file.
+    fasta: str
+        The name of fasta file.
+    List: str
+        The name of MOTU list file.    
+    NomList: str
+        The name of norminal list file.   
+    outfile: str
+        The name of MOTU list file renamed.   
+    """
     if not os.path.exists(path + 'tmp_file/'):
         os.makedirs(path + 'tmp_file/')
     newpath = path + 'tmp_file/'
@@ -120,6 +159,19 @@ def random_color(h=None, l=None, s=None):
 
 
 class sorting_fasta:
+    """Initial check for fasta
+    
+    Parameters
+    ----------
+    path: str
+        The path to folder with the input file.
+    fasta: str
+        The name of fasta file.
+    typeCODE: str
+        Type of genetic code used to check stop codon, use 'VER' or 'INV'      
+    outname: str
+        The name of fasta sorted by name.   
+    """
     def __init__(self, path, fasta, typeCODE='VER', outname='Nominal/sorted.fasta'):
         self.path = path
         self.fasta = open(path + fasta, newline='')
@@ -127,6 +179,7 @@ class sorting_fasta:
         self.typeCODE = typeCODE
 
     def check_fasta(self):
+        """To check if sequences are aligned."""
         logging.info('checking if sequences are aligned')
         self.fasta.seek(0)
         handle = self.fasta
@@ -144,6 +197,7 @@ class sorting_fasta:
     #        print 'ok'
 
     def describe_fasta(self):
+        """To print the main characteristics of fasta file."""        
         self.fasta.seek(0)
         handle = self.fasta
         n = len(next(SeqIO.parse(handle, "fasta")))
@@ -155,6 +209,7 @@ class sorting_fasta:
 
     def stop_codon(
             self):  # modified from https://stackoverflow.com/questions/34009041/python-code-to-find-coding-dna-with-start-and-stop-codons
+        """To check if there are at least one ORF without stop codon"""    
         logging.info('checking stop codons using ' + self.typeCODE + ' genetic code')
         allcheck = True
         if self.typeCODE == 'VER':
@@ -195,6 +250,7 @@ class sorting_fasta:
             logging.info('All sequences have at least one ORF without stop codons')
 
     def sort_fasta(self):
+        """Sort the fasta file by name in sequences."""    
         logging.info('sorting fasta')
         self.fasta.seek(0)
         handle = self.fasta
@@ -229,6 +285,7 @@ class sorting_fasta:
         return file_sorted
 
     def check_pattern(self):
+        """Check if the patter genus_species_ID in the sequences name."""    
         self.fasta.seek(0)
         for line in self.fasta:
             if line.startswith('>'):
@@ -238,12 +295,23 @@ class sorting_fasta:
 
 
 class check_tree:
+    """check if tree file is correct
+    Parameters
+    ----------
+    path: str
+        The path to folder with the input file.
+    fasta: str
+        The name of sorted fasta file.
+    tree: str
+        The name of tree file.        
+    """
     def __init__(self, path, fasta, tree):
         self.path = path
         self.fasta = open(path + fasta, newline='')
         self.tree = Tree(path + tree)
 
     def check(self):
+        """Check if the names in the tree are exactly the same than the fasta."""
         self.fasta.seek(0)
         t = self.tree
         name_leaf = []
@@ -270,6 +338,7 @@ class check_tree:
             return False
 
     def root_midle(self):
+        """Root the three to the middle."""    # function to be tested!! improve the results??   
         t = self.tree
         #        print t
         R = t.get_midpoint_outgroup()
@@ -278,6 +347,20 @@ class check_tree:
 
 
 class MOTU_PTP:
+    """To run PTP delimitation method
+    Parameters
+    ----------
+    path: str
+        The path to folder with the input file.
+    fasta: str
+        The name of sorted fasta file.
+    outfile: str
+        species delimitation results file precalculated.
+    outptp: str
+        base name used to the analysis.        
+    tree: str
+        The name of tree file.        
+    """
     def __init__(self, path, fasta, outfile=None, outptp='PTP', tree=None):
         if not os.path.exists(path + 'PTP/'):
             os.makedirs(path + 'PTP/')
@@ -289,9 +372,15 @@ class MOTU_PTP:
         self.fasta_PTP = self.MOTU_renameFasta()
 
     def ptp(self):
+        """Run the PTP analysis"""         
         PTP.main(['-t', self.tree, '-o', self.path + 'PTP/' + self.outptp, '-r'])
 
     def MOTU_listPTP(self):
+        """Read the output and construct a list with the MOTUs
+        Returns
+        -------
+        A list with MOTUs
+        """          
         if self.outfile == None:
             self.ptp()
             listPTP = open(self.path + 'PTP/' + self.outptp + '.PTPhSupportPartition.txt')
@@ -312,6 +401,7 @@ class MOTU_PTP:
         return name
 
     def print_MOTU_PTP(self):
+        """Print the PTP results and write it to file"""          
         listPTP = open(self.path + self.outfile)
         listPTP.seek(0)
         listPTP_txt = open(self.path + 'PTP/' + self.outptp + '.MOTU_list.txt', 'w+')
@@ -331,6 +421,7 @@ class MOTU_PTP:
                 listPTP_txt.write(line + '\n')
 
     def MOTU_renameFasta(self):
+        """Rename the fasta name sequences using MOTUs"""            #rewrite using biopython
         self.fasta_sorted.seek(0)
         newfasta = open(self.path + 'PTP/' + 'PTP_MOTU.fasta', 'w+')
         a = 0
@@ -384,6 +475,26 @@ class MOTU_PTP:
 
 
 class MOTU_bPTP:
+    """To run bPTP delimitation method
+    Parameters
+    ----------
+    path: str
+        The path to folder with the input file.
+    fasta: str
+        The name of sorted fasta file.
+    outfile: str
+        species delimitation results file precalculated.
+    outptp: str
+        base name used to the analysis.        
+    tree: str
+        The name of tree file.
+    niter: int
+        number of iterations for MCMC
+    sample: int
+        sampling for MCMC. 
+    burnin: float
+        burnin for MCMC.         
+    """
     def __init__(self, path, fasta, outfile=None, outbptp='bPTP', tree=None, niter='10000', sample='100', burnin='0.1'):
         if not os.path.exists(path + 'bPTP/'):
             os.makedirs(path + 'bPTP/')
@@ -398,10 +509,16 @@ class MOTU_bPTP:
         self.fasta_bPTP = self.MOTU_renameFasta2()
 
     def bptp(self):
+        """Run the bPTP analysis"""           
         bPTP.main(['-t', self.tree, '-o', self.path + 'bPTP/' + self.outptp, '-s', '1234', '-r', '-i', self.niter, '-n',
                    self.sample, '-b', self.burnin])
 
     def MOTU_listbPTP(self):
+        """Read the output and construct a list with the MOTUs
+        Returns
+        -------
+        A list with MOTUs
+        """
         if self.outfile == None:
             self.bptp()
             listPTP = open(self.path + 'bPTP/' + self.outptp + '.PTPhSupportPartition.txt')
@@ -422,6 +539,7 @@ class MOTU_bPTP:
         return name
 
     def print_MOTU_bPTP(self):
+        """Print the bPTP results and write it to file""" 
         listPTP = open(self.path + self.outfile)
         listPTP.seek(0)
         listPTP_txt = open(self.path + 'bPTP/' + self.outptp + '.MOTU_list.txt', 'w+')
@@ -441,6 +559,7 @@ class MOTU_bPTP:
                 listPTP_txt.write(line + '\n')
 
     def MOTU_renameFasta2(self):
+        """Rename the fasta name sequences using MOTUs"""  #rewrite using biopython
         self.fasta_sorted.seek(0)
         newfasta = open(self.path + 'bPTP/' + 'bPTP_MOTU.fasta', 'w+')
         a = 0
@@ -492,6 +611,20 @@ class MOTU_bPTP:
 
 
 class MOTU_GMYC:
+    """To run GMYC delimitation method
+    Parameters
+    ----------
+    path: str
+        The path to folder with the input file.
+    fasta: str
+        The name of sorted fasta file.
+    outfile: str
+        species delimitation results file precalculated.
+    outptp: str
+        base name used to the analysis.        
+    tree: str
+        The name of tree file.        
+    """
     def __init__(self, path, fasta, outfile=None, tree=None):
         if not os.path.exists(path + 'GMYC/'):
             os.makedirs(path + 'GMYC/')
@@ -502,9 +635,15 @@ class MOTU_GMYC:
         self.fasta_gmyc = self.MOTU_renameFasta_gmyc()
 
     def gmyc_run(self):
+        """Run the GMYC analysis"""   
         GMYC.main(['-t', self.tree, '-ps'])
 
     def MOTU_listGMYC(self):
+        """Read the output and construct a list with the MOTUs
+        Returns
+        -------
+        A list with MOTUs
+        """
         if self.outfile == None:
             self.gmyc_run()
             listGMYC = open(self.path + 'GMYC/GMYC_MOTU.txt')
@@ -526,6 +665,7 @@ class MOTU_GMYC:
         return name
 
     def print_MOTU_GMYC(self):
+        """Print the GMYC results and write it to file"""  
         listGMYC = open(self.path + self.outfile)
         listGMYC.seek(0)
         listGMYC_txt = open(self.path + 'GMYC/' + 'MOTU_list.txt', 'w+')
@@ -542,7 +682,8 @@ class MOTU_GMYC:
                 logging.info(line)
                 listGMYC_txt.write(line + '\n')
 
-    def MOTU_renameFasta_gmyc(self):
+    def MOTU_renameFasta_gmyc(self): #rewrite using biopython
+        """Rename the fasta name sequences using MOTUs"""  
         self.fasta_sorted.seek(0)
         newfasta = open(self.path + 'GMYC/' + 'GMYC_MOTU.fasta', 'w+')
         a = 0
@@ -594,6 +735,16 @@ class MOTU_GMYC:
 
 
 class MOTU_BIN:
+    """To parse BIN delimitation method results
+    Parameters
+    ----------
+    path: str
+        The path to folder with the input file.
+    fasta: str
+        The name of sorted fasta file.
+    BinList: str
+        species delimitation results file precalculated.        
+    """
     def __init__(self, path, fasta, BinList=None, ):
         if not os.path.exists(path + 'BIN/'):
             os.makedirs(path + 'BIN/')
@@ -603,6 +754,7 @@ class MOTU_BIN:
         self.fasta_bin = self.MOTU_renameFasta_bin()
 
     def print_MOTU_bin(self):
+        """Print the BIN results and write it to file"""
         with open(self.path + 'BIN_MOTU_sorted.fasta') as listbin, open(self.path + 'MOTU_list.txt',
                                                                         'w+') as listBIN_txt:
             #        listbin=open(self.path+'BIN_MOTU_sorted.fasta')
@@ -652,6 +804,7 @@ class MOTU_BIN:
                 logging.info('')
 
     def MOTU_renameFasta_bin(self):
+        """Rename the fasta name sequences using MOTUs"""  #rewrite using biopython
         self.fasta.seek(0)
         with open(self.BinList) as newnames, open(self.path + 'BIN_MOTU.fasta', 'w+') as newfasta:
             for line in self.fasta:
@@ -670,6 +823,18 @@ class MOTU_BIN:
 
 
 class MOTU_X:
+    """To parse any delimitation method results
+    Parameters
+    ----------
+    path: str
+        The path to folder with the input file.
+    fasta: str
+        The name of sorted fasta file.
+    folder: str
+        The folder name for outputs
+    BinList: str
+        species delimitation results file precalculated.        
+    """    
     def __init__(self, path, fasta, folder, BinList=None):
         if not os.path.exists(path + folder):
             os.makedirs(path + folder)
@@ -679,6 +844,7 @@ class MOTU_X:
         self.fasta_X = self.MOTU_renameFasta_X()
 
     def print_MOTU_X(self):
+        """Print the delimitation results and write it to file"""  
         with open(self.path + 'X_MOTU_sorted.fasta') as listbin, open(self.path + 'MOTU_list.txt', 'w+') as listBIN_txt:
 
             listbin.seek(0)
@@ -721,6 +887,7 @@ class MOTU_X:
                 logging.info('')
 
     def MOTU_renameFasta_X(self):
+        """Rename the fasta name sequences using MOTUs"""
         self.fasta.seek(0)
         with open(self.BinList) as newnames, open(self.path + 'X_MOTU.fasta', 'w+') as newfasta:
             for line in self.fasta:
@@ -739,6 +906,20 @@ class MOTU_X:
 
 
 class MOTU_nominal:
+    """To parse norminal delimitation using fasta names
+    Parameters
+    ----------
+    path: str
+        The path to folder with the input file.
+    fasta: str
+        The name of sorted fasta file.
+    nominalList: str
+        nominal list provided by user.
+    gen: int
+        genus position on sequence names splited by "_".        
+    sp: int
+        genus position on sequence names splited by "_".        
+    """
     def __init__(self, path, fasta, nominalList=None, gen=1, sp=2):
         self.path = path
         self.fasta = open(path + fasta, newline='')
@@ -748,6 +929,7 @@ class MOTU_nominal:
             self.nominalList = path + nominalList  # PARA OPCION DE LISTA CON NOMINALES!!!
 
     def print_MOTU_nonminal(self, a, b):
+        """Print the nominal delimitaion and write it to file"""  
         with open(self.path + 'tmp_file/nominal_list.txt', newline='') as listnominal_txt, open(
                 self.path + 'Nominal/nominal_list_sp.txt', 'w+') as allList:
             self.fasta.seek(0)
@@ -772,6 +954,16 @@ class MOTU_nominal:
 
 
 class Compare:
+    """Compare the delimitation resuls and produce Consensus MOTUs
+    Parameters
+    ----------
+    path: str
+        The path to folder with the input file.
+    fasta: str
+        The name of sorted fasta file.
+    CompList: str
+        list of delimitation methods used.       
+    """
     def __init__(self, path, fasta, CompList):
         if not os.path.exists(path + 'Compare/'):
             os.makedirs(path + 'Compare/')
@@ -785,6 +977,7 @@ class Compare:
     #        self.comp_warn=self.Compare_warning()
 
     def compare(self):
+        """Parse the different results and generate a file with Consensus Motus""" 
         with open(self.path + 'tmp_file/ALL_MOTUs.txt', 'w+') as compare_file:
             lists = []
             motus_name = []
@@ -904,6 +1097,7 @@ class Compare:
                 compare_file.write(('%s' % ', '.join(map(str, concordants[i][0]))) + '\n')
 
     def summary_motu(self):
+        """Print the Consensus results and write it to file""" 
         n_analysis = 0
         if 'p' in self.CompList and os.path.exists(self.path + 'PTP/' + 'PTP' + '.MOTU_list.txt'):
             n_analysis += 1
@@ -962,8 +1156,8 @@ class Compare:
                                 #                            print line
                                 lists_MD.append(next(compare_file))
 
-                    logging.info('\n' + '### MOTUs totally agree with taxonomy ###\n')
-                    summary_file.write('\n' + a + 'MOTUs totally agree with taxonomy\n' + a + '\n')
+                    logging.info('### All MOTUs match with the taxonomy ###\n')
+                    summary_file.write('\n' + a + 'All MOTUs agree with the taxonomy\n' + a + '\n')
                     for i in range(len(motus_name_TC)):
                         logging.info('Consensus MOTU ' + str(num_motu) + ' [' + motus_name_TC[i].strip() + ']')
                         summary_file.write('Consensus MOTU ' + str(num_motu) + ' [' + motus_name_TC[i].strip() + ']\n')
@@ -972,8 +1166,8 @@ class Compare:
                         summary_file.write(lists_TC[i] + '\n')
                         out_list.write(lists_TC[i])
                         num_motu += 1
-                    logging.info('\n' + '### MOTUs mostly agree with taxonomy ###\n')
-                    summary_file.write('\n' + a + 'MOTUs Mostly agree with taxonomy\n' + a + '\n')
+                    logging.info('### Most MOTUs agree with the taxonomy ###\n')
+                    summary_file.write('\n' + a + 'Most MOTUs agree with the taxonomy\n' + a + '\n')
                     for i in range(len(motus_name_MC)):
                         logging.info('Consensus MOTU ' + str(num_motu) + ' [' + motus_name_MC[i].strip() + ']')
                         summary_file.write('Consensus MOTU ' + str(num_motu) + ' [' + motus_name_MC[i].strip() + ']\n')
@@ -982,8 +1176,8 @@ class Compare:
                         summary_file.write(lists_MC[i] + '\n')
                         out_list.write(lists_MC[i])
                         num_motu += 1
-                    logging.info('\n' + '### MOTUs totally disagree with taxonomy ###\n')
-                    summary_file.write('\n' + a + 'MOTUs totally disagree with taxonomy\n' + a + '\n')
+                    logging.info('### All MOTUs do not match the taxonomy###\n')
+                    summary_file.write('\n' + a + 'All MOTUs do not match the taxonomy\n' + a + '\n')
                     for i in range(len(motus_name_TD)):
                         logging.info('Consensus MOTU ' + str(num_motu) + ' [' + motus_name_TD[i].strip() + ']')
                         summary_file.write('Consensus MOTU ' + str(num_motu) + ' [' + motus_name_TD[i].strip() + ']\n')
@@ -992,8 +1186,8 @@ class Compare:
                         summary_file.write(lists_TD[i] + '\n')
                         out_list.write(lists_TD[i])
                         num_motu += 1
-                    logging.info('\n' + '### MOTUs mostly disagree with taxonomy ###\n')
-                    summary_file.write('\n' + a + 'MOTUs mostly dagree with taxonomy\n' + a + '\n')
+                    logging.info('### Most MOTUs do not match the taxonomy ###\n')
+                    summary_file.write('\n' + a + 'Most MOTUs do not match the taxonomy\n' + a + '\n')
                     for i in range(len(motus_name_MD)):
                         logging.info('Consensus MOTU ' + str(num_motu) + ' [' + motus_name_MD[i].strip() + ']')
                         summary_file.write('Consensus MOTU ' + str(num_motu) + ' [' + motus_name_MD[i].strip() + ']\n')
@@ -1016,8 +1210,8 @@ class Compare:
                                 motus_name_MC.append(line)
                                 lists_MC.append(next(compare_file))
 
-                    logging.info('\n' + '### MOTUs totally agree ###\n')
-                    summary_file.write('\n' + a + 'MOTUs totally agree\n' + a + '\n')
+                    logging.info('### MOTUs totally agree ###\n')
+                    summary_file.write('\n' + a + 'All MOTUs match the same delimitation\n' + a + '\n')
                     for i in range(len(motus_name_TC)):
                         summary_file.write('Consensus MOTU ' + str(num_motu) + ' [' + motus_name_TC[i].strip() + ']\n')
                         out_list.write('MOTU ' + str(num_motu) + '\n')
@@ -1026,7 +1220,7 @@ class Compare:
                         out_list.write(lists_TC[i])
                         logging.info(lists_TC[i])
                         num_motu += 1
-                    logging.info('\n' + '### MOTUs mostly agree ###\n')
+                    logging.info('### Most MOTUs match the same delimitation ###\n')
                     summary_file.write('\n' + a + 'MOTUs mostly agree\n' + a + '\n')
                     for i in range(len(motus_name_MC)):
                         logging.info('Consensus MOTU ' + str(num_motu) + ' [' + motus_name_MC[i].strip() + ']')
@@ -1038,6 +1232,7 @@ class Compare:
                         num_motu += 1
 
     def Compare_warning(self):
+        """Rise warnings in case of overlapping Consensus MOTUs and try to resolve it before continue the analysis""" 
         lists_w_temp = []
         lists_W = []
         motus_name_W = []
@@ -1139,6 +1334,7 @@ class Compare:
                     exit()
 
     def MOTU_renameFasta_Compare(self):
+        """Rename the fasta name sequences using Consensus MOTUs""" #rewrite with biopython
         self.fasta.seek(0)
         with open(self.path + 'Compare/Compare_MOTU_list.txt', newline='') as Comp_file, open(
                 self.path + 'Compare/Compare_MOTU.fasta', 'w+') as newfasta:
@@ -1159,7 +1355,17 @@ class Compare:
 
 
 class plot_compare_tree:
-    def __init__(self, path, tree, names=True):  # names=False for hide names leaf
+    """To plot the tree graph with MOTUs results
+    Parameters
+    ----------
+    path: str
+        The path to folder with the input file.       
+    tree: str
+        The name of tree file.   
+    names: boolean
+        For hide names leaf in the tree, default=True to show the names.          
+    """    
+    def __init__(self, path, tree, names=True):  
         self.path = path
         self.tree_loaded = Tree(path + tree)
         self.tree2 = toytree.tree(path + tree)  # ,tree_format=1)
@@ -1169,6 +1375,11 @@ class plot_compare_tree:
         self.plot_tree_con_line()
 
     def dic_motu_color(self):
+        """Read the consensus MOTUs and construct a dcitionary with color by MOTU
+        Returns
+        -------
+        A dictionary with MOTUs by analysis, congruente MOTUs share the same color
+        """        
         color_used = ['#e6194b', '#3cb44b', '#ffe119', '#0082c8', '#f58231', '#911eb4', '#46f0f0', '#f032e6', '#d2f53c',
                       '#fabebe', '#008080', '#e6beff', '#aa6e28', '#fffac8', '#800000', '#aaffc3', '#808000', '#ffd8b1',
                       '#000080', '#808080', '#FFFFFF', '#000000']
@@ -1241,6 +1452,7 @@ class plot_compare_tree:
         return dicts
 
     def layout_tree_compare(self, node):
+        """Layout tree for the plot_tree_con function""" 
         #        print(self.dic_color)
         node.collapsed = False
         n = 0
@@ -1251,6 +1463,7 @@ class plot_compare_tree:
                 add_face_to_node(RectFace(10, 10, 'FFFFFF', self.dic_color[k][name]), node, n, aligned=True)
 
     def plot_tree_con(self):
+        """Plot MOTUS on the tree using colors""" 
         ts = TreeStyle()
         ts.margin_left = 15
         ts.margin_bottom = 15
@@ -1262,6 +1475,8 @@ class plot_compare_tree:
         ts.title.add_face(TextFace("Species delimitation comparision", ftype='Arial', fsize=10), column=0)
         n = 0
         for k in self.dic_color:
+            if k == 'NOM':
+                k='NOMINAL'
             F = TextFace(k, fsize=7)
             F.rotation = 270
             n += 1
@@ -1272,10 +1487,11 @@ class plot_compare_tree:
         nstyle['hz_line_width'] = 1
         for n in self.tree_loaded.traverse():
             n.set_style(nstyle)
-        #        self.tree_loaded.show(tree_style=ts)      #delete?? kernel died every twice
+        #self.tree_loaded.show(tree_style=ts)      #delete?? kernel died every twice
         self.tree_loaded.render(self.path + "Compare/compare_tree.pdf", tree_style=ts, dpi=300)
 
     def plot_tree_con_line(self):
+        """Plot MOTUS on the tree using lines""" 
         tree = self.tree2
         tree = tree.mod.node_scale_root_height(2 * len(self.dic_color))
         tips = (tree.get_tip_labels())
@@ -1331,7 +1547,12 @@ class plot_compare_tree:
                   style=tipstyle,
                   )
         # add analyses names
-        labels = [k for k in self.dic_color]
+        # labels = [k for k in self.dic_color]
+        labels=[]
+        for k in self.dic_color:
+            if k == 'NOM':
+                k='NOMINAL'            
+            labels.append(k)
         tipstyle = {"text-anchor": "start", "-toyplot-anchor-shift": "0"}
         for i in labels:
             axes.text(
@@ -1346,7 +1567,8 @@ class plot_compare_tree:
             num_tax = []
             num_contigous = []
             num_con = 0
-            for v in self.dic_color['NOM'].values():
+            for v in tips:
+                v=v.split('_')[:2]
                 if v not in num_tax:
                     num_tax.append(v)
                 if v in num_contigous:
@@ -1354,7 +1576,7 @@ class plot_compare_tree:
                 else:
                     num_contigous = [v]
                     num_con += 1
-            if len(coor_start) == num_con:
+            if len(num_tax) == num_con:
                 toyplot.svg.render(canvas, self.path + "Compare/compare_tree_lines.svg")
             #                toyplot.pdf.render(canvas, self.path+"Compare/compare_tree_lines.pdf")
             else:
@@ -1362,12 +1584,14 @@ class plot_compare_tree:
                 toyplot.svg.render(canvas, self.path + "Compare/compare_tree_lines.svg")
         else:
             toyplot.svg.render(canvas, self.path + "Compare/compare_tree_lines.svg")
-
+        return(canvas)
+        
 
 #            toyplot.pdf.render(canvas, self.path+"Compare/compare_tree_lines.pdf")
 
 
 def print_options():
+    """Print avaliable options""" 
     print('')
     print('SPdel v1.0 - Species delimitation and statistics for DNA Barcoding data sets')
     print('')
@@ -1407,6 +1631,44 @@ def print_options():
 
 
 def main(argu=None):
+    """main function to run all analysis
+    Parameters
+    ----------
+    path: str
+        The path to folder with the input file.
+    fasta: str
+        The name of sorted fasta file.
+    gen: int
+        genus position on sequence names splited by "_".        
+    sp: int
+        genus position on sequence names splited by "_".         
+    dis: str
+        Substitution model, k for K2p or p for p-distance (default=k). 
+    niter: int
+        number of iterations for MCMC
+    sample: int
+        sampling for MCMC. 
+    burnin: float
+        burnin for MCMC.        
+    BinList: str
+        BIN species delimitation results file precalculated.   
+    XList: str
+        Any species delimitation results file precalculated.   
+    NomList: str
+        Nominal species list.           
+    CompList: str
+        species delimitation results file precalculated.   
+    PTPList: str
+        PTP species delimitation results file precalculated.  
+    GMYCList: str
+        GMYC species delimitation results file precalculated.
+    bPTPList: str
+        bPTP species delimitation results file precalculated.
+    n_ind: int
+        Minimum number of individuals for species to be considered in the diagnostic character analysis (default=3).   
+    CODE: str
+        Type of genetic code used to check stop codon, use 'VER' or 'INV'           
+    """
     #    orig_stdout = sys.stdout
     #    f=open(path+'output.txt','w')
     #    sys.stdout = f
@@ -1654,7 +1916,7 @@ def main(argu=None):
                 Diagnoser.main(path + i_folder + '/', 'X_MOTU_sorted.fasta', n_ind)
 
     if CompList != None:
-        logging.info('\n' + tex + 'Concordant MOTUs\n' + tex)
+        logging.info('\n' + tex + 'Consensus MOTUs\n' + tex)
         comp_analize = Compare(path, fasta, CompList)
         comp_analize.Compare_warning()
         comp_analize.MOTU_renameFasta_Compare()
@@ -1677,13 +1939,10 @@ if __name__ == "__main__":
 # revisar total distancia
 # usar split para patron
 
-# tk
-
 # output print to file #HTML?
 # cambiar nombres y cursiva, mostrar texto nominal?,
 # path fasta
 
 # testar reenraizar a la mitad?
 
-# separar opcion compare
 # casos en que mi sobre posicion no se da bien....cada analisis una delimit
