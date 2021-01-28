@@ -9,7 +9,7 @@ try:
     import subprocess
     from ete3 import Tree, SeqGroup
     from subprocess import call
-    from nexus import NexusReader
+    # from nexus import NexusReader
     from spdelib.PTPLLH import (
         lh_ratio_test,
         exp_distribution,
@@ -39,9 +39,10 @@ class bootstrap_ptp:
         self.method = method
         self.firstktrees = firstktrees
         if ftype == "nexus":
-            self.nexus = NexusReader(filename)
-            self.nexus.blocks["trees"].detranslate()
-            self.trees = self.nexus.trees.trees
+            pass
+            # self.nexus = NexusReader(filename)
+            # self.nexus.blocks["trees"].detranslate()
+            # self.trees = self.nexus.trees.trees
         else:
             self.trees = self.raxmlTreeParser(filename)
 

@@ -15,7 +15,7 @@ try:
     from scipy import stats
     import matplotlib.pyplot as plt
     from subprocess import call
-    from nexus import NexusReader
+    # from nexus import NexusReader
 except ImportError:
     print("Please install the scipy, matplotlib package first.")
     print(
@@ -1037,13 +1037,13 @@ def main(argu=None):
         sys.exit()
 
     try:
-        treetest = open(stree)
-        l1 = treetest.readline()
-        if l1.strip() == "#NEXUS":
-            nexus = NexusReader(stree)
-            nexus.blocks["trees"].detranslate()
-            stree = nexus.trees.trees[0]
-        treetest.close()
+        # treetest = open(stree)
+        # l1 = treetest.readline()
+        # if l1.strip() == "#NEXUS":
+        #     nexus = NexusReader(stree)
+        #     nexus.blocks["trees"].detranslate()
+        #     stree = nexus.trees.trees[0]
+        # treetest.close()
 
         sp = gmyc(
             tree=stree,

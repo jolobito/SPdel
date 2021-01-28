@@ -6,7 +6,7 @@ try:
     import argparse
     import os
     from ete3 import Tree
-    from nexus import NexusReader
+    # from nexus import NexusReader
     from spdelib.summary import partitionparser
     from spdelib.PTPLLH import (
         lh_ratio_test,
@@ -232,9 +232,10 @@ class bayesianptp:
         self.burnin = burnin
         self.firstktrees = firstktrees
         if ftype == "nexus":
-            self.nexus = NexusReader(filename)
-            self.nexus.blocks["trees"].detranslate()
-            self.trees = self.nexus.trees.trees
+            pass
+            # self.nexus = NexusReader(filename)
+            # self.nexus.blocks["trees"].detranslate()
+            # self.trees = self.nexus.trees.trees
         else:
             self.trees = self.raxmlTreeParser(filename)
 
