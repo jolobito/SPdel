@@ -1498,7 +1498,7 @@ class plot_compare_tree:
         tree = self.tree2
         tree = tree.mod.node_scale_root_height(2 * len(self.dic_color))
         tips = (tree.get_tip_labels())
-        canvas, axes = tree.draw(
+        canvas, axes, mark = tree.draw(
             width=800,
             height=30 * len(tips),
             tip_labels=False,  # hide labels
@@ -1511,15 +1511,15 @@ class plot_compare_tree:
         # add rectangles for delimitation
         for k in self.dic_color:
             n += 1
-            coord = tree.get_tip_coordinates(axis='y')
-            coor_start = [coord[0]]
+            coord = tree.get_tip_coordinates()
+            coor_start = [coord[0][1]]
             coor_end = []
             for i, j in enumerate(tips):
                 if i < len(tips) - 1:
                     if self.dic_color[k].get(j) != self.dic_color[k].get(tips[i + 1]):
-                        coor_end.append(coord[i])
-                        coor_start.append(coord[i + 1])
-            coor_end.append(coord[len(tips) - 1])
+                        coor_end.append(coord[i][1])
+                        coor_start.append(coord[i + 1][1])
+            coor_end.append(coord[len(tips) - 1][1])
             for i in range(len(coor_start)):
                 if k == 'NOM':
                     axes.rectangle(xsep * n, xsep * n + 0.2,
