@@ -8,9 +8,12 @@ try:
     from scipy import stats
 except ImportError:
     print("Please install the matplotlib and other dependent package first.")
-    print("If your OS is ubuntu or has apt installed, you can try the following:")
     print(
-        " sudo apt-get install python-setuptools python-numpy python-qt4 python-scipy python-mysqldb python-lxml python-matplotlib")
+        "If your OS is ubuntu or has apt installed, you can try the following:"
+    )
+    print(
+        " sudo apt-get install python-setuptools python-numpy python-qt4 python-scipy python-mysqldb python-lxml python-matplotlib"
+    )
     sys.exit()
 
 
@@ -76,9 +79,9 @@ class exp_distribution:
         n = float(len(X))
         for i in range(len(X)):
             x = X[i]
-            l = abs((float(i + 1) / n) - self.exp_cdf(self.rate, x))
+            l_cdf = abs((float(i + 1) / n) - self.exp_cdf(self.rate, x))
             r = abs(self.exp_cdf(self.rate, x) - (float(i) / n))
-            s_list.append(l)
+            s_list.append(l_cdf)
             s_list.append(r)
 
         Dn = max(s_list)
@@ -105,7 +108,9 @@ class exp_distribution:
 class species_setting:
     """Store one delimitation"""
 
-    def __init__(self, spe_nodes, root, sp_rate=0, fix_sp_rate=False, minbr=0.0001):
+    def __init__(
+        self, spe_nodes, root, sp_rate=0, fix_sp_rate=False, minbr=0.0001
+    ):
         self.min_brl = minbr
         self.spe_rate = sp_rate
         self.fix_spe_rate = fix_sp_rate
@@ -150,7 +155,9 @@ class species_setting:
             for node in self.spe_nodes:
                 children = node.get_children()
                 if len(children) >= 2:
-                    if (children[0] in self.active_nodes) and (children[1] in self.active_nodes):
+                    if (children[0] in self.active_nodes) and (
+                        children[1] in self.active_nodes
+                    ):
                         self.node_can_merge.append(node)
             return len(self.node_can_merge)
         else:
@@ -244,7 +251,14 @@ class species_setting:
 class exponential_mixture:
     """ML search PTP, to use: __init__(), search() and count_species()"""
 
-    def __init__(self, tree, sp_rate=0, fix_sp_rate=False, max_iters=20000, min_br=0.0001):
+    def __init__(
+        self,
+        tree,
+        sp_rate=0,
+        fix_sp_rate=False,
+        max_iters=20000,
+        min_br=0.0001,
+    ):
         self.min_brl = min_br
         self.tree = Tree(tree, format=1)
         self.tree.resolve_polytomy(recursive=True)
@@ -282,7 +296,7 @@ class exponential_mixture:
         self.tree.dist = 0.0
 
     def comp_num_comb(self):
-        for node in self.tree.traverse(strategy='postorder'):
+        for node in self.tree.traverse(strategy="postorder"):
             if node.is_leaf():
                 node.add_feature("cnt", 1.0)
             else:
@@ -309,8 +323,13 @@ class exponential_mixture:
                     sp_nodes.append(child)
                 for nod in sp_setting.spe_nodes:
                     sp_nodes.append(nod)
-                new_sp_setting = species_setting(spe_nodes=sp_nodes, root=sp_setting.root, sp_rate=sp_setting.spe_rate,
-                                                 fix_sp_rate=sp_setting.fix_spe_rate, minbr=self.min_brl)
+                new_sp_setting = species_setting(
+                    spe_nodes=sp_nodes,
+                    root=sp_setting.root,
+                    sp_rate=sp_setting.spe_rate,
+                    fix_sp_rate=sp_setting.fix_spe_rate,
+                    minbr=self.min_brl,
+                )
                 if frozenset(sp_nodes) in self.setting_set:
                     pass
                 else:
@@ -319,7 +338,7 @@ class exponential_mixture:
     def H0(self, reroot=True):
         self.H1(reroot)
         self.H2(reroot=False)
-        self.H3(reroot=False)
+        self.run_h3(reroot=False)
 
     def H1(self, reroot=True):
         if reroot:
@@ -335,8 +354,13 @@ class exponential_mixture:
         first_childs = self.tree.get_children()
         for child in first_childs:
             first_node_list.append(child)
-        first_setting = species_setting(spe_nodes=first_node_list, root=self.tree, sp_rate=self.fix_spe,
-                                        fix_sp_rate=self.fix_spe_rate, minbr=self.min_brl)
+        first_setting = species_setting(
+            spe_nodes=first_node_list,
+            root=self.tree,
+            sp_rate=self.fix_spe,
+            fix_sp_rate=self.fix_spe_rate,
+            minbr=self.min_brl,
+        )
         last_setting = first_setting
         max_logl = last_setting.get_log_l()
         max_setting = last_setting
@@ -347,7 +371,9 @@ class exponential_mixture:
                 for nod in last_setting.spe_nodes:
                     curr_sp_nodes.append(nod)
 
-                chosen_branching_node = node.up  # find the father of this new node
+                chosen_branching_node = (
+                    node.up
+                )  # find the father of this new node
                 if chosen_branching_node in last_setting.spe_nodes:
                     for nod in chosen_branching_node.get_children():
                         if nod not in curr_sp_nodes:
@@ -363,8 +389,13 @@ class exponential_mixture:
                                 curr_sp_nodes.append(nod)
                         if chosen_branching_node in last_setting.spe_nodes:
                             break
-                new_setting = species_setting(spe_nodes=curr_sp_nodes, root=self.tree, sp_rate=self.fix_spe,
-                                              fix_sp_rate=self.fix_spe_rate, minbr=self.min_brl)
+                new_setting = species_setting(
+                    spe_nodes=curr_sp_nodes,
+                    root=self.tree,
+                    sp_rate=self.fix_spe,
+                    fix_sp_rate=self.fix_spe_rate,
+                    minbr=self.min_brl,
+                )
                 new_logl = new_setting.get_log_l()
                 if new_logl > max_logl:
                     max_logl = new_logl
@@ -394,8 +425,13 @@ class exponential_mixture:
         first_childs = self.tree.get_children()
         for child in first_childs:
             first_node_list.append(child)
-        first_setting = species_setting(spe_nodes=first_node_list, root=self.tree, sp_rate=self.fix_spe,
-                                        fix_sp_rate=self.fix_spe_rate, minbr=self.min_brl)
+        first_setting = species_setting(
+            spe_nodes=first_node_list,
+            root=self.tree,
+            sp_rate=self.fix_spe,
+            fix_sp_rate=self.fix_spe_rate,
+            minbr=self.min_brl,
+        )
         last_setting = first_setting
         max_logl = last_setting.get_log_l()
         max_setting = last_setting
@@ -416,8 +452,13 @@ class exponential_mixture:
                         sp_nodes.append(child)
                     for nod in last_setting.spe_nodes:
                         sp_nodes.append(nod)
-                    new_sp_setting = species_setting(spe_nodes=sp_nodes, root=self.tree, sp_rate=self.fix_spe,
-                                                     fix_sp_rate=self.fix_spe_rate, minbr=self.min_brl)
+                    new_sp_setting = species_setting(
+                        spe_nodes=sp_nodes,
+                        root=self.tree,
+                        sp_rate=self.fix_spe,
+                        fix_sp_rate=self.fix_spe_rate,
+                        minbr=self.min_brl,
+                    )
                     logl = new_sp_setting.get_log_l()
                     if logl > curr_max_logl:
                         curr_max_logl = logl
@@ -433,7 +474,7 @@ class exponential_mixture:
             self.max_logl = max_logl
             self.max_setting = max_setting
 
-    def H3(self, reroot=True):
+    def run_h3(self, reroot=True):
         if reroot:
             self.re_rooting()
         sorted_node_list = self.tree.get_descendants()
@@ -461,8 +502,13 @@ class exponential_mixture:
         first_childs = self.tree.get_children()
         for child in first_childs:
             first_node_list.append(child)
-        first_setting = species_setting(spe_nodes=first_node_list, root=self.tree, sp_rate=self.fix_spe,
-                                        fix_sp_rate=self.fix_spe_rate, minbr=self.min_brl)
+        first_setting = species_setting(
+            spe_nodes=first_node_list,
+            root=self.tree,
+            sp_rate=self.fix_spe,
+            fix_sp_rate=self.fix_spe_rate,
+            minbr=self.min_brl,
+        )
         last_setting = first_setting
         max_logl = last_setting.get_log_l()
         max_setting = last_setting
@@ -491,8 +537,13 @@ class exponential_mixture:
                             sp_nodes.append(child)
                         for nod in last_setting.spe_nodes:
                             sp_nodes.append(nod)
-                        new_sp_setting = species_setting(spe_nodes=sp_nodes, root=self.tree, sp_rate=self.fix_spe,
-                                                         fix_sp_rate=self.fix_spe_rate, minbr=self.min_brl)
+                        new_sp_setting = species_setting(
+                            spe_nodes=sp_nodes,
+                            root=self.tree,
+                            sp_rate=self.fix_spe,
+                            fix_sp_rate=self.fix_spe_rate,
+                            minbr=self.min_brl,
+                        )
                         logl = new_sp_setting.get_log_l()
                         if logl > curr_max_logl:
                             curr_max_logl = logl
@@ -517,8 +568,13 @@ class exponential_mixture:
                             sp_nodes.append(child)
                         for nod in last_setting.spe_nodes:
                             sp_nodes.append(nod)
-                        new_sp_setting = species_setting(spe_nodes=sp_nodes, root=self.tree, sp_rate=self.fix_spe,
-                                                         fix_sp_rate=self.fix_spe_rate, minbr=self.min_brl)
+                        new_sp_setting = species_setting(
+                            spe_nodes=sp_nodes,
+                            root=self.tree,
+                            sp_rate=self.fix_spe,
+                            fix_sp_rate=self.fix_spe_rate,
+                            minbr=self.min_brl,
+                        )
                         logl = new_sp_setting.get_log_l()
                         if logl > curr_max_logl:
                             curr_max_logl = logl
@@ -542,11 +598,20 @@ class exponential_mixture:
             first_node_list.append(child)
         num_s = self.comp_num_comb()
         if num_s > self.max_num_search:
-            print("Too many search iterations: " + repr(num_s) + ", using H0 instead!!!")
+            print(
+                "Too many search iterations: "
+                + repr(num_s)
+                + ", using H0 instead!!!"
+            )
             self.H0(reroot=False)
         else:
-            first_setting = species_setting(spe_nodes=first_node_list, root=self.tree, sp_rate=self.fix_spe,
-                                            fix_sp_rate=self.fix_spe_rate, minbr=self.min_brl)
+            first_setting = species_setting(
+                spe_nodes=first_node_list,
+                root=self.tree,
+                sp_rate=self.fix_spe,
+                fix_sp_rate=self.fix_spe_rate,
+                minbr=self.min_brl,
+            )
             self.next(first_setting)
 
     def search(self, strategy="H1", reroot=False):
@@ -555,7 +620,7 @@ class exponential_mixture:
         elif strategy == "H2":
             self.H2(reroot)
         elif strategy == "H3":
-            self.H3(reroot)
+            self.run_h3(reroot)
         elif strategy == "Brutal":
             self.Brutal(reroot)
         else:
@@ -565,16 +630,24 @@ class exponential_mixture:
         lhr = lh_ratio_test(self.null_logl, self.max_logl, 1)
         pvalue = lhr.get_p_value()
         if print_log:
-            print("Speciation rate: " + "{0:.3f}".format(self.max_setting.rate2))
-            print("Coalesecnt rate: " + "{0:.3f}".format(self.max_setting.rate1))
+            print(
+                "Speciation rate: " + "{0:.3f}".format(self.max_setting.rate2)
+            )
+            print(
+                "Coalesecnt rate: " + "{0:.3f}".format(self.max_setting.rate1)
+            )
             print("Null logl: " + "{0:.3f}".format(self.null_logl))
             print("MAX logl: " + "{0:.3f}".format(self.max_logl))
             print("P-value: " + "{0:.3f}".format(pvalue))
             spefit, speaw = self.max_setting.e2.ks_statistic()
             coafit, coaaw = self.max_setting.e1.ks_statistic()
             print("Kolmogorov-Smirnov test for model fitting:")
-            print("Speciation: " + "Dtest = {0:.3f}".format(spefit) + " " + speaw)
-            print("Coalescent: " + "Dtest = {0:.3f}".format(coafit) + " " + coaaw)
+            print(
+                "Speciation: " + "Dtest = {0:.3f}".format(spefit) + " " + speaw
+            )
+            print(
+                "Coalescent: " + "Dtest = {0:.3f}".format(coafit) + " " + coaaw
+            )
         if pvalue < pv:
             num_sp, self.species_list = self.max_setting.count_species()
             return num_sp
@@ -628,7 +701,14 @@ class exponential_mixture:
             return taxa_order, partion
 
 
-def showTree(delimitation, scale=500, render=False, fout="", form="svg", show_support=False):
+def showTree(
+    delimitation,
+    scale=500,
+    render=False,
+    fout="",
+    form="svg",
+    show_support=False,
+):
     """delimitation: species_setting class"""
     tree = delimitation.root
     style0 = NodeStyle()
@@ -641,11 +721,11 @@ def showTree(delimitation, scale=500, render=False, fout="", form="svg", show_su
     style0["hz_line_type"] = 0
     style0["size"] = 0
 
-    #	tree.clear_face()
-    #	for node in tree.get_descendants():
-    #		node.set_style(style0)
-    #		node.img_style["size"] = 0
-    #		node.clear_face()
+    # 	tree.clear_face()
+    # 	for node in tree.get_descendants():
+    # 		node.set_style(style0)
+    # 		node.img_style["size"] = 0
+    # 		node.clear_face()
 
     # tree.clear_face()
     tree._faces = _FaceAreas()
@@ -685,12 +765,18 @@ def showTree(delimitation, scale=500, render=False, fout="", form="svg", show_su
             des.set_style(style2)
             des.img_style["size"] = 0
 
-    for node in delimitation.root.traverse(strategy='preorder'):
+    for node in delimitation.root.traverse(strategy="preorder"):
         if show_support and hasattr(node, "bs"):
             if node.bs == 0.0:
-                node.add_face(TextFace("0", fsize=8), column=0, position="branch-top")
+                node.add_face(
+                    TextFace("0", fsize=8), column=0, position="branch-top"
+                )
             else:
-                node.add_face(TextFace("{0:.2f}".format(node.bs), fsize=8), column=0, position="branch-top")
+                node.add_face(
+                    TextFace("{0:.2f}".format(node.bs), fsize=8),
+                    column=0,
+                    position="branch-top",
+                )
 
     ts = TreeStyle()
     """scale pixels per branch length unit"""

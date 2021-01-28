@@ -6,7 +6,7 @@ import sys
 try:
     from sys import platform as sys_pf
 
-    if sys_pf == 'darwin':
+    if sys_pf == "darwin":
         import matplotlib
 
         matplotlib.use("Qt5Agg")
@@ -17,14 +17,27 @@ try:
 
 except ImportError:
     print("Please install the scipy and other dependent package first.")
-    print("If your OS is ubuntu or has apt installed, you can try the following:")
     print(
-        " sudo apt-get install python-setuptools python-numpy python-qt4 python-scipy python-mysqldb python-lxml python-matplotlib")
+        "If your OS is ubuntu or has apt installed, you can try the following:"
+    )
+    print(
+        " sudo apt-get install python-setuptools python-numpy python-qt4 python-scipy python-mysqldb python-lxml python-matplotlib"
+    )
     sys.exit()
 
 
 class pnode:
-    def __init__(self, newpartition, lastpnode, all_taxa, pmap, all_partitions, bound, taxa_order, numtrees):
+    def __init__(
+        self,
+        newpartition,
+        lastpnode,
+        all_taxa,
+        pmap,
+        all_partitions,
+        bound,
+        taxa_order,
+        numtrees,
+    ):
         # all_taxa: set; newpartition: tuple of idices; lastnode: pnode; pmap: dictionary; all_partitions: list; bound: float
         self.numtrees = numtrees
         self.taxa_order = taxa_order
@@ -60,7 +73,9 @@ class pnode:
 
             for par in self.all_partitions:
                 spar = set(par)
-                if (next_taxa_to_include_idx in spar) and (len(spar & self.allprocessed_taxa_idx) == 0):
+                if (next_taxa_to_include_idx in spar) and (
+                    len(spar & self.allprocessed_taxa_idx) == 0
+                ):
                     self.next_partition_list.append(par)
 
             return self.next_partition_list
@@ -75,11 +90,28 @@ class pnode:
         return repr(self.partition) + " : " + repr(self.support)
 
 
-def rc_function(newpartition, lastpnode, all_taxa, pmap, all_partitions, bound, taxa_order, numtrees):
+def rc_function(
+    newpartition,
+    lastpnode,
+    all_taxa,
+    pmap,
+    all_partitions,
+    bound,
+    taxa_order,
+    numtrees,
+):
     global maxsupport
     global bestlastnode
-    nextnode = pnode(newpartition=newpartition, lastpnode=lastpnode, all_taxa=all_taxa, pmap=pmap,
-                     all_partitions=all_partitions, bound=bound, taxa_order=taxa_order, numtrees=numtrees)
+    nextnode = pnode(
+        newpartition=newpartition,
+        lastpnode=lastpnode,
+        all_taxa=all_taxa,
+        pmap=pmap,
+        all_partitions=all_partitions,
+        bound=bound,
+        taxa_order=taxa_order,
+        numtrees=numtrees,
+    )
     nextpartitions = nextnode.search()
     if len(nextpartitions) == 0:
         if nextnode.isvalid:
@@ -88,8 +120,16 @@ def rc_function(newpartition, lastpnode, all_taxa, pmap, all_partitions, bound, 
                 bestlastnode = nextnode
     else:
         for par in nextpartitions:
-            rc_function(newpartition=par, lastpnode=nextnode, all_taxa=all_taxa, pmap=pmap,
-                        all_partitions=all_partitions, bound=bound, taxa_order=taxa_order, numtrees=numtrees)
+            rc_function(
+                newpartition=par,
+                lastpnode=nextnode,
+                all_taxa=all_taxa,
+                pmap=pmap,
+                all_partitions=all_partitions,
+                bound=bound,
+                taxa_order=taxa_order,
+                numtrees=numtrees,
+            )
 
 
 def bbsearch(pmap, taxa_order, bound, numtrees):
@@ -100,14 +140,30 @@ def bbsearch(pmap, taxa_order, bound, numtrees):
     bestlastnode = None
     all_taxa_set = set(taxa_order)
     all_partitions = list(pmap.keys())
-    pnode0 = pnode(newpartition=tuple([]), lastpnode=None, all_taxa=all_taxa_set, pmap=pmap,
-                   all_partitions=all_partitions, bound=bound, taxa_order=taxa_order, numtrees=numtrees)
+    pnode0 = pnode(
+        newpartition=tuple([]),
+        lastpnode=None,
+        all_taxa=all_taxa_set,
+        pmap=pmap,
+        all_partitions=all_partitions,
+        bound=bound,
+        taxa_order=taxa_order,
+        numtrees=numtrees,
+    )
     inipartitions = pnode0.search()
 
     # search for every cases containing the first taxa name
     for par in inipartitions:
-        rc_function(newpartition=par, lastpnode=pnode0, all_taxa=all_taxa_set, pmap=pmap, all_partitions=all_partitions,
-                    bound=bound, taxa_order=taxa_order, numtrees=numtrees)
+        rc_function(
+            newpartition=par,
+            lastpnode=pnode0,
+            all_taxa=all_taxa_set,
+            pmap=pmap,
+            all_partitions=all_partitions,
+            bound=bound,
+            taxa_order=taxa_order,
+            numtrees=numtrees,
+        )
 
     # return the results
     spes = []
@@ -138,8 +194,12 @@ def mutual_info(x, y):
             # Find the intersections
             l1_ids = numpy.nonzero(x == l1)[0]
             l2_ids = numpy.nonzero(y == l2)[0]
-            pxy = (numpy.double(numpy.intersect1d(l1_ids, l2_ids).size) / N) + eps
-            I += pxy * numpy.log2(pxy / ((l1_ids.size / N) * (l2_ids.size / N)))
+            pxy = (
+                numpy.double(numpy.intersect1d(l1_ids, l2_ids).size) / N
+            ) + eps
+            I += pxy * numpy.log2(
+                pxy / ((l1_ids.size / N) * (l2_ids.size / N))
+            )
     return I
 
 
@@ -152,11 +212,15 @@ def nmi(x, y):
     Hx = 0
     for l1 in numpy.unique(x):
         l1_count = numpy.nonzero(x == l1)[0].size
-        Hx += -(numpy.double(l1_count) / N) * numpy.log2(numpy.double(l1_count) / N)
+        Hx += -(numpy.double(l1_count) / N) * numpy.log2(
+            numpy.double(l1_count) / N
+        )
     Hy = 0
     for l2 in numpy.unique(y):
         l2_count = numpy.nonzero(y == l2)[0].size
-        Hy += -(numpy.double(l2_count) / N) * numpy.log2(numpy.double(l2_count) / N)
+        Hy += -(numpy.double(l2_count) / N) * numpy.log2(
+            numpy.double(l2_count) / N
+        )
     if (Hx + Hy) == 0:
         return 1.0
     else:
@@ -171,7 +235,7 @@ def translate2idx(taxon, taxaorder):
 
 
 def add_bayesain_support(delimitation, pmap, taxaorder, numpar):
-    for node in delimitation.root.traverse(strategy='preorder'):
+    for node in delimitation.root.traverse(strategy="preorder"):
         taxa_list = node.get_leaf_names()
         taxa_idx = translate2idx(taxa_list, taxaorder)
         support = pmap.get(taxa_idx, 0.0) / float(numpar)
@@ -181,7 +245,15 @@ def add_bayesain_support(delimitation, pmap, taxaorder, numpar):
 
 
 class partitionparser:
-    def __init__(self, pfin=None, lfin=None, taxa_order=None, partitions=[], llhs=[], scale=500):
+    def __init__(
+        self,
+        pfin=None,
+        lfin=None,
+        taxa_order=None,
+        partitions=[],
+        llhs=[],
+        scale=500,
+    ):
         self.taxaorder = taxa_order
         self.partitions = partitions
         self.llhs = llhs
@@ -189,9 +261,13 @@ class partitionparser:
             with open(pfin) as f:
                 lines = f.readlines()
                 for line in lines:
-                    if line.startswith("#"):  # ignore all other lines starts with #
+                    if line.startswith(
+                        "#"
+                    ):  # ignore all other lines starts with #
                         if line.startswith("#taxaorder"):
-                            self.taxaorder = line.strip().split(":")[1].split(",")
+                            self.taxaorder = (
+                                line.strip().split(":")[1].split(",")
+                            )
                             self.numtaxa = len(self.taxaorder)
                     else:
                         par = line.strip().split(",")
@@ -215,7 +291,9 @@ class partitionparser:
 
     def hpd(self, region=0.95):
         """Credible interval / delimitations in our case """
-        self.sorted_llhs, self.sorted_partitions = list(zip(*sorted(zip(self.llhs, self.partitions), reverse=True)))
+        self.sorted_llhs, self.sorted_partitions = list(
+            zip(*sorted(zip(self.llhs, self.partitions), reverse=True))
+        )
         sumlogl = sum(self.llhs)
         psumlogl = float(sumlogl) * region
 
@@ -240,7 +318,16 @@ class partitionparser:
 
         return min(pmlist), max(pmlist), numpy.mean(pmlist)
 
-    def summary(self, fout="", region=1.0, bnmi=False, ML_par=None, ml_spe_setting=None, sp_setting=[], plot=True):
+    def summary(
+        self,
+        fout="",
+        region=1.0,
+        bnmi=False,
+        ML_par=None,
+        ml_spe_setting=None,
+        sp_setting=[],
+        plot=True,
+    ):
         if region >= 1.0 or region <= 0:
             tpartitions = self.partitions
             tllhs = self.llhs
@@ -259,12 +346,21 @@ class partitionparser:
                     pmap[par] = pmap.get(par, 0) + 1
 
             """Output partition summary"""
-            for key, value in sorted(iter(pmap.items()), reverse=True, key=lambda k_v: (k_v[1], k_v[0])):
+            for key, value in sorted(
+                iter(pmap.items()),
+                reverse=True,
+                key=lambda k_v: (k_v[1], k_v[0]),
+            ):
                 onespe = ""
                 for idx in key:
                     onespe = onespe + ", " + self.taxaorder[idx]
                 onespe = onespe[1:]
-                fo_partsum.write(onespe + ": " + "{0:.3f}".format(float(value) / float(len(tpartitions))) + "\n")
+                fo_partsum.write(
+                    onespe
+                    + ": "
+                    + "{0:.3f}".format(float(value) / float(len(tpartitions)))
+                    + "\n"
+                )
             fo_partsum.close()
 
             """Output all partitions"""
@@ -276,25 +372,40 @@ class partitionparser:
             fo_parts.close()
 
             """Output the best partition found"""
-            bestpar = self.combine_simple_heuristic(tpartitions=tpartitions, pmap=pmap, idxpars=idxpars,
-                                                    fo=fout + ".PTPhSupportPartition.txt", sp_setting=sp_setting,
-                                                    plot=plot)
+            bestpar = self.combine_simple_heuristic(
+                tpartitions=tpartitions,
+                pmap=pmap,
+                idxpars=idxpars,
+                fo=fout + ".PTPhSupportPartition.txt",
+                sp_setting=sp_setting,
+                plot=plot,
+            )
 
             if bnmi:
-                self.combine_max_NMI(tpartitions=tpartitions, pmap=pmap, fo=fout + ".PTPhNMIPartition.txt")
+                self.combine_max_NMI(
+                    tpartitions=tpartitions,
+                    pmap=pmap,
+                    fo=fout + ".PTPhNMIPartition.txt",
+                )
 
             if ML_par != None:
-                self.combine_max_LLH(bestpar=ML_par, tpartitions=tpartitions, pmap=pmap,
-                                     fo=fout + ".PTPMLPartition.txt", spe_setting=ml_spe_setting, plot=plot)
+                self.combine_max_LLH(
+                    bestpar=ML_par,
+                    tpartitions=tpartitions,
+                    pmap=pmap,
+                    fo=fout + ".PTPMLPartition.txt",
+                    spe_setting=ml_spe_setting,
+                    plot=plot,
+                )
 
             """MCMC LLH"""
             if (region >= 1.0 or region <= 0) and len(tllhs) > 0:
                 plt.plot(tllhs)
-                plt.ylabel('Log likelihood')
-                plt.xlabel('MCMC iterations after thinning')
+                plt.ylabel("Log likelihood")
+                plt.xlabel("MCMC iterations after thinning")
                 plt.savefig(fout + ".llh.pdf", bbox_inches="tight")
-                #				plt.show() #########################
-                plt.clf()  ########################
+                # 				plt.show() #########################
+                plt.clf()
                 with open(fout + ".PTPllh.txt", "w") as f:
                     for llh in tllhs:
                         f.write(repr(llh) + "\n")
@@ -302,7 +413,9 @@ class partitionparser:
         else:
             return None
 
-    def combine_simple_heuristic(self, tpartitions, pmap, idxpars, fo, sp_setting=[], plot=True):
+    def combine_simple_heuristic(
+        self, tpartitions, pmap, idxpars, fo, sp_setting=[], plot=True
+    ):
         maxw = 0
         bestpar = None
         bestsupport = None
@@ -323,22 +436,52 @@ class partitionparser:
                 bestsupport = support
 
         self.meansupport = numpy.mean(bestsupport)
-        spes, support = self._partition2names(tpartitions[bestpar], bestsupport)
+        spes, support = self._partition2names(
+            tpartitions[bestpar], bestsupport
+        )
         spe_setting = sp_setting[bestpar]
 
         if plot:
-            spe_setting = add_bayesain_support(delimitation=spe_setting, pmap=pmap, taxaorder=self.taxaorder,
-                                               numpar=len(tpartitions))
-            spe_setting.root.write(features=["bs"], outfile=fo + ".sh.tre", format=0)
-            showTree(delimitation=spe_setting, scale=self.scale, render=True, fout=fo, form="svg", show_support=True)
-            showTree(delimitation=spe_setting, scale=self.scale, render=True, fout=fo, form="png", show_support=True)
+            spe_setting = add_bayesain_support(
+                delimitation=spe_setting,
+                pmap=pmap,
+                taxaorder=self.taxaorder,
+                numpar=len(tpartitions),
+            )
+            spe_setting.root.write(
+                features=["bs"], outfile=fo + ".sh.tre", format=0
+            )
+            showTree(
+                delimitation=spe_setting,
+                scale=self.scale,
+                render=True,
+                fout=fo,
+                form="svg",
+                show_support=True,
+            )
+            showTree(
+                delimitation=spe_setting,
+                scale=self.scale,
+                render=True,
+                fout=fo,
+                form="png",
+                show_support=True,
+            )
 
         fo_bestpar = open(fo, "w")
-        fo_bestpar.write("# Most supported partition found by simple heuristic search\n")
+        fo_bestpar.write(
+            "# Most supported partition found by simple heuristic search\n"
+        )
         for i in range(len(spes)):
             spe = spes[i]
             sup = support[i]
-            fo_bestpar.write("Species " + str(i + 1) + " (support = " + "{0:.3f}".format(sup) + ")\n")
+            fo_bestpar.write(
+                "Species "
+                + str(i + 1)
+                + " (support = "
+                + "{0:.3f}".format(sup)
+                + ")\n"
+            )
             fo_bestpar.write("     " + self._print_list(spe) + "\n")
         fo_bestpar.close()
 
@@ -365,15 +508,25 @@ class partitionparser:
         spes, support = self._partition2names(bestpar, bestsupport)
 
         fo_bestpar = open(fo, "w")
-        fo_bestpar.write("# MAX NMI partition found by simple heuristic search\n")
+        fo_bestpar.write(
+            "# MAX NMI partition found by simple heuristic search\n"
+        )
         for i in range(len(spes)):
             spe = spes[i]
             sup = support[i]
-            fo_bestpar.write("Species " + str(i + 1) + " (support = " + "{0:.3f}".format(sup) + ")\n")
+            fo_bestpar.write(
+                "Species "
+                + str(i + 1)
+                + " (support = "
+                + "{0:.3f}".format(sup)
+                + ")\n"
+            )
             fo_bestpar.write("     " + self._print_list(spe) + "\n")
         fo_bestpar.close()
 
-    def combine_max_LLH(self, bestpar, tpartitions, pmap, spe_setting=None, fo="", plot=True):
+    def combine_max_LLH(
+        self, bestpar, tpartitions, pmap, spe_setting=None, fo="", plot=True
+    ):
         idxpar = self._convert2idx(bestpar)
         bestsupport = [0.0] * self.numtaxa
         for par in idxpar:
@@ -385,18 +538,44 @@ class partitionparser:
         spes, support = self._partition2names(bestpar, bestsupport)
 
         if spe_setting != None and plot:
-            spe_setting = add_bayesain_support(delimitation=spe_setting, pmap=pmap, taxaorder=self.taxaorder,
-                                               numpar=len(tpartitions))
-            spe_setting.root.write(features=["bs"], outfile=fo + ".ml.tre", format=0)
-            showTree(delimitation=spe_setting, scale=self.scale, render=True, fout=fo, form="svg", show_support=True)
-            showTree(delimitation=spe_setting, scale=self.scale, render=True, fout=fo, form="png", show_support=True)
+            spe_setting = add_bayesain_support(
+                delimitation=spe_setting,
+                pmap=pmap,
+                taxaorder=self.taxaorder,
+                numpar=len(tpartitions),
+            )
+            spe_setting.root.write(
+                features=["bs"], outfile=fo + ".ml.tre", format=0
+            )
+            showTree(
+                delimitation=spe_setting,
+                scale=self.scale,
+                render=True,
+                fout=fo,
+                form="svg",
+                show_support=True,
+            )
+            showTree(
+                delimitation=spe_setting,
+                scale=self.scale,
+                render=True,
+                fout=fo,
+                form="png",
+                show_support=True,
+            )
 
         fo_bestpar = open(fo, "w")
         fo_bestpar.write("# Max likilhood partition \n")
         for i in range(len(spes)):
             spe = spes[i]
             sup = support[i]
-            fo_bestpar.write("Species " + str(i + 1) + " (support = " + "{0:.3f}".format(sup) + ")\n")
+            fo_bestpar.write(
+                "Species "
+                + str(i + 1)
+                + " (support = "
+                + "{0:.3f}".format(sup)
+                + ")\n"
+            )
             fo_bestpar.write("     " + self._print_list(spe) + "\n")
         fo_bestpar.close()
 
@@ -464,7 +643,8 @@ class partitionparser:
 
 
 def parse_arguments():
-    parser = argparse.ArgumentParser(description="""summary: a helper program to summarize multiple partitions.
+    parser = argparse.ArgumentParser(
+        description="""summary: a helper program to summarize multiple partitions.
 Note: it only make sense to use this script if you do Bayesian analysis on a single tree.
 
 By using this program, you agree to cite: 
@@ -476,33 +656,44 @@ Bugs, questions and suggestions please send to bestzhangjiajie@gmail.com
 Visit http://www.exelixis-lab.org/ for more information.
 
 Version 0.2 released by Jiajie Zhang on 11-02-2014.""",
-                                     formatter_class=argparse.RawDescriptionHelpFormatter,
-                                     prog="python summary.py")
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        prog="python summary.py",
+    )
 
-    parser.add_argument("-p", dest="partitions",
-                        help="""Input partitions file""",
-                        required=True)
+    parser.add_argument(
+        "-p",
+        dest="partitions",
+        help="""Input partitions file""",
+        required=True,
+    )
 
-    parser.add_argument("-l", dest="llhs",
-                        help="""Input LLH file""",
-                        required=True)
+    parser.add_argument(
+        "-l", dest="llhs", help="""Input LLH file""", required=True
+    )
 
-    parser.add_argument("-o", dest="output",
-                        help="Output file name",
-                        required=True)
+    parser.add_argument(
+        "-o", dest="output", help="Output file name", required=True
+    )
 
-    parser.add_argument("-c", dest="hpd",
-                        help="""Credible interval (or Bayesian confidence interval), must be a value between 0 and 1""",
-                        type=float,
-                        required=True,
-                        default=1.0)
+    parser.add_argument(
+        "-c",
+        dest="hpd",
+        help="""Credible interval (or Bayesian confidence interval), must be a value between 0 and 1""",
+        type=float,
+        required=True,
+        default=1.0,
+    )
 
-    parser.add_argument("--nmi",
-                        help="""Summary mutiple partitions using max NMI, this is very slow for large number of trees""",
-                        default=False,
-                        action="store_true")
+    parser.add_argument(
+        "--nmi",
+        help="""Summary mutiple partitions using max NMI, this is very slow for large number of trees""",
+        default=False,
+        action="store_true",
+    )
 
-    parser.add_argument('--version', action='version', version='%(prog)s 0.2 (11-02-2014)')
+    parser.add_argument(
+        "--version", action="version", version="%(prog)s 0.2 (11-02-2014)"
+    )
 
     return parser.parse_args()
 
@@ -525,5 +716,12 @@ if __name__ == "__main__":
     pp = partitionparser(pfin=args.partitions, lfin=args.llhs)
     pp.summary(fout=args.output, region=args.hpd, bnmi=args.nmi)
     min_no_p, max_no_p, mean_no_p = pp.hpd_numpartitions()
-    print(("Estimated number of species is between " + repr(min_no_p) + " and " + repr(max_no_p)))
+    print(
+        (
+            "Estimated number of species is between "
+            + repr(min_no_p)
+            + " and "
+            + repr(max_no_p)
+        )
+    )
     print(("Mean: " + repr(mean_no_p)))

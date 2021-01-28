@@ -3,38 +3,50 @@ try:
     import sys
     import math
     import collections
-    import ete3  #########
+    import ete3
     import os
     import argparse
     import subprocess
-    from ete3 import Tree, SeqGroup  #########
+    from ete3 import Tree, SeqGroup
     from subprocess import call
     from nexus import NexusReader
-    from spdelib.PTPLLH import lh_ratio_test, exp_distribution, species_setting, exponential_mixture, showTree
+    from spdelib.PTPLLH import (
+        lh_ratio_test,
+        exp_distribution,
+        species_setting,
+        exponential_mixture,
+        showTree,
+    )
     from spdelib.summary import partitionparser
 except ImportError:
     print("Please install the scipy and other dependent package first.")
-    print("If your OS is ubuntu or has apt installed, you can try the following:")
     print(
-        " sudo apt-get install python-setuptools python-numpy python-qt4 python-scipy python-mysqldb python-lxml python-matplotlib")
+        "If your OS is ubuntu or has apt installed, you can try the following:"
+    )
+    print(
+        " sudo apt-get install python-setuptools python-numpy python-qt4 python-scipy python-mysqldb python-lxml "
+        "python-matplotlib"
+    )
     sys.exit()
 
 
 class bootstrap_ptp:
     """Run MCMC on multiple trees"""
 
-    def __init__(self, filename, ftype="nexus", reroot=False, method="H1", firstktrees=0):
+    def __init__(
+        self, filename, ftype="nexus", reroot=False, method="H1", firstktrees=0
+    ):
         self.method = method
         self.firstktrees = firstktrees
         if ftype == "nexus":
             self.nexus = NexusReader(filename)
-            self.nexus.blocks['trees'].detranslate()
+            self.nexus.blocks["trees"].detranslate()
             self.trees = self.nexus.trees.trees
         else:
             self.trees = self.raxmlTreeParser(filename)
 
         if 0 < self.firstktrees <= len(self.trees):
-            self.trees = self.trees[:self.firstktrees]
+            self.trees = self.trees[: self.firstktrees]
 
         self.taxa_order = Tree(self.trees[0]).get_leaf_names()
         self.numtaxa = len(self.taxa_order)
@@ -64,7 +76,9 @@ class bootstrap_ptp:
                 self.trees[i] = t.write()
         except ValueError as e:
             print(e)
-            print("\n Somthing is wrong with the input outgroup names \n Quiting ...")
+            print(
+                "\n Somthing is wrong with the input outgroup names \n Quiting ..."
+            )
             sys.exit()
 
     def delimit(self, args):
@@ -76,13 +90,22 @@ class bootstrap_ptp:
             tree = self.trees[0]
             me = None
             if args.spe_rate <= 0:
-                me = exponential_mixture(tree=tree, max_iters=args.max_iter, min_br=args.min_brl)
+                me = exponential_mixture(
+                    tree=tree, max_iters=args.max_iter, min_br=args.min_brl
+                )
             else:
-                me = exponential_mixture(tree=tree, max_iters=args.max_iter, min_br=args.min_brl, sp_rate=args.spe_rate,
-                                         fix_sp_rate=True)
+                me = exponential_mixture(
+                    tree=tree,
+                    max_iters=args.max_iter,
+                    min_br=args.min_brl,
+                    sp_rate=args.spe_rate,
+                    fix_sp_rate=True,
+                )
 
             if args.whiten:
-                me.whitening_search(reroot=self.reroot, strategy=args.sstrategy)
+                me.whitening_search(
+                    reroot=self.reroot, strategy=args.sstrategy
+                )
             else:
                 me.search(reroot=self.reroot, strategy=args.sstrategy)
 
@@ -90,7 +113,10 @@ class bootstrap_ptp:
                 me.count_species(pv=args.pvalue)
                 me.print_species()
             else:
-                print("Number of species: " + repr(me.count_species(pv=args.pvalue)))
+                print(
+                    "Number of species: "
+                    + repr(me.count_species(pv=args.pvalue))
+                )
 
             to, par = me.output_species(taxa_order=self.taxa_order)
             self.partitions.append(par)
@@ -100,7 +126,9 @@ class bootstrap_ptp:
             for tree in self.trees:
                 print("Running PTP on tree " + repr(cnt) + " ........")
                 cnt = cnt + 1
-                me = exponential_mixture(tree=tree, max_iters=args.max_iter, min_br=args.min_brl)
+                me = exponential_mixture(
+                    tree=tree, max_iters=args.max_iter, min_br=args.min_brl
+                )
                 me.search(reroot=self.reroot, strategy=args.sstrategy)
                 me.count_species(pv=args.pvalue, print_log=False)
                 to, par = me.output_species(taxa_order=self.taxa_order)
@@ -117,7 +145,7 @@ class bootstrap_ptp:
         for line in lines:
             line = line.strip()
             if not line == "":
-                trees.append(line[line.index("("):])
+                trees.append(line[line.index("(") :])
         return trees
 
 
@@ -128,8 +156,23 @@ def build_ref_tree(nfin, num_thread="2"):
         print("Using existing reference tree !!")
         return nfolder + nfout + ".tre"
     basepath = os.path.dirname(os.path.abspath(__file__))
-    call([basepath + "/bin/raxmlHPC-PTHREADS-SSE3", "-m", "GTRGAMMA", "-s", nfin, "-n", nfout, "-p", "1234", "-T",
-          num_thread, "-w", nfolder])  # , stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+    call(
+        [
+            basepath + "/bin/raxmlHPC-PTHREADS-SSE3",
+            "-m",
+            "GTRGAMMA",
+            "-s",
+            nfin,
+            "-n",
+            nfout,
+            "-p",
+            "1234",
+            "-T",
+            num_thread,
+            "-w",
+            nfolder,
+        ]
+    )  # , stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
     os.rename(nfolder + "RAxML_bestTree." + nfout, nfolder + nfout + ".tre")
     os.remove(nfolder + "RAxML_info." + nfout)
     os.remove(nfolder + "RAxML_log." + nfout)
@@ -155,114 +198,165 @@ def pick_otu(spe_out, alignment):
 
 
 def parse_arguments():
-    parser = argparse.ArgumentParser(description="""PTP: Poisson Tree Processes model for species delimitation with bootstrap support.
+    description = """PTP: Poisson Tree Processes model for species delimitation with bootstrap support.
+    By using this program, you agree to cite: 
+    "J. Zhang, P. Kapli, P. Pavlidis, A. Stamatakis: A General Species 
+    Delimitation Method with Applications to Phylogenetic Placements.
+    Bioinformatics (2013), 29 (22): 2869-2876 " 
+    
+    Bugs, questions and suggestions please send to bestzhangjiajie@gmail.com.
+    
+    Version 2.2 released by Jiajie Zhang on 14-02-2014."""
+    parser = argparse.ArgumentParser(
+        description=description,
+        prog="python PTP.py",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
 
-By using this program, you agree to cite: 
-"J. Zhang, P. Kapli, P. Pavlidis, A. Stamatakis: A General Species 
-Delimitation Method with Applications to Phylogenetic Placements.
-Bioinformatics (2013), 29 (22): 2869-2876 " 
+    parser.add_argument(
+        "-t",
+        dest="stree",
+        metavar="TREE",
+        help="""Input phylogenetic tree file. Tree can be both rooted or unrooted, 
+                if unrooted, please use -r option. Supported format: NEXUS (trees without annotation),
+                RAxML (simple Newick foramt). If the input file contains multiple trees, the program 
+                will do bootstrap analysis""",
+        required=True,
+    )
 
-Bugs, questions and suggestions please send to bestzhangjiajie@gmail.com.
+    parser.add_argument(
+        "-o", dest="output", help="Output file name", required=True
+    )
 
-Version 2.2 released by Jiajie Zhang on 14-02-2014.""",
-                                     formatter_class=argparse.RawDescriptionHelpFormatter,
-                                     prog="python PTP.py")
+    parser.add_argument(
+        "-a",
+        dest="salignment",
+        metavar="ALIGNMENT",
+        default="",
+        help="""Specify the alignment, PTP will build a phylogenetic tree using RAxML, 
+                        currently only support DNA sequences with GTRGAMMA""",
+    )
 
-    parser.add_argument("-t", dest="stree",
-                        metavar="TREE",
-                        help="""Input phylogenetic tree file. Tree can be both rooted or unrooted, 
-						if unrooted, please use -r option. Supported format: NEXUS (trees without annotation),
-						RAxML (simple Newick foramt). If the input file contains multiple trees, the program 
-						will do bootstrap analysis""",
-                        required=True)
+    parser.add_argument(
+        "-u",
+        dest="ptpout",
+        metavar="REP-SEQUENCES",
+        default="",
+        help="""Pick representative sequences and write to this file if combined with -a""",
+    )
 
-    parser.add_argument("-o", dest="output",
-                        help="Output file name",
-                        required=True)
+    parser.add_argument(
+        "-r",
+        dest="sreroot",
+        help="""Re-rooting the input tree on the longest branch (default not)""",
+        default=False,
+        action="store_true",
+    )
 
-    parser.add_argument("-a", dest="salignment",
-                        metavar="ALIGNMENT",
-                        default="",
-                        help="""Specify the alignment, PTP will build a phylogenetic tree using RAxML, 
-						currently only support DNA sequences with GTRGAMMA""")
+    parser.add_argument(
+        "-g",
+        dest="outgroups",
+        nargs="+",
+        help="""Outgroup names, seperate by space. If this option is specified, 
+                        input tree will be rerooted accordingly""",
+    )
 
-    parser.add_argument("-u", dest="ptpout",
-                        metavar="REP-SEQUENCES",
-                        default="",
-                        help="""Pick representative sequences and write to this file if combined with -a""")
+    parser.add_argument(
+        "-d",
+        dest="delete",
+        help="""Remove outgroups specified by -g (default not)""",
+        default=False,
+        action="store_true",
+    )
 
-    parser.add_argument("-r", dest="sreroot",
-                        help="""Re-rooting the input tree on the longest branch (default not)""",
-                        default=False,
-                        action="store_true")
+    parser.add_argument(
+        "-m",
+        dest="sstrategy",
+        help="""Method for generate the starting partition (H0, H1, H2, H3, Brutal) (default H0)""",
+        choices=["H0", "H1", "H2", "H3", "Brutal"],
+        default="H0",
+    )
 
-    parser.add_argument("-g", dest="outgroups",
-                        nargs='+',
-                        help="""Outgroup names, seperate by space. If this option is specified, 
-						input tree will be rerooted accordingly""")
+    parser.add_argument(
+        "-pvalue",
+        dest="pvalue",
+        help="""Set the p-value for likelihood ratio test.(default 0.001) 
+                        If the test failed, the program will output only one species.
+                        Note this could mean there is only one species or all input taxon are different species""",
+        type=float,
+        default=0.001,
+    )
 
-    parser.add_argument("-d", dest="delete",
-                        help="""Remove outgroups specified by -g (default not)""",
-                        default=False,
-                        action="store_true")
+    parser.add_argument(
+        "-p",
+        dest="sprint",
+        help="""Print delimited species on the screen (default not show)""",
+        default=False,
+        action="store_true",
+    )
 
-    parser.add_argument("-m", dest="sstrategy",
-                        help="""Method for generate the starting partition (H0, H1, H2, H3, Brutal) (default H0)""",
-                        choices=["H0", "H1", "H2", "H3", "Brutal"],
-                        default="H0")
+    parser.add_argument(
+        "-w",
+        dest="whiten",
+        help="""Specify this option to normalize the No.sequenes of each species 
+                        from the first run and re-run the program""",
+        default=False,
+        action="store_true",
+    )
 
-    parser.add_argument("-pvalue", dest="pvalue",
-                        help="""Set the p-value for likelihood ratio test.(default 0.001) 
-						If the test failed, the program will output only one species.
-						Note this could mean there is only one species or all input taxon are different species""",
-                        type=float,
-                        default=0.001)
+    parser.add_argument(
+        "-minbr",
+        dest="min_brl",
+        help="""The minimal branch length allowed in tree (default 0.0001)""",
+        type=float,
+        default=0.0001,
+    )
 
-    parser.add_argument("-p", dest="sprint",
-                        help="""Print delimited species on the screen (default not show)""",
-                        default=False,
-                        action="store_true")
+    parser.add_argument(
+        "-sprate",
+        dest="spe_rate",
+        help="""Fix the speciation rate to the input value during model optimization (default not fixed)""",
+        type=float,
+        default=-1.0,
+    )
 
-    parser.add_argument("-w", dest="whiten",
-                        help="""Specify this option to normalize the No.sequenes of each species 
-						from the first run and re-run the program""",
-                        default=False,
-                        action="store_true")
+    parser.add_argument(
+        "-maxiters",
+        dest="max_iter",
+        help="""Set the max number of search if using Brutal search (default 20000).
+                        The program will calculate how many searches are needed for Brutal search,
+                        if the number of actual search is great than this value, the program will use H0 instead""",
+        type=int,
+        default=20000,
+    )
 
-    parser.add_argument("-minbr", dest="min_brl",
-                        help="""The minimal branch length allowed in tree (default 0.0001)""",
-                        type=float,
-                        default=0.0001)
+    parser.add_argument(
+        "-c",
+        dest="sscale",
+        help="""To use with -s option to set how long a branch is displayed in the plot (default 500)""",
+        type=int,
+        default=500,
+    )
 
-    parser.add_argument("-sprate", dest="spe_rate",
-                        help="""Fix the speciation rate to the input value during model optimization (default not fixed)""",
-                        type=float,
-                        default=-1.0)
+    parser.add_argument(
+        "-k",
+        dest="num_trees",
+        metavar="NUM-TREES",
+        help="""Run bPTP on first k trees (default all trees)""",
+        type=int,
+        default=0,
+    )
 
-    parser.add_argument("-maxiters", dest="max_iter",
-                        help="""Set the max number of search if using Brutal search (default 20000).
-						The program will calculate how many searches are needed for Brutal search,
-						if the number of actual search is great than this value, the program will use H0 instead""",
-                        type=int,
-                        default=20000)
+    parser.add_argument(
+        "--nmi",
+        help="""Summary mutiple partitions using max NMI, note this is very slow for large number of trees""",
+        default=False,
+        action="store_true",
+    )
 
-    parser.add_argument("-c", dest="sscale",
-                        help="""To use with -s option to set how long a branch is displayed in the plot (default 500)""",
-                        type=int,
-                        default=500)
-
-    parser.add_argument("-k", dest="num_trees",
-                        metavar="NUM-TREES",
-                        help="""Run bPTP on first k trees (default all trees)""",
-                        type=int,
-                        default=0)
-
-    parser.add_argument("--nmi",
-                        help="""Summary mutiple partitions using max NMI, note this is very slow for large number of trees""",
-                        default=False,
-                        action="store_true")
-
-    parser.add_argument('--version', action='version', version='%(prog)s 2.2 (14-02-2014)')
+    parser.add_argument(
+        "--version", action="version", version="%(prog)s 2.2 (14-02-2014)"
+    )
 
     return parser.parse_args()
 
@@ -299,7 +393,7 @@ def main(argu=None):
     if argu is not None:
         for i in argu:
             sys.argv.append(i)
-    #	print sys.argv
+    #     print sys.argv
     args = parse_arguments()
 
     if args.ptpout != "" and args.salignment != "":
@@ -313,7 +407,9 @@ def main(argu=None):
             print("please download the latest source code from: ")
             print("https://github.com/stamatak/standard-RAxML")
             print("Please complie the SSE + PTHREAD version, ")
-            print("rename the executable to raxmlHPC-PTHREADS-SSE3 and put it to bin/  \n")
+            print(
+                "rename the executable to raxmlHPC-PTHREADS-SSE3 and put it to bin/  \n"
+            )
             sys.exit()
         print("Building phylogenetic tree using RAxML.")
         args.stree = build_ref_tree(nfin=args.salignment, num_thread="2")
@@ -334,25 +430,37 @@ def main(argu=None):
         else:
             inputformat = "raxml"
 
-        bsptp = bootstrap_ptp(filename=args.stree, ftype=inputformat, reroot=args.sreroot, method=args.sstrategy,
-                              firstktrees=args.num_trees)
+        bsptp = bootstrap_ptp(
+            filename=args.stree,
+            ftype=inputformat,
+            reroot=args.sreroot,
+            method=args.sstrategy,
+            firstktrees=args.num_trees,
+        )
 
-        if args.outgroups != None and len(args.outgroups) > 0:
+        if args.outgroups is not None and len(args.outgroups) > 0:
             bsptp.remove_outgroups(args.outgroups, remove=args.delete)
 
         pars, settings = bsptp.delimit(args=args)
 
-        pp = partitionparser(taxa_order=bsptp.taxa_order, partitions=pars, scale=args.sscale)
+        pp = partitionparser(
+            taxa_order=bsptp.taxa_order, partitions=pars, scale=args.sscale
+        )
         pp.summary(fout=args.output, bnmi=args.nmi, sp_setting=settings)
 
         if bsptp.numtrees > 1:
             min_no_p, max_no_p, mean_no_p = pp.hpd_numpartitions()
-            print("Estimated number of species is between " + repr(min_no_p) + " and " + repr(max_no_p))
+            print(
+                "Estimated number of species is between "
+                + repr(min_no_p)
+                + " and "
+                + repr(max_no_p)
+            )
             print("Mean: " + repr(mean_no_p))
 
         print_run_info(args=args)
 
-    except ete3.parser.newick.NewickError:  ###########
+    except ete3.parser.newick.NewickError:
         print("Unexisting tree file or Malformed newick tree structure.")
 
 
