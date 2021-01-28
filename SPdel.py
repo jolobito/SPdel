@@ -1,17 +1,20 @@
 #!/usr/bin/env python3
 
 # SPdel v 1.0
-try:
-    import sys
-    from sys import platform as sys_pf
+import os
+import sys
+import random
+import colorsys
+import logging
+from sys import platform as sys_pf
 
+try:
     if sys_pf == 'darwin':
         import matplotlib
 
         matplotlib.use("Qt5Agg")
 
     from matplotlib import pyplot as plt
-    import os
     from Bio import SeqIO
     from ete3 import TextFace, RectFace, Tree, TreeStyle, NodeStyle
     from ete3.treeview.faces import add_face_to_node
@@ -20,16 +23,16 @@ try:
     from spdelib import GMYC
     from spdelib import Diagnoser
     from spdelib import Matrian
-    import random
-    import colorsys
-    import logging
     import toytree
     import toyplot
     import toyplot.svg
     import toyplot.pdf
+
 except ImportError:
-    logging.info("Please install all dependences first.")
+    sys.stderr.write("Please install all dependences first.\n")
+    sys.stderr.flush()
     sys.exit()
+
 
 
 def check_list(path, fasta, fileList):
