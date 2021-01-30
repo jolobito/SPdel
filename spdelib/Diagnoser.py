@@ -28,12 +28,12 @@ from Bio.SeqRecord import SeqRecord
 
 
 def snper(path, fasta):  # code modified from Jufisawa blog
-    if not os.path.exists(path + "tmp/"):
-        os.makedirs(path + "tmp")
+    if not os.path.exists(os.path.join(path, "tmp/")):
+        os.makedirs(os.path.join(path, "tmp"))
     s_bases = ("A", "C", "G", "T")
     d_bases = ("R", "Y", "S", "W", "K", "M", "N")
     bases = s_bases + d_bases
-    alig = AlignIO.read(path + fasta, "fasta")
+    alig = AlignIO.read(os.path.join(path, fasta), "fasta")
     list_n_pos = []
     # snp = [SeqRecord(Seq('', s.seq.alphabet), id=s.id, description=s.description) for s in alig]
     snp = [
@@ -50,7 +50,7 @@ def snper(path, fasta):  # code modified from Jufisawa blog
         if len(genotypes) > 1:
             list_n_pos.append(i + 1)
             snp = snp + alig[:, i : i + 1]
-    with open(path + "tmp/" + "snps_all.fasta", "w+") as snpfile:
+    with open(os.path.join(path, "tmp/snps_all.fasta"), "w+") as snpfile:
         snpfile.write(snp.format("fasta"))
     #    print list_n_pos
     return list_n_pos
@@ -59,7 +59,7 @@ def snper(path, fasta):  # code modified from Jufisawa blog
 def consensus_fasta(
     path, fasta, n_ind
 ):  # modified from biopython  #add bases degeneradas
-    alig = AlignIO.read(path + fasta, "fasta")
+    alig = AlignIO.read(os.path.join(path, fasta), "fasta")
     #    print alig
     consensus = []
     con_len = alig.get_alignment_length()
@@ -80,7 +80,7 @@ def consensus_fasta(
 
 
 def specier(path, fasta, gen, sp):
-    alig = AlignIO.read(path + fasta, "fasta")
+    alig = AlignIO.read(os.path.join(path, fasta), "fasta")
     spec = []
     n_spec = 0
     n_ind_spec = []
@@ -92,7 +92,7 @@ def specier(path, fasta, gen, sp):
             n_spec += 1
     for i in range(n_spec):
         n = 0
-        with open(path + "spec" + str(i) + ".fasta", "w+") as fasta:
+        with open(os.path.join(path, "spec" + str(i) + ".fasta"), "w+") as fasta:
             for seq in alig:
                 if seq.id.startswith(spec[i]):
                     fasta.write(">" + seq.description + "\n")
@@ -107,7 +107,7 @@ def diagnoser(path, n_spec, n_ind):
     lists_var = []
     for i in range(n_spec):
         lists_var.append(
-            consensus_fasta(path + "tmp/", "spec" + str(i) + ".fasta", n_ind)
+            consensus_fasta(os.path.join(path, "tmp/"), "spec" + str(i) + ".fasta", n_ind)
         )
     list_all = []
     for j in range(len(lists_var[0])):
@@ -205,7 +205,7 @@ def diagnoser(path, n_spec, n_ind):
 
 
 def summary(path, list_all, spec_list, n_ind_spec, n_ind):
-    with open(path + "Diagnostic_character.txt", "w+") as diagnostic:
+    with open(os.path.join(path, "Diagnostic_character.txt"), "w+") as diagnostic:
         u, w, x, y, z = [], [], [], [], []
         spec_list2 = []
         n_ind_spec2 = []
@@ -389,14 +389,7 @@ def plot_dc(path, list_var, cod_color, spec_list, list_n_pos):
         )
 
         lists_data[i] = trace
-        print(
-            [
-                0,
-                float(width_1 + (width_2 * len(list_n_pos_tmp)))
-                / (width_1 + (width_2 * n_div)),
-            ],
-            [yvalue, sz - 0.02],
-        )
+
         sz = sz - ((len(spec_list) + 1) * fct)
 
     data_lgnd = {
@@ -435,7 +428,7 @@ def plot_dc(path, list_var, cod_color, spec_list, list_n_pos):
             font=dict(color="black", size=11),
         ),
     )
-    print([0, 0.35], [round(1 - (6 * fct), 2), 1])
+
     height_per = (len(spec_list) + 1) * 30 * div + div * 10 + 6 * 30
     lists_data = [trace_legend] + lists_data
 
@@ -451,7 +444,7 @@ def plot_dc(path, list_var, cod_color, spec_list, list_n_pos):
     fig = dict(data=lists_data, layout=layout2)
     plotly.offline.plot(
         fig,
-        filename=path + "Diagnostic_character.html",
+        filename=os.path.join(path, "Diagnostic_character.html"),
         auto_open=False,
         config={"displayModeBar": False},
         show_link=False,
@@ -460,7 +453,7 @@ def plot_dc(path, list_var, cod_color, spec_list, list_n_pos):
 
 def main(path, fasta, n_ind=3, gen=1, sp=2):
     list_n_pos = snper(path, fasta)
-    n_spec = specier(path + "tmp/", "snps_all.fasta", gen - 1, sp - 1)
+    n_spec = specier(os.path.join(path, "tmp/"), "snps_all.fasta", gen - 1, sp - 1)
     spec_list = n_spec[1]
     n_ind_spec = n_spec[2]
     n_spec = n_spec[0]
@@ -469,7 +462,7 @@ def main(path, fasta, n_ind=3, gen=1, sp=2):
     spec_list2 = summary(path, list_all[0], spec_list, n_ind_spec, n_ind)
     plot_dc(path, list_all[1], list_all[0], spec_list2, list_n_pos)
 
-    shutil.rmtree(path + "tmp")  # will delete a directory and all its contents
+    shutil.rmtree(os.path.join(path, "tmp"))  # will delete a directory and all its contents
     # os.remove() #will remove a file.
     # os.rmdir(path+'tmp') #will remove an empty directory.
 

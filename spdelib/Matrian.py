@@ -40,13 +40,13 @@ class Matrian:
 
     def __init__(self, path, fasta, gen, sp, distance):
         self.path = path
-        self.fasta = open(path + fasta, newline="")
+        self.fasta = open(fasta, newline="")
         self.fasta_seqIO = SeqIO.parse(self.fasta, "fasta")  # sequence object
         self.fasta_names = [
             seq.id for seq in self.fasta_seqIO
         ]  # list of samples names
         self.fasta_dict = SeqIO.to_dict(
-            SeqIO.parse(path + fasta, "fasta")
+            SeqIO.parse(fasta, "fasta")
         )  # dictionary of sequences
         self.Lname = self.name_sp(gen, sp)  # list of species
         self.data = self.matrix(distance)  # matrix genetic distances
@@ -228,7 +228,7 @@ class Matrian:
         return minter, mediater, maxter, L
 
     def plot_max_min(self, df):  # max vs min graph
-        sns.lmplot("intra2", "inter", data=df, fit_reg=False)
+        sns.lmplot(x="intra2", y="inter", data=df, fit_reg=False)
         plt.title("Maximum intraspecific vs Minimum to NN")
         plt.xlabel("Maximum intraspecific")
         plt.ylabel("Minimum to NN")
@@ -236,7 +236,7 @@ class Matrian:
         plt.axis([0, max(z) + 1, 0, max(z) + 1])
         lims = [0, max(z) + 1]
         plt.plot(lims, lims, ":k")
-        plt.savefig(self.path + "min_max.pdf")
+        plt.savefig(os.path.join(self.path, "min_max.pdf"))
         # plt.show()
         plt.clf()
 
@@ -244,7 +244,7 @@ class Matrian:
         newBins_tra = len(set(tra)) // 3
         newBins_ter = len(set(ter)) // 3
         f, ax = plt.subplots(3, 1, sharex="col", sharey="all")
-        sns.distplot(
+        sns.histplot(
             ter,
             bins=newBins_ter,
             color="b",
@@ -252,7 +252,7 @@ class Matrian:
             label="Intergruop distance",
             ax=ax[1],
         )
-        sns.distplot(
+        sns.histplot(
             tra,
             bins=newBins_tra,
             color="r",
@@ -260,7 +260,7 @@ class Matrian:
             label="Intragroup distance",
             ax=ax[0],
         )
-        sns.distplot(
+        sns.histplot(
             tra,
             bins=newBins_tra,
             color="r",
@@ -268,7 +268,7 @@ class Matrian:
             label="Intragroup distance",
             ax=ax[2],
         )
-        sns.distplot(
+        sns.histplot(
             ter,
             bins=newBins_ter,
             color="b",
@@ -284,7 +284,7 @@ class Matrian:
         ax[1].legend()
         ax[2].legend()
         ax[2].set_xlabel("Genetic Distance")
-        f.savefig(self.path + "barcoding_gap.pdf")
+        f.savefig(os.path.join(self.path, "barcoding_gap.pdf"))
         # plt.show(f)
         # plt.close(f)
         plt.clf()
@@ -349,13 +349,13 @@ class Matrian:
                 )
 
 
-def main(path, fasta, gen, sp, distance, out_name=None, n=False):
+def main(path, fasta_file, gen, sp, distance, out_name=None, n=False):
     """A function to calculate and print main genetic distances results.
     Parameters
     ----------
     path: str
-        The path to folder with the input file.
-    fasta: str
+        The path to output folder.
+    fasta_file: str
         The name of fasta file.
     gen: int
         genus position on sequence names splited by "_".
@@ -369,13 +369,11 @@ def main(path, fasta, gen, sp, distance, out_name=None, n=False):
         True if nominal analysis.
     """
 
-    tmp = Matrian(path, fasta, gen, sp, distance)
+    tmp = Matrian(path, fasta_file, gen, sp, distance)
     tmp.analyze()
 
-    file_name = os.path.join(path, fasta)
-
     if path is not None:
-        tmp.save_csv(file_name)
+        tmp.save_csv(fasta_file)
 
     if n == True:
         List = tmp.name_sp(gen, sp)
