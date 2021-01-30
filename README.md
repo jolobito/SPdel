@@ -83,7 +83,7 @@ conda activate spdel
 Install the develop requirements:
 
 ```
-conda activate spdel
+conda install --file requirements_dev.txt
 ```
 
  
