@@ -40,8 +40,8 @@ class Matrian:
 
     def __init__(self, path, fasta, gen, sp, distance):
         self.path = path
-        self.fasta = open(fasta, newline="")
-        self.fasta_seqIO = SeqIO.parse(self.fasta, "fasta")  # sequence object
+        self.fasta = open(fasta, newline="")     
+        self.fasta_seqIO = SeqIO.parse(self.fasta, "fasta")  # sequence object           
         self.fasta_names = [
             seq.id for seq in self.fasta_seqIO
         ]  # list of samples names
@@ -129,14 +129,14 @@ class Matrian:
     def mean_intra(self):  # da media intra de todos los grupos
         mean_intra_dict = {}
         for sp in self.Lname:
-            ind_sp = [ind for ind in self.fasta_names if ind.startswith(sp)]
+            ind_sp = [ind for ind in self.fasta_names if ind.startswith(sp+'_')]
             L = []
             for ind in ind_sp:
                 ind_dic = self.data[ind]
                 L = L + [
                     values
                     for key, values in ind_dic.items()
-                    if key.startswith(sp) and key is not ind
+                    if key.startswith(sp+'_') and key is not ind
                 ]
             if L == []:
                 v = None
@@ -148,14 +148,14 @@ class Matrian:
     def max_intra(self):  # da maxima dentro de un grupo
         max_intra_dict = {}
         for sp in self.Lname:
-            ind_sp = [ind for ind in self.fasta_names if ind.startswith(sp)]
+            ind_sp = [ind for ind in self.fasta_names if ind.startswith(sp+'_')]
             L = []
             for ind in ind_sp:
                 ind_dic = self.data[ind]
                 L = L + [
                     values
                     for key, values in ind_dic.items()
-                    if key.startswith(sp)
+                    if key.startswith(sp+'_')
                 ]
             v = max(L)
             max_intra_dict[sp] = v
@@ -166,7 +166,7 @@ class Matrian:
         NN_dict = {}
         for sp in self.Lname:
             ind_sp = [
-                ind for ind in self.fasta_names if ind.startswith(sp)
+                ind for ind in self.fasta_names if ind.startswith(sp+'_')
             ]  # list of individuals of a given sp
             L = []
             K = []
@@ -177,10 +177,10 @@ class Matrian:
                 L = L + [
                     values
                     for key, values in ind_dic.items()
-                    if not key.startswith(sp)
+                    if not key.startswith(sp+'_')
                 ]
                 K = K + [
-                    key for key in ind_dic.keys() if not key.startswith(sp)
+                    key for key in ind_dic.keys() if not key.startswith(sp+'_')
                 ]
             v = min(L)
             kpos = L.index(v)
@@ -192,13 +192,13 @@ class Matrian:
         # mmm_intra_dict={}
         L = []
         for sp in self.Lname:
-            ind_sp = [ind for ind in self.fasta_names if ind.startswith(sp)]
+            ind_sp = [ind for ind in self.fasta_names if ind.startswith(sp+'_')]
             for ind in ind_sp:
                 ind_dic = self.data[ind]
                 L = L + [
                     values
                     for key, values in ind_dic.items()
-                    if key.startswith(sp) and key is not ind
+                    if key.startswith(sp+'_') and key is not ind
                 ]
         mintra = min(L)
         mediatra = round((sum(L) / len(L)), 5)
@@ -210,7 +210,7 @@ class Matrian:
         L = []
         for sp in self.Lname:
             ind_sp = [
-                ind for ind in self.fasta_names if ind.startswith(sp)
+                ind for ind in self.fasta_names if ind.startswith(sp+'_')
             ]  # list of individuals of a given sp
             for ind in ind_sp:
                 ind_dic = self.data[
@@ -219,7 +219,7 @@ class Matrian:
                 L = L + [
                     values
                     for key, values in ind_dic.items()
-                    if not key.startswith(sp)
+                    if not key.startswith(sp+'_')
                 ]
         minter = min(L)
         mediater = round((sum(L) / len(L)), 5)
@@ -309,7 +309,7 @@ class Matrian:
                 y.append(maxintra.get(sp))
         datas = {"Mean": b, "Max": c, "NN": d, "DtoNN": e}
         summ = pd.DataFrame(datas, index=a)
-        # print(summ)
+        print(summ)
         logging.info(summ)
         datas2 = {"inter": e, "intra2": y}
 
@@ -332,11 +332,11 @@ class Matrian:
 
         ####Plot max vc min graph####
 
-        self.plot_max_min(df)
+        # self.plot_max_min(df)
 
         ####Plot frequencies graph####
 
-        self.plot_freq(L[-1], M[-1])
+        # self.plot_freq(L[-1], M[-1])
 
     def save_csv(self, out_name):
         out_name_csv = os.path.splitext(out_name)[0] + ".csv"
@@ -385,6 +385,6 @@ def main(path, fasta_file, gen, sp, distance, out_name=None, n=False):
 if __name__ == "__main__":
     main()
 
-# tmp=matrian('C:/Users/ramir/OneDrive/Python/SPdel/Example//Schizodon/',"SC_COI_ALINHADO.fasta",1,2,'k')
+# tmp=Matrian('C:/Users/ramir/OneDrive/Python/SPdel/Example/Megaleporinus/PTP/',"C:/Users/ramir/OneDrive/Python/SPdel/Example/Megaleporinus/PTP/PTP_MOTU.fasta",1,2,'k')
 # tmp.analyze()
 # tmp.save_csv('C:/Users/ramir/OneDrive/Python/SPdel/Example//Schizodon/SC_COI_ALINHADO.fasta')
