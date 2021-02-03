@@ -309,7 +309,6 @@ class Matrian:
                 y.append(maxintra.get(sp))
         datas = {"Mean": b, "Max": c, "NN": d, "DtoNN": e}
         summ = pd.DataFrame(datas, index=a)
-        print(summ)
         logging.info(summ)
         datas2 = {"inter": e, "intra2": y}
 
