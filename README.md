@@ -4,16 +4,16 @@ SPdel is a pipeline to integrate different single-gene species delimitation meth
 
 ### Requirement:
 
-* [Anaconda](https://www.anaconda.com/download/)
-* [Git](https://git-scm.com/downloads/)
+* python3
 
 ### Installation:
 
-Open Anaconda prompt or terminal:
+Run the following line inside the repo's directory:
+
 ```
-conda env create -f environment.yml
-conda activate spdel 
+python -m pip install .
 ```
+
 ### Overview
 
 The pipeline SPdel can run PTP, BPTP and GMYC analyses locally in your computer using original codes and then parse the results. Also, SPdel can interpretate output files from PTP and bPTP web server (https://species.h-its.org/) or python distribution (https://github.com/zhangjiajie/PTP). For GMYC the pipeline works with the outfile from python version (https://github.com/zhangjiajie/pGMYC), but you can use the R version or the web server (https://species.h-its.org/gmyc/) and include your results using -X option. Please check the example files included. 
