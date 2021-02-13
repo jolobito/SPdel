@@ -331,11 +331,11 @@ class Matrian:
 
         ####Plot max vc min graph####
 
-        # self.plot_max_min(df)
+        self.plot_max_min(df)
 
         ####Plot frequencies graph####
 
-        # self.plot_freq(L[-1], M[-1])
+        self.plot_freq(L[-1], M[-1])
 
     def save_csv(self, out_name):
         out_name_csv = os.path.splitext(out_name)[0] + ".csv"
