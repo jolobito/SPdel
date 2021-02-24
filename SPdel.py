@@ -1934,13 +1934,11 @@ if __name__ == "__main__":
     #    basepath = os.path.dirname(os.path.abspath(__file__))
     main()
 
-# optimizar matrian
+
 # revisar total distancia
-# usar split para patron
 
 # output print to file #HTML?
 # cambiar nombres y cursiva, mostrar texto nominal?,
-# path fasta
 
 # testar reenraizar a la mitad?
 

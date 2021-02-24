@@ -28,6 +28,17 @@ from Bio.SeqRecord import SeqRecord
 
 
 def snper(path, fasta):  # code modified from Jufisawa blog
+    """calculate the positions with polymorphism.
+    Parameters
+    ----------
+    path: str
+        The path to folder with the input file.
+    fasta: str
+        The name of fasta file.
+    Returns
+    -------
+    A list of polymorphic positions.
+    """    
     if not os.path.exists(os.path.join(path, "tmp/")):
         os.makedirs(os.path.join(path, "tmp"))
     s_bases = ("A", "C", "G", "T")
@@ -51,7 +62,7 @@ def snper(path, fasta):  # code modified from Jufisawa blog
             list_n_pos.append(i + 1)
             snp = snp + alig[:, i : i + 1]
     with open(os.path.join(path, "tmp/snps_all.fasta"), "w+") as snpfile:
-        snpfile.write(snp.format("fasta"))
+        snpfile.write(format(snp,"fasta"))
     #    print list_n_pos
     return list_n_pos
 
@@ -80,6 +91,21 @@ def consensus_fasta(
 
 
 def specier(path, fasta, gen, sp):
+    """return a tuple with basic information.
+    Parameters
+    ----------
+    path: str
+        The path to folder with the input file.
+    fasta: str
+        The name of fasta file.    
+    gen: int
+        genus position on sequence names splited by "_".
+    sp: int
+        genus position on sequence names splited by "_".
+    Returns
+    -------
+    The number of species, a list with name of species, and a list with number of individual for each species.        
+    """    
     alig = AlignIO.read(os.path.join(path, fasta), "fasta")
     spec = []
     n_spec = 0
@@ -104,6 +130,19 @@ def specier(path, fasta, gen, sp):
 
 
 def diagnoser(path, n_spec, n_ind):
+    """return a tuple with character diagnostic information.
+    Parameters
+    ----------
+    path: str
+        The path to folder with the input file.
+    n_spec: str
+        number of individuals for each species.    
+    n_ind: int
+        minimum number of individuals for species.
+    Returns
+    -------
+    A list with a list for each polymorfic position with type of character of each species, and a list of list of snps for each position and each species.        
+    """      
     lists_var = []
     for i in range(n_spec):
         lists_var.append(
@@ -205,6 +244,23 @@ def diagnoser(path, n_spec, n_ind):
 
 
 def summary(path, list_all, spec_list, n_ind_spec, n_ind):
+    """print a summary of kind of diagnostic character by each species.
+    Parameters
+    ----------
+    path: str
+        The path to folder with the input file.
+    list_all: tuple
+        tuple of list obtained by diagnoser function.    
+    spec_list: int
+        a list with name of species.
+    n_ind_spec: int
+        a list with number of individual for each species.
+    n_ind: int
+        minimum number of individuals for species.        
+    Returns
+    -------
+    A list with names of species included in the analysis.        
+    """        
     with open(os.path.join(path, "Diagnostic_character.txt"), "w+") as diagnostic:
         u, w, x, y, z = [], [], [], [], []
         spec_list2 = []
@@ -255,6 +311,20 @@ def summary(path, list_all, spec_list, n_ind_spec, n_ind):
 
 
 def plot_dc(path, list_var, cod_color, spec_list, list_n_pos):
+    """print HTML file with the resuls.
+    Parameters
+    ----------
+    path: str
+        The path to folder with the input file.
+    list_var: tuple
+        a list of list of snps for each position and each species.    
+    cod_color: int
+        A list with a list for each polymorfic position with type of character of each species.
+    spec_list: int
+        A list with names of species included in the analysis.
+    list_n_pos: int
+        A list of polymorphic positions.               
+    """     
     list_var = [x for x in list_var if x is not None]
     #    print list_var
     list_var2 = []
@@ -292,11 +362,11 @@ def plot_dc(path, list_var, cod_color, spec_list, list_n_pos):
     # print(list_n_pos)
 
     #    Code for do the tables with the data prepared above
-    n_div = 20
+    n_div = 20 #number of columns in the table
     lists_data = [[] for i in range(int(ceil(len(pos_cc_ls) / float(n_div))))]
-    div = int(ceil(len(pos_cc_ls) / float(n_div)))
-    n_col = 6 + ((len(spec_list) + 1) * div)
-    fct = 1 / float(n_col)
+    div = int(ceil(len(pos_cc_ls) / float(n_div))) #number of tables necessaries if considering n_div columns
+    n_col = 6 + ((len(spec_list) + 1) * div) #number of rows considering also the legend
+    fct = 1 / float(n_col) #size of each row
     sz = round(1 - (6 * fct), 2)
     for i in range(int(ceil(len(pos_cc_ls) / float(n_div)))):  # 0 1 2
         if i + 1 < len(pos_cc_ls) / float(n_div):  # i < 2.1
@@ -341,7 +411,7 @@ def plot_dc(path, list_var, cod_color, spec_list, list_n_pos):
             data[str(k)] = seq_snp_tmp[k]
         for l in list_n_pos_tmp:
             head.append("<b>" + str(l) + "</b>")
-        df = pd.DataFrame(data)
+        df = pd.DataFrame(data)  #data frame with diagnostic characters
 
         val = []
         col = []
@@ -402,7 +472,7 @@ def plot_dc(path, list_var, cod_color, spec_list, list_n_pos):
             "Invalid Character",
         ],
     }
-    df2 = pd.DataFrame(data_lgnd)
+    df2 = pd.DataFrame(data_lgnd) #dataframe with legend
 
     trace_legend = go.Table(
         type="table",
@@ -429,7 +499,7 @@ def plot_dc(path, list_var, cod_color, spec_list, list_n_pos):
         ),
     )
 
-    height_per = (len(spec_list) + 1) * 30 * div + div * 10 + 6 * 30
+    height_per = (len(spec_list) + 1) * 30 * div + 6 * 60 # change for separate elements
     lists_data = [trace_legend] + lists_data
 
     layout2 = dict(
@@ -452,6 +522,20 @@ def plot_dc(path, list_var, cod_color, spec_list, list_n_pos):
 
 
 def main(path, fasta, n_ind=3, gen=1, sp=2):
+    """calculate and print diagnostic characters.
+    Parameters
+    ----------
+    path: str
+        The path to folder with the input file.
+    fasta: str
+        The name of fasta file.
+    n_ind: int
+        minimum number of individuals for species.        
+    gen: int
+        genus position on sequence names splited by "_".
+    sp: int
+        genus position on sequence names splited by "_".
+    """
     list_n_pos = snper(path, fasta)
     n_spec = specier(os.path.join(path, "tmp/"), "snps_all.fasta", gen - 1, sp - 1)
     spec_list = n_spec[1]
