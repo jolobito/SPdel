@@ -24,21 +24,27 @@ How to Use:
 
 The sequences name should be separate for "_" (e.g. Genus_species_individual) or use -N option for rename sequences
 
+In this example we will use the LA_nominal.fasta dataset included in data folder.
+
 Calculates genetic distances for nominal species
 ```
-SPdel.py path/fasta_file -n
+python path/SPdel.py path/LA_nominal.fasta -n
 ```
 Calculate PTP, bPTP and GMYC locally and perfom genetic distances analyses
 ```
-SPdel.py path/fasta_file -n -P -T -G -t path/tree_file
+python path/SPdel.py path/LA_nominal.fasta -n -P -T -G -t path/LA_nominal.nwk
 ```
-Calculates genetics distances from MOTUs delimited for PTP, bPTP and GMYC using outfiles calculated outside the pipeline
+Calculates genetics distances from MOTUs delimited for BIN using outfiles calculated outside the pipeline
 ```
-SPdel.py path/fasta_file -P path/PTP_File -G path/GMYC_File -T path/bPTP_File -t path/tree_file
+python path/SPdel.py path/LA_nominal.fasta -B path/LA_BinList.txt -t path/LA_nominal.nwk
 ```
 Compare analyses previously calculated
 ```
-usage: ./SPdel.py path/fasta_file -C n,p,t,g -t path/tree_file
+python path/SPdel.py path/LA_nominal.fasta -C n,p,t,g -t path/LA_nominal.nwk
+```
+Calculate all analyses and compare the results
+```
+python path/SPdel.py path/LA_nominal.fasta -P -T -G -B path/LA_BinList.txt -t path/LA_nominal.nwk -C n,p,t,g,b
 ```
 
 Options:   
