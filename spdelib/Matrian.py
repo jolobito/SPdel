@@ -242,6 +242,8 @@ class Matrian:
 
     def plot_freq(self, tra, ter):  # Barcoding gap graph
         newBins_tra = len(set(tra)) // 3
+        if newBins_tra == 0:
+            newBins_tra = 1
         newBins_ter = len(set(ter)) // 3
         f, ax = plt.subplots(3, 1, sharex="col", sharey="all")
         sns.histplot(

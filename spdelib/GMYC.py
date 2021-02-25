@@ -30,13 +30,14 @@ except ImportError:
 
 
 class um_tree:
-    def __init__(self, tree):
+    def __init__(self, tree, PATH):
         self.tree = Tree(tree, format=1)
         self.tree2 = open(tree)
         self.tree.resolve_polytomy(default_dist=0.000001, recursive=True)
         self.tree.dist = 0
         self.tree.add_feature("age", 0)
         self.nodes = self.tree.get_descendants()
+        self.PATH= PATH
         internal_node = []
         cnt = 0
         for n in self.nodes:
@@ -235,8 +236,8 @@ class um_tree:
         return [all_taxa_name], sp_list
 
     def print_species(self):
-        tree_path = os.path.dirname(self.tree2.name)
-        sp_out = open(tree_path + "/GMYC/GMYC_MOTU.txt", "w+")
+        # tree_path = os.path.dirname(self.tree2.name)
+        sp_out = open(os.path.join(self.PATH,"GMYC/GMYC_MOTU.txt"), "w+")
         cnt = 1
         for sp in self.species_list:
             # 			print("Species " + repr(cnt) + ":")
@@ -755,6 +756,7 @@ def optimize_null_model(umtree):
 
 def gmyc(
     tree,
+    PATH,
     print_detail=False,
     show_tree=False,
     show_llh=False,
@@ -768,7 +770,7 @@ def gmyc(
     best_llh = float("-inf")
     best_num_spe = -1
     best_node = None
-    utree = um_tree(tree)
+    utree = um_tree(tree,PATH)
     for tnode in utree.nodes:
         wt_list, num_spe = utree.get_waiting_times(threshold_node=tnode)
         tt = tree_time(wt_list, num_spe)
@@ -989,6 +991,7 @@ def main(argu=None):
     sprint_species = False
     p_value = 0.01
     salignment = ""
+    sPATH = ""
 
     for i in range(len(sys.argv)):
         if sys.argv[i] == "-t":
@@ -1010,6 +1013,9 @@ def main(argu=None):
         elif sys.argv[i] == "-a":
             i = i + 1
             salignment = sys.argv[i]
+        if sys.argv[i] == "path":
+            i = i + 1
+            sPATH = sys.argv[i]         
         elif i == 0:
             pass
     # 		elif sys.argv[i].startswith("-"):
@@ -1047,6 +1053,7 @@ def main(argu=None):
 
         sp = gmyc(
             tree=stree,
+            PATH=sPATH,
             print_detail=sprint_detail,
             show_tree=sshow_tree,
             show_llh=sshow_llh,

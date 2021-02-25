@@ -633,7 +633,7 @@ class MOTU_GMYC:
 
     def gmyc_run(self):
         """Run the GMYC analysis"""   
-        GMYC.main(['-t', self.tree, '-ps'])
+        GMYC.main(['-t', self.tree, '-ps','path',self.path])
 
     def MOTU_listGMYC(self):
         """Read the output and construct a list with the MOTUs
