@@ -28,23 +28,23 @@ In this example we will use the LA_nominal.fasta dataset included in data folder
 
 Calculates genetic distances for nominal species
 ```
-python path/SPdel.py path/LA_nominal.fasta -n
+SPdel.py path/LA_nominal.fasta -n
 ```
 Calculate PTP, bPTP and GMYC locally and perfom genetic distances analyses
 ```
-python path/SPdel.py path/LA_nominal.fasta -n -P -T -G -t path/LA_nominal.nwk
+SPdel.py path/LA_nominal.fasta -n -P -T -G -t path/LA_nominal.nwk
 ```
 Calculates genetics distances from MOTUs delimited for BIN using outfiles calculated outside the pipeline
 ```
-python path/SPdel.py path/LA_nominal.fasta -B path/LA_BinList.txt -t path/LA_nominal.nwk
+SPdel.py path/LA_nominal.fasta -B path/LA_BinList.txt -t path/LA_nominal.nwk
 ```
 Compare analyses previously calculated
 ```
-python path/SPdel.py path/LA_nominal.fasta -C n,p,t,g -t path/LA_nominal.nwk
+SPdel.py path/LA_nominal.fasta -C n,p,t,g -t path/LA_nominal.nwk
 ```
 Calculate all analyses and compare the results
 ```
-python path/SPdel.py path/LA_nominal.fasta -P -T -G -B path/LA_BinList.txt -t path/LA_nominal.nwk -C n,p,t,g,b
+SPdel.py path/LA_nominal.fasta -P -T -G -B path/LA_BinList.txt -t path/LA_nominal.nwk -C n,p,t,g,b
 ```
 
 Options:   
