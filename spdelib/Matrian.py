@@ -20,6 +20,7 @@ from Bio import SeqIO
 from math import log, sqrt
 from collections import defaultdict
 import logging
+pd.set_option('display.max_rows', None)
 
 
 class Matrian:
