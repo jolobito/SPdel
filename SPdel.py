@@ -1,164 +1,61 @@
 #! /usr/bin/env python
 
-# SPdel v 1.0
+# SPdel v 2.0
 import os
 import sys
-import random
-import colorsys
 import logging
-from sys import platform as sys_pf
+# from sys import platform as sys_pf
 
 try:
-    if sys_pf == 'darwin':
-        import matplotlib
+    # if sys_pf == 'darwin':
+    #     import matplotlib
 
-        matplotlib.use("Qt5Agg")
+    #     matplotlib.use("Qt5Agg")
 
-    from matplotlib import pyplot as plt
-    from Bio import SeqIO
-    from ete3 import TextFace, RectFace, Tree, TreeStyle, NodeStyle
-    from ete3.treeview.faces import add_face_to_node
-    from spdelib import PTP
-    from spdelib import bPTP
-    from spdelib import GMYC
+    # from matplotlib import pyplot as plt
+    from Bio import SeqIO, Phylo, Seq
     from spdelib import Diagnoser
     from spdelib import Matrian
     import toytree
     import toyplot
     import toyplot.svg
     import toyplot.pdf
+    import pandas as pd
 
 except ImportError:
     sys.stderr.write("Please install all dependences first.\n")
     sys.stderr.flush()
     sys.exit()
 
-
-
-def check_list(fasta, fileList):
-    """A function to check if the nominal list and fasta file have same number of individuals.
+def check_MOTUlist(fasta, MOTUList):
+    """A function to check if the MOTU list and fasta file have same individuals.
     Parameters
     ----------
     fasta: str
         The fasta file.
     fileList: str
-        The nominal list file.        
+        The MOTU list file.        
     Returns
     -------
     True if the files have same numeber of individuals.
     """
-    with open(fasta, newline='') as fasta, open(fileList, newline='') as filelist:
-        n_line = 0
-        n_seq = 0
-        for line in filelist:
-            n_line += 1
-        for line in fasta:
-            if line.startswith('>'):
-                n_seq += 1
-        if n_seq == n_line:
-            return True
-
-
-def rename_NomList(path, fasta, NomList, tree=None):
-    """A function to rename fasta and tree file using a nominal list. Tree file is optional
-    Parameters
-    ----------
-    path: str
-        The path to folder with the input file.
-    fasta: str
-        The name of fasta file.
-    NomList: str
-        The name of norminal list file.
-    tree: str
-        The name of tree file.        
-    """
-    if not os.path.exists(os.path.join(path, 'tmp_file/')):
-        os.makedirs(os.path.join(path, 'tmp_file/'))
-    newpath = os.path.join(path, 'tmp_file/')
-    with open(fasta, newline='') as fasta, open(NomList, newline='') as newnames, open(
-            os.path.join(newpath, 'fasta_renamed.fasta'), 'w+') as newfasta:
-        if tree != None:
-            with open(os.path.join(path, tree), newline='') as tree, open(os.path.join(newpath, 'tree_renamed.nwk'), 'w+') as newtree:
-                for line in tree:
-                    new_line_tree = line
-                for line in fasta:
-                    if line.startswith('>'):
-                        new_name = newnames.readline().strip().replace(' ', '_')
-                        newline = line.replace('>', '').split(' ')
-                        #                print new_name
-                        newfasta.write('>' + new_name + '_' + newline[0])
-                        new_line_tree = new_line_tree.replace(newline[0].strip(), (new_name + '_' + newline[0].strip()))
-                    else:
-                        #                print line
-                        newfasta.write(line)
-                newtree.write(new_line_tree)
-        else:
-            for line in fasta:
-                if line.startswith('>'):
-                    new_name = newnames.readline().strip().replace(' ', '_')
-                    newline = line.replace('>', '').split(' ')
-                    #                print new_name
-                    newfasta.write('>' + new_name + '_' + newline[0])
-                else:
-                    #                print line
-                    newfasta.write(line)
-
-
-def rename_MOTUList(path, fasta, List, NomList, outfile):
-    """A function to rename delimitation lists if provided and not calulated using a nominal list
-    Parameters
-    ----------
-    path: str
-        The path to folder with the input file.
-    fasta: str
-        The name of fasta file.
-    List: str
-        The name of MOTU list file.    
-    NomList: str
-        The name of norminal list file.   
-    outfile: str
-        The name of MOTU list file renamed.   
-    """
-    if not os.path.exists(os.path.join(path,'tmp_file/')):
-        os.makedirs(os.path.join(path,'tmp_file/'))
-    newpath = os.path.join(path, 'tmp_file/')
-    with open(fasta, newline='') as fasta, open(NomList, newline='') as newnames, open(List,newline='') as PL, open(
-            os.path.join(newpath, outfile), 'w+') as newPL:
-        for line in PL:
-            new_line_PL = line
-            #            logging.info(new_line_PL)
-            fasta.seek(0)
-            newnames.seek(0)
-            for line in fasta:
-                if line.startswith('>'):
-                    new_name = newnames.readline().strip().replace(' ', '_')
-                    newline = line.replace('>', '').split(' ')
-                    new_line_PL = new_line_PL.replace(newline[0].strip(), (new_name + '_' + newline[0].strip()))
-            #                logging.info(new_line_PL)
-            newPL.write(new_line_PL)
-
-
-def random_color(h=None, l=None, s=None):
-    """ returns the RGB code of a random color. Hue (h), Lightness (l)
-    and Saturation (s) of the generated color could be fixed using the
-    pertinent function argument.  """
-
-    def rgb2hex(rgb):
-        return '#%02x%02x%02x' % rgb
-
-    def hls2hex(h, l, s):
-        return rgb2hex(tuple(map(lambda x: int(x * 255), colorsys.hls_to_rgb(h, l, s))))
-
-    if not h:
-        h = random.random()
-    if not s:
-        s = 0.5
-    if not l:
-        l = 0.5
-    return hls2hex(h, l, s)
-
-
-class sorting_fasta:
+    # with open(fasta, newline='') as fasta:
+    fasta.seek(0)
+    handle = fasta
+    seqnames=[]
+    n_seq = 0
+    for seq in SeqIO.parse(handle, "fasta"):
+        n_seq += 1
+        seqnames.append(seq.name)                            
+    namesfile = MOTUList.index.tolist()
+    names= set.intersection(set(seqnames), set(namesfile))    
+    if len(names) != len(seqnames):        
+        logging.info('Error: Different number of individuals en MOTU list and fasta')
+        logging.info('Names found only in fasta:'+ ', '.join(set(seqnames)-set(namesfile))) #extra
+        logging.info('Names found only in MOTUList:'+ ', '.join(set(namesfile)-set(seqnames))) #extra
+        return False
+ 
+class sorting_data:
     """Initial check for fasta
     
     Parameters
@@ -172,29 +69,25 @@ class sorting_fasta:
     outname: str
         The name of fasta sorted by name.   
     """
-    def __init__(self, basepath, fasta, typeCODE='VER', outname='Nominal/sorted.fasta'):
+    def __init__(self, basepath, fasta, typeCODE=None, outname='Nominal/sorted.fasta',tree=None):
         self.basepath = basepath
         self.fasta = open(fasta, newline='')
         self.outname = outname
         self.typeCODE = typeCODE
+        self.tree = tree
 
     def check_fasta(self):
         """To check if sequences are aligned."""
-        logging.info('checking if sequences are aligned')
         self.fasta.seek(0)
         handle = self.fasta
         n = len(next(SeqIO.parse(handle, "fasta")))
         handle.seek(0)
-        #        print n
         for seq in SeqIO.parse(handle, "fasta"):
             if (len(seq)) == n:
-                #                print "OK"
                 continue
             else:
-                #                print 'error'
                 return False
-
-    #        print 'ok'
+        return True
 
     def describe_fasta(self):
         """To print the main characteristics of fasta file."""        
@@ -207,40 +100,35 @@ class sorting_fasta:
             n_seq += 1
         logging.info('Fasta file with ' + str(n_seq) + ' sequences and ' + str(n) + ' base pairs')
 
-    def stop_codon(
-            self):  # modified from https://stackoverflow.com/questions/34009041/python-code-to-find-coding-dna-with-start-and-stop-codons
+    def stop_codon(self): # improve to return the position in the ORF? add N to made multiple of three
         """To check if there are at least one ORF without stop codon"""    
-        logging.info('checking stop codons using ' + self.typeCODE + ' genetic code')
-        allcheck = True
+        logging.info('Checking stop codons using ' + str(self.typeCODE) + ' genetic code')
         if self.typeCODE == 'VER':
-            codon_list = ["AGA", "TAA", "TAG", "AGG"]  # The Vertebrate Mitochondrial Code (transl_table=2)
-            codon_list_RC = ["TCT", "TTA", "CTA", "CCT"]
+            table_code=2
         elif self.typeCODE == 'INV':
-            codon_list = ["TAA", "TAG"]  # The Invertebrate Mitochondrial Code (transl_table=5)
-            codon_list_RC = ["TTA", "CTA"]
+            table_code=5
+        else:
+            table_code = self.typeCODE
+        allcheck = True
         self.fasta.seek(0)
         handle = self.fasta
-        ORF = [0, 1, 2, -1, -2, -3]
+        ORF = [0, 1, 2]
         for seq in SeqIO.parse(handle, "fasta"):
+            seq.seq=Seq.Seq(str(seq.seq).replace('-',''))
+            seq_rc=seq.reverse_complement()
             codonPass = []
             for i in ORF:
-                found_codon_positions = []
-                if i >= 0:
-                    for j in range(0, len(seq), 3):
-                        if i + j + 3 <= len(seq):
-                            if seq.seq[i + j:i + j + 3] in codon_list:
-                                found_codon_positions.append(i + j + 1)
-                else:
-                    for j in range(-1, len(seq) * -1, -3):
-                        if abs(i + j - 1) <= len(seq):
-                            if seq.seq[i + j + 1:i + j - 2:-1] in codon_list_RC:
-                                found_codon_positions.append(i + j + 1)
-                if found_codon_positions != []:
-                    #                    logging.info('found stop codons at indices {}'.format(found_codon_positions)+' in ORF',i,'at '+seq.id)
+                trans=seq[i:].translate(table=table_code)
+                trans_rc=seq_rc[i:].translate(table=table_code)
+                if '*' in trans:
                     codonPass.append(1)
                 else:
                     codonPass.append(0)
-                #            logging.info(codonPass)
+                if '*' in trans_rc:
+                    codonPass.append(1)
+                else:
+                    codonPass.append(0)
+            # logging.info(codonPass)
             if 0 in codonPass:
                 pass
             else:
@@ -248,39 +136,18 @@ class sorting_fasta:
                 logging.info('WARNING: No ORF without stop codon were found in sequence ' + seq.id)
         if allcheck == True:
             logging.info('All sequences have at least one ORF without stop codons')
-
+            
     def sort_fasta(self):
         """Sort the fasta file by name in sequences."""    
-        logging.info('sorting fasta')
         self.fasta.seek(0)
-        handle = self.fasta
-        l = SeqIO.parse(handle, "fasta")
-        sortedList = [f for f in sorted(l, key=lambda x: x.id)]
         tmp = os.path.join(self.basepath,self.outname)
-        file_sorted = open(tmp, 'w+')
-        for s in sortedList:
-            #            print s.description
-            file_sorted.write('>' + s.description + '\n')
-            #            return s.description
-            #            print str(s.seq)
-            file_sorted.write(str(s.seq) + '\n')
-        logging.info('checking if sorting was ok')
-        handle.seek(0)
-        file_sorted.seek(0)
-        n_aln = 0
-        n_aln_sorted = 0
-        for seq in SeqIO.parse(handle, "fasta"):
-            n_aln += 1
-        #        print n_aln
-        for seq in SeqIO.parse(file_sorted, "fasta"):
-            n_aln_sorted += 1
-        #        print n_aln_sorted
-        if n_aln == n_aln_sorted:
-            logging.info('Fasta file sorted successfuly')
-            pass
-        else:
-            self.sort_fasta(self)
-        #        handle.close()
+        file_sorted = open(tmp, 'w+')        
+        handle = self.fasta
+        fasta_dict = SeqIO.to_dict(SeqIO.parse(handle, "fasta"))
+        records=[]
+        for k in sorted(fasta_dict):
+            records.append(fasta_dict[k])
+        SeqIO.write(records,file_sorted,'fasta')        
         file_sorted.close()
         return file_sorted
 
@@ -293,534 +160,110 @@ class sorting_fasta:
                 if len(pattern) < 3:
                     return False
 
-
-class check_tree:
-    """check if tree file is correct
-    Parameters
-    ----------
-    fasta: str
-        The sorted fasta file.
-    tree: str
-        The tree file.        
-    """
-    def __init__(self, fasta, tree):
-        self.fasta = open(fasta, newline='')
-        self.tree = Tree(tree)
-
-    def check(self):
-        """Check if the names in the tree are exactly the same than the fasta."""
-        self.fasta.seek(0)
-        t = self.tree
-        name_leaf = []
-        for leaf in t:
-            name_leaf.append(leaf.name)
-        #        print len(name_leaf)
-        name_fasta = []
-        for seq in SeqIO.parse(self.fasta, "fasta"):
-            name_fasta.append(seq.id)
-        #        print name_leaf
-        #        print name_fasta
-        #        print len(name_leaf)
-        #        print len(name_fasta)
-        if len(name_leaf) != len(name_fasta):
+    def check_tree(self, treetype='newick'):
+        """Check if the names in the tree are exactly the same than the fasta
+        Parameters
+        ----------
+        fasta: str
+            The sorted fasta file.
+        tree: str
+            The tree file.        
+        """
+        fasta = SeqIO.parse(self.fasta,'fasta')
+        tree = Phylo.read(self.tree,treetype)
+        seqnames=[]
+        treenames=[]
+        for seq in fasta:
+            seqnames.append(seq.name)
+        for leaf in tree.get_terminals():
+            treenames.append(leaf.name)
+        names= set.intersection(set(seqnames), set(treenames))    
+        if len(names) != len(seqnames):
             logging.info('Different number of individuals in tree and fasta')
-            logging.info('Names found in tree: ' + '%s' % ', '.join(map(str, list(set(name_leaf) - set(name_fasta)))))
-            logging.info('Names found in fasta: ' + '%s' % ', '.join(map(str, list(set(name_fasta) - set(name_leaf)))))
-            return False
-        comp = set(name_leaf) & set(name_fasta)
-        #        print len(comp)
-        if len(comp) != len(name_leaf):
-            logging.info('Names found in tree: ' + '%s' % ', '.join(map(str, list(set(name_leaf) - set(name_fasta)))))
-            logging.info('Names found in fasta: ' + '%s' % ', '.join(map(str, list(set(name_fasta) - set(name_leaf)))))
+            logging.info('Names found only in fasta:'+ ', '.join(set(seqnames)-set(treenames))) #extra
+            logging.info('Names found only in tree:'+ ', '.join(set(treenames)-set(seqnames))) #extra
             return False
 
-    def root_midle(self):
-        """Root the three to the middle."""    # function to be tested!! improve the results??   
-        t = self.tree
-        #        print t
-        R = t.get_midpoint_outgroup()
-        t.set_outgroup(R)
-        return t
-
-
-class MOTU_PTP:
-    """To run PTP delimitation method
+def MOTU_listPTP(path,infile,analisis):
+    """Read the input precalclate and construct a df with the MOTUs
     Parameters
     ----------
-    path: str
-        The path to folder with the input file.
-    fasta: str
-        The name of sorted fasta file.
-    outfile: str
+    infile: str
         species delimitation results file precalculated.
-    outptp: str
-        base name used to the analysis.        
-    tree: str
-        The name of tree file.        
-    """
-    def __init__(self, path, fasta, outfile=None, outptp='PTP', tree=None):
-        if not os.path.exists(os.path.join(path, 'PTP/')):
-            os.makedirs(os.path.join(path, 'PTP/'))
-        self.path = path
-        self.fasta_sorted = open(fasta, newline='')
-        self.outfile = outfile
-        self.outptp = outptp
-        self.tree = tree
-        self.fasta_PTP = self.MOTU_renameFasta()
-
-    def ptp(self):
-        """Run the PTP analysis"""         
-        PTP.main(['-t', self.tree, '-o', os.path.join(self.path, 'PTP', self.outptp), '-r'])
-
-    def MOTU_listPTP(self):
-        """Read the output and construct a list with the MOTUs
-        Returns
-        -------
-        A list with MOTUs
-        """          
-        if self.outfile == None:
-            self.ptp()
-            listPTP = open(os.path.join(self.path, 'PTP', self.outptp+'.PTPhSupportPartition.txt'))
-            self.outfile = 'PTP/PTP.PTPhSupportPartition.txt'
-        else:
-            listPTP = open(os.path.join(self.path, self.outfile))
-            listPTP.seek(0)
-        name = []
-        for line in listPTP:
-            line = line.strip()
-            if not line.strip(): continue
-            if line.startswith("#"):
-                pass
-            elif line.startswith("Species"):
-                pass
-            else:
-                name.append(line)
-        return name
-
-    def print_MOTU_PTP(self):
-        """Print the PTP results and write it to file"""          
-        listPTP = open(os.path.join(self.path, self.outfile))
-        listPTP.seek(0)
-        listPTP_txt = open(os.path.join(self.path, 'PTP', self.outptp + '.MOTU_list.txt'), 'w+')
-        for line in listPTP:
-            line = line.strip()
-            if not line.strip(): continue
-            if line.startswith("#"):
-                pass
-            elif line.startswith("Species"):
-                logging.info('')
-                line = line.replace("Species", "MOTU")
-                logging.info(line)
-                listPTP_txt.write(line + '\n')
-            else:
-                line = line.replace(",", ", ")
-                logging.info(line)
-                listPTP_txt.write(line + '\n')
-
-    def MOTU_renameFasta(self):
-        """Rename the fasta name sequences using MOTUs"""            #rewrite using biopython
-        self.fasta_sorted.seek(0)
-        newfasta = open(os.path.join(self.path, 'PTP', 'PTP_MOTU.fasta'), 'w+')
-        a = 0
-        for i in self.MOTU_listPTP():
-            sps = i
-            sp = sps.split(',')
-            sp.sort()
-            #            print(sp)
-            for j in sp:
-                #                print j
-                for line in self.fasta_sorted:
-                    #                    if line.startswith('>') and str(j)+'\n' in line:
-                    if '>' + str(j) in line:
-                        new_name = '>MOTU_' + str(a + 1) + '_' + str(j) + '\n'
-                        newfasta.write(new_name)
-                        while True:
-                            seq = next(self.fasta_sorted, '')
-                            if seq == '':
-                                break
-                            elif seq[0] != '>':
-                                newfasta.write(seq)
-                            else:
-                                break
-                    else:
-                        pass
-                self.fasta_sorted.seek(0)
-            a += 1
-        # checking fasta size number of sequences
-        self.fasta_sorted.seek(0)
-        newfasta.seek(0)
-        n_aln = 0
-        n_aln_sorted = 0
-        for seq in SeqIO.parse(self.fasta_sorted, "fasta"):
-            n_aln += 1
-        #        print(n_aln)
-        for seq in SeqIO.parse(newfasta, "fasta"):
-            n_aln_sorted += 1
-        #        print(n_aln_sorted)
-        if n_aln == n_aln_sorted:
-            #            print('Fasta file sorted successfuly')
+    Returns
+    -------
+    A df with MOTUs
+    """          
+    listPTP = open(os.path.join(path, infile))
+    listPTP.seek(0)
+    name = []
+    ind = []
+    n=0
+    for line in listPTP:
+        line = line.strip()
+        if not line.strip(): continue
+        if line.startswith("#"):
             pass
+        elif line.startswith("Species"):
+            n+=1
         else:
-            logging.info('error renaming fasta')
-        # cheking fasta for bp size
-        newfasta_check = sorting_fasta(os.path.join(self.path, 'PTP/'), os.path.join(self.path, 'PTP/PTP_MOTU.fasta'))  # Checking fasta PROVISIONALLY!!!
-        if newfasta_check.check_fasta() is False:
-            sys.exit("Error: different length sequences, please check your alignment")
-        #
-        newfasta.seek(0)
-        return newfasta
+            for i in line.split(','):
+                name.append('MOTU_'+str(n))
+                ind.append(i)
+    datas = {analisis: name}
+    PTP_df = pd.DataFrame(datas, index=ind)  
+    return PTP_df
 
 
-class MOTU_bPTP:
-    """To run bPTP delimitation method
+def ptp(path,tree):
+    """Run the PTP analysis"""
+    from spdelib import PTP     
+    PTP.main(['-t', tree, '-o', os.path.join(path, 'PTP', 'PTP'), '-r'])
+    
+def bptp(path,tree,niter,sample,burnin):
+    """Run the bPTP analysis"""
+    from spdelib import bPTP          
+    bPTP.main(['-t', tree, '-o', os.path.join(path, 'bPTP', 'bPTP'), '-s', '1234', '-r', '-i', niter, '-n',
+                sample, '-b', burnin])
+
+def gmyc_run(path,tree):
+    """Run the GMYC analysis""" 
+    from spdelib import GMYC
+    GMYC.main(['-t', tree, '-ps','path',path])
+
+def MOTU_listGMYC(path,infile,analisis):
+    """Read the input precalclate and construct a df with the MOTUs
     Parameters
     ----------
-    path: str
-        The path to folder with the input file.
-    fasta: str
-        The name of sorted fasta file.
-    outfile: str
+    infile: str
         species delimitation results file precalculated.
-    outptp: str
-        base name used to the analysis.        
-    tree: str
-        The name of tree file.
-    niter: int
-        number of iterations for MCMC
-    sample: int
-        sampling for MCMC. 
-    burnin: float
-        burnin for MCMC.         
-    """
-    def __init__(self, path, fasta, outfile=None, outbptp='bPTP', tree=None, niter='10000', sample='100', burnin='0.1'):
-        if not os.path.exists(os.path.join(path, 'bPTP/')):
-            os.makedirs(os.path.join(path, 'bPTP/'))
-        self.path = path
-        self.fasta_sorted = open(fasta, newline='')
-        self.outptp = outbptp
-        self.outfile = outfile
-        self.tree = tree
-        self.niter = niter
-        self.sample = sample
-        self.burnin = burnin
-        self.fasta_bPTP = self.MOTU_renameFasta2()
-
-    def bptp(self):
-        """Run the bPTP analysis"""           
-        bPTP.main(['-t', self.tree, '-o', os.path.join(self.path, 'bPTP/', self.outptp), '-s', '1234', '-r', '-i', self.niter, '-n',
-                   self.sample, '-b', self.burnin])
-
-    def MOTU_listbPTP(self):
-        """Read the output and construct a list with the MOTUs
-        Returns
-        -------
-        A list with MOTUs
-        """
-        if self.outfile == None:
-            self.bptp()
-            listPTP = open(os.path.join(self.path, 'bPTP',  self.outptp + '.PTPhSupportPartition.txt'))
-            self.outfile = 'bPTP/bPTP.PTPhSupportPartition.txt'
+    Returns
+    -------
+    A df with MOTUs
+    """          
+    listGMYC = open(os.path.join(path, infile))
+    listGMYC.seek(0)
+    name = []
+    ind = []
+    n=0
+    for line in listGMYC:
+        line = line.strip()
+        line = line.replace(" ", "")
+        line = line[:-1]
+        if not line.strip(): continue
+        elif line.startswith("Species"):
+            n+=1
         else:
-            listPTP = open(os.path.join(self.path, self.outfile))
-            listPTP.seek(0)
-        name = []
-        for line in listPTP:
-            line = line.strip()
-            if not line.strip(): continue
-            if line.startswith("#"):
-                pass
-            elif line.startswith("Species"):
-                pass
-            else:
-                name.append(line)
-        return name
-
-    def print_MOTU_bPTP(self):
-        """Print the bPTP results and write it to file""" 
-        listPTP = open(os.path.join(self.path, self.outfile))
-        listPTP.seek(0)
-        listPTP_txt = open(os.path.join(self.path, 'bPTP', self.outptp + '.MOTU_list.txt'), 'w+')
-        for line in listPTP:
-            line = line.strip()
-            if not line.strip(): continue
-            if line.startswith("#"):
-                pass
-            elif line.startswith("Species"):
-                logging.info('')
-                line = line.replace("Species", "MOTU")
-                logging.info(line)
-                listPTP_txt.write(line + '\n')
-            else:
-                line = line.replace(",", ", ")
-                logging.info(line)
-                listPTP_txt.write(line + '\n')
-
-    def MOTU_renameFasta2(self):
-        """Rename the fasta name sequences using MOTUs"""  #rewrite using biopython
-        self.fasta_sorted.seek(0)
-        newfasta = open(os.path.join(self.path, 'bPTP', 'bPTP_MOTU.fasta'), 'w+')
-        a = 0
-        for i in self.MOTU_listbPTP():
-            sps = i
-            sp = sps.split(',')
-            sp.sort()
-            #        print sp
-            for j in sp:
-                for line in self.fasta_sorted:
-                    if '>' + str(j) in line:
-                        new_name = '>MOTU_' + str(a + 1) + '_' + str(j) + '\n'
-                        #                    print new_name
-                        newfasta.write(new_name)
-                        while True:
-                            seq = next(self.fasta_sorted, '')
-                            if seq == '':
-                                break
-                            elif seq[0] != '>':
-                                newfasta.write(seq)
-                            else:
-                                break
-                    else:
-                        pass
-                self.fasta_sorted.seek(0)
-            a += 1
-        #        self.fasta_sorted.close()
-        #        newfasta.close()
-        # checking fasta size
-        self.fasta_sorted.seek(0)
-        newfasta.seek(0)
-        n_aln = 0
-        n_aln_sorted = 0
-        for seq in SeqIO.parse(self.fasta_sorted, "fasta"):
-            n_aln += 1
-        #        print n_aln
-        for seq in SeqIO.parse(newfasta, "fasta"):
-            n_aln_sorted += 1
-        #        print n_aln_sorted
-        if n_aln == n_aln_sorted:
-            #            print 'Fasta file sorted successfuly'
-            pass
-        else:
-            logging.info('error renaming fasta')
-        #            self.MOTU_renameFasta2()
-        #
-        newfasta.seek(0)
-        return newfasta
+            for i in line.split(','):
+                name.append('MOTU_'+str(n))
+                ind.append(i)
+    datas = {analisis: name}
+    GMYC_df = pd.DataFrame(datas, index=ind)  
+    return GMYC_df
 
 
-class MOTU_GMYC:
-    """To run GMYC delimitation method
-    Parameters
-    ----------
-    path: str
-        The path to folder with the input file.
-    fasta: str
-        The name of sorted fasta file.
-    outfile: str
-        species delimitation results file precalculated.
-    outptp: str
-        base name used to the analysis.        
-    tree: str
-        The name of tree file.        
-    """
-    def __init__(self, path, fasta, outfile=None, tree=None):
-        if not os.path.exists(os.path.join(path, 'GMYC/')):
-            os.makedirs(os.path.join(path, 'GMYC/'))
-        self.path = path
-        self.fasta_sorted = open(fasta, newline='')
-        self.outfile = outfile
-        self.tree = tree
-        self.fasta_gmyc = self.MOTU_renameFasta_gmyc()
-
-    def gmyc_run(self):
-        """Run the GMYC analysis"""   
-        GMYC.main(['-t', self.tree, '-ps','path',self.path])
-
-    def MOTU_listGMYC(self):
-        """Read the output and construct a list with the MOTUs
-        Returns
-        -------
-        A list with MOTUs
-        """
-        if self.outfile == None:
-            self.gmyc_run()
-            listGMYC = open(os.path.join(self.path, 'GMYC/GMYC_MOTU.txt'))
-            self.outfile = 'GMYC/GMYC_MOTU.txt'
-        else:
-            listGMYC = open(os.path.join(self.path, self.outfile))
-            listGMYC.seek(0)
-        name = []
-        for line in listGMYC:
-            line = line.strip()
-            line = line.replace(" ", "")
-            line = line[:-1]
-            if not line.strip(): continue
-            if line.startswith("Species"):
-                pass
-            else:
-                name.append(line)
-        #        print name
-        return name
-
-    def print_MOTU_GMYC(self):
-        """Print the GMYC results and write it to file"""  
-        listGMYC = open(os.path.join(self.path, self.outfile))
-        listGMYC.seek(0)
-        listGMYC_txt = open(os.path.join(self.path, 'GMYC', 'MOTU_list.txt'), 'w+')
-        for line in listGMYC:
-            line = line.strip()
-            if not line.strip(): continue
-            if line.startswith("Species"):
-                logging.info('')
-                line = line.replace("Species", "MOTU")
-                logging.info(line)
-                listGMYC_txt.write(line + '\n')
-            else:
-                line = line[:-1]
-                logging.info(line)
-                listGMYC_txt.write(line + '\n')
-
-    def MOTU_renameFasta_gmyc(self): #rewrite using biopython
-        """Rename the fasta name sequences using MOTUs"""  
-        self.fasta_sorted.seek(0)
-        newfasta = open(os.path.join(self.path, 'GMYC', 'GMYC_MOTU.fasta'), 'w+')
-        a = 0
-        for i in self.MOTU_listGMYC():
-            sps = i
-            sp = sps.split(',')
-            sp.sort()
-            #            print sp
-            for j in sp:
-                for line in self.fasta_sorted:
-                    if '>' + str(j) in line:
-                        new_name = '>MOTU_' + str(a + 1) + '_' + str(j) + '\n'
-                        #                    print new_name
-                        newfasta.write(new_name)
-                        while True:
-                            seq = next(self.fasta_sorted, '')
-                            if seq == '':
-                                break
-                            elif seq[0] != '>':
-                                newfasta.write(seq)
-                            else:
-                                break
-                    else:
-                        pass
-                self.fasta_sorted.seek(0)
-            a += 1
-        #        self.fasta_sorted.close()
-        #        newfasta.close()
-        # checking fasta size
-        self.fasta_sorted.seek(0)
-        newfasta.seek(0)
-        n_aln = 0
-        n_aln_sorted = 0
-        for seq in SeqIO.parse(self.fasta_sorted, "fasta"):
-            n_aln += 1
-        #        print n_aln
-        for seq in SeqIO.parse(newfasta, "fasta"):
-            n_aln_sorted += 1
-        #        print n_aln_sorted
-        if n_aln == n_aln_sorted:
-            #            print 'Fasta file sorted successfuly'
-            pass
-        else:
-            logging.info('error renaming fasta')
-        #            self.MOTU_renameFasta_gmyc(self)
-        #
-        newfasta.seek(0)
-        return newfasta
-
-
-class MOTU_BIN:
-    """To parse BIN delimitation method results
-    Parameters
-    ----------
-    path: str
-        The path to folder with the input file.
-    fasta: str
-        The name of sorted fasta file.
-    BinList: str
-        species delimitation results file precalculated.        
-    """
-    def __init__(self, path, fasta, BinList=None, ):
-        if not os.path.exists(os.path.join(path, 'BIN/')):
-            os.makedirs(os.path.join(path, 'BIN/'))
-        self.path = os.path.join(path, 'BIN/')
-        self.fasta = open(fasta, newline='')
-        self.BinList = BinList
-        self.fasta_bin = self.MOTU_renameFasta_bin()
-
-    def print_MOTU_bin(self):
-        """Print the BIN results and write it to file"""
-        with open(os.path.join(self.path, 'BIN_MOTU_sorted.fasta')) as listbin, open(os.path.join(self.path, 'MOTU_list.txt'),
-                                                                        'w+') as listBIN_txt:
-            #        listbin=open(self.path+'BIN_MOTU_sorted.fasta')
-            #        listBIN_txt=open(self.path+'MOTU_list.txt', 'w+')
-            listbin.seek(0)
-            name_list = []
-            motu_list = []
-            #            a=0
-            #            for line in listbin:
-            #                a+=1
-            #            print a
-            listbin.seek(0)
-            for line in listbin:
-                if line.startswith('>'):
-                    line.strip()
-                    bins = line.split('_')
-                    #                    print bins ###########
-                    #                    print bins[1] ###########
-                    motu_name = bins[1]
-                    if motu_name not in motu_list:
-                        motu_list.append(motu_name)
-            listbin.seek(0)
-            for line in listbin:
-                if line.startswith('>'):
-                    line.strip()
-                    #                    print line
-                    line = line[:-1]
-                    x = line.split('_')  ###gran descubrimiento!
-                    #                    print x
-                    name_list.append(x)
-            for i in motu_list:
-                member = []
-                logging.info('MOTU ' + i)
-                listBIN_txt.write('MOTU ' + i + '\n')
-                for j in name_list:
-                    #                    print j
-                    if i == j[1]:
-                        a = 2
-                        y = len(j)
-                        ind = ''
-                        while a < y:
-                            ind = ind + j[a] + '_'
-                            a += 1
-                        member.append(ind[:-1])
-                logging.info('%s' % ', '.join(map(str, member)))
-                listBIN_txt.write('%s' % ', '.join(map(str, member)) + '\n')
-                logging.info('')
-
-    def MOTU_renameFasta_bin(self):
-        """Rename the fasta name sequences using MOTUs"""  #rewrite using biopython
-        self.fasta.seek(0)
-        with open(self.BinList) as newnames, open(os.path.join(self.path, 'BIN_MOTU.fasta'), 'w+') as newfasta:
-            for line in self.fasta:
-                if line.startswith('>'):
-                    bin_name = newnames.readline().strip()
-                    new_name = '>MOTU_' + bin_name + '_' + line[1:]  # +'\n'
-                    #                print new_name
-                    newfasta.write(new_name)
-                else:
-                    newfasta.write(line)
-        newfasta2 = sorting_fasta(self.path, os.path.join(self.path,'BIN_MOTU.fasta'), outname='BIN_MOTU_sorted.fasta')  # Checking fasta
-        if newfasta2.check_fasta() is False:
-            sys.exit("Error: different length sequences, please check your alignment")
-        newfasta2.sort_fasta()  # sorting fasta
-        return newfasta2
-
-
-class MOTU_X:
-    """To parse any delimitation method results
+def MOTU_X(path, fasta, folder, MOTUDict, k):
+    """Rename the fasta name sequences using MOTUs Dictionary
     Parameters
     ----------
     path: str
@@ -829,127 +272,82 @@ class MOTU_X:
         The name of sorted fasta file.
     folder: str
         The folder name for outputs
-    BinList: str
-        species delimitation results file precalculated.        
+    MOTUDict: dict
+        Dictionary with species delimitation results file precalculated.        
     """    
-    def __init__(self, path, fasta, folder, BinList=None):
-        if not os.path.exists(os.path.join(path, folder)):
-            os.makedirs(os.path.join(path, folder))
-        self.path = os.path.join(path, folder)
-        self.fasta = open(fasta, newline='')
-        self.BinList = BinList
-        self.fasta_X = self.MOTU_renameFasta_X()
+    if not os.path.exists(os.path.join(path, folder)):
+        os.makedirs(os.path.join(path, folder))
+    path = os.path.join(path, folder)
+    # fasta = open(fasta, newline='')
+    fasta.seek(0)
+    fasta_dict = SeqIO.to_dict(SeqIO.parse(fasta,'fasta'))
+    records=[]
+    for k,record in fasta_dict.items():
+        newname=MOTUDict[k]
+        record.id=newname+'_'+k
+        record.description=''
+        records.append(record)
+    SeqIO.write(records,os.path.join(path, 'MOTU.fasta'),'fasta')
 
-    def print_MOTU_X(self):
-        """Print the delimitation results and write it to file"""  
-        with open(os.path.join(self.path, 'X_MOTU_sorted.fasta')) as listbin, open(
-                os.path.join(self.path, 'MOTU_list.txt'), 'w+') as listBIN_txt:
+    newfasta2 = sorting_data(path, os.path.join(path,'MOTU.fasta'), outname='MOTU_sorted.fasta')  # Checking fasta
+    if newfasta2.check_fasta() is False:
+        sys.exit("Error: different length sequences, please check your alignment")
+    newfasta2.sort_fasta()  # sorting fasta
+    
+def print_MOTU_X(path,MOTUs_df,k):
+    """Print the delimitation results and write it to csv file"""
+    MOTUprint = MOTUs_df.groupby(k).groups
+    for k,v in MOTUprint.items():
+        logging.info('#####'+k+'#####')
+        logging.info('%s' % ', '.join(map(str, v)))   
+        logging.info('')
+    MOTUs_df.to_csv(os.path.join(path, 'MOTU_list.csv')) 
+        
+def extract_MOTU_nominal(basepath, fasta, gen=1, sp=2):
+    if not os.path.exists(os.path.join(basepath,'Nominal/')):
+        os.makedirs(os.path.join(basepath, 'Nominal/'))  
+    with open(fasta, newline='') as handle:
+        fasta_seqIO = SeqIO.parse(handle, 'fasta')
+        names=[records.id for records in fasta_seqIO]
+        spnames=['_'.join(i.split('_')[:2]) for i in names]
+        datas = {"Nominal": spnames}
+        MOTUs = pd.DataFrame(datas, index=names)                   
+        return MOTUs
 
-            listbin.seek(0)
-            name_list = []
-            motu_list = []
+def dict_to_matrian(basepath,AllMOTUs,fasta,gen,sp,dis,cmd=False,diagnostic=False,n_ind=3):
+    MOTUs_dict=AllMOTUs.to_dict()
+    disdic={}
+    for k,v in MOTUs_dict.items():
+        out_folder = os.path.join(basepath, k)
+        logging.info('\n#####################\n' + k + ' MOTUs\n#####################\n')
+        # sys.argv = [sys.argv[0]]
+        MOTU_X(basepath, fasta, out_folder, v, k)
+        print_MOTU_X(basepath,AllMOTUs[[k]],k)
+        logging.info('')
+        distances = Matrian.main(os.path.join(basepath, out_folder), os.path.join(basepath,out_folder,'MOTU_sorted.fasta'), gen, sp, dis)
+        disdic[k]=distances
+        # if diagnostic == True:
+        #     Diagnoser.main(os.path.join(basepath, out_folder), 'MOTU_sorted.fasta', n_ind)
+        if cmd==True:
+            distances.print_sum()
+            distances.plot_max_min()
+            distances.plot_freq() 
+            if diagnostic==True:
+                logging.info(("\n" + "### Summary of diagnostic character result ###\n"))
+                diagnostics_cmd(basepath,k,n_ind)
+    if len(MOTUs_dict)>1:
+        return disdic
+    else:
+        return distances
+    
+def diagnostics(basepath,k,n_ind=3):
+    out_folder= os.path.join(basepath, k)
+    datas=Diagnoser.main(os.path.join(basepath, out_folder), 'MOTU_sorted.fasta', n_ind)
+    return datas
 
-            listbin.seek(0)
-            for line in listbin:
-                if line.startswith('>'):
-                    line.strip()
-                    bins = line.split('_')
-                    motu_name = bins[1]
-                    if motu_name not in motu_list:
-                        motu_list.append(motu_name)
-            listbin.seek(0)
-            for line in listbin:
-                if line.startswith('>'):
-                    line.strip()
-                    #                    print line
-                    line = line[:-1]
-                    x = line.split('_')
-                    #                    print x
-                    name_list.append(x)
-            for i in motu_list:
-                member = []
-                logging.info('MOTU ' + i)
-                listBIN_txt.write('MOTU ' + i + '\n')
-                for j in name_list:
-                    #                    print j
-                    if i == j[1]:
-                        a = 2
-                        y = len(j)
-                        ind = ''
-                        while a < y:
-                            ind = ind + j[a] + '_'
-                            a += 1
-                        member.append(ind[:-1])
-                logging.info('%s' % ', '.join(map(str, member)))
-                listBIN_txt.write('%s' % ', '.join(map(str, member)) + '\n')
-                logging.info('')
-
-    def MOTU_renameFasta_X(self):
-        """Rename the fasta name sequences using MOTUs"""
-        self.fasta.seek(0)
-        with open(self.BinList) as newnames, open(os.path.join(self.path, 'X_MOTU.fasta'), 'w+') as newfasta:
-            for line in self.fasta:
-                if line.startswith('>'):
-                    bin_name = newnames.readline().strip()
-                    new_name = '>MOTU_' + bin_name + '_' + line[1:]  # +'\n'
-                    #                print new_name
-                    newfasta.write(new_name)
-                else:
-                    newfasta.write(line)
-        newfasta2 = sorting_fasta(self.path, os.path.join(self.path,'X_MOTU.fasta'), outname='X_MOTU_sorted.fasta')  # Checking fasta
-        if newfasta2.check_fasta() is False:
-            sys.exit("Error: different length sequences, please check your alignment")
-        newfasta2.sort_fasta()  # sorting fasta
-        return newfasta2
-
-
-class MOTU_nominal:
-    """To parse norminal delimitation using fasta names
-    Parameters
-    ----------
-    basepath: str
-        The path to folder with the input file.
-    fasta: str
-        The sorted fasta file.
-    nominalList: str
-        nominal list provided by user.
-    gen: int
-        genus position on sequence names splited by "_".        
-    sp: int
-        genus position on sequence names splited by "_".        
-    """
-    def __init__(self, basepath, fasta, gen=1, sp=2): #nominalList=None, gen=1, sp=2):
-        self.path = basepath
-        self.fasta = open(fasta, newline='')
-        # if nominalList is None:
-        self.Lname = self.print_MOTU_nonminal(gen, sp)
-        # else:
-        #     self.nominalList = path + nominalList  # PARA OPCION DE LISTA CON NOMINALES!!!
-
-    def print_MOTU_nonminal(self, a, b):
-        """Print the nominal delimitaion and write it to file"""  
-        with open(os.path.join(self.path, 'tmp_file/nominal_list.txt'), newline='') as listnominal_txt, open(
-                os.path.join(self.path, 'Nominal/nominal_list_sp.txt'), 'w+') as allList:
-            self.fasta.seek(0)
-            name = []
-            n = 0
-            for line in self.fasta:
-                line = line.strip()
-                if line.startswith(">"):
-                    name.append(line[1:])
-            for i in listnominal_txt:
-                i = i.strip()
-                n += 1
-                #                logging.info('Species '+str(n)+' '+i)
-                allList.write('MOTU ' + str(n) + ' ' + i + '\n')
-                member = []
-                i = i + '_'
-                for j in name:
-                    if i in j:
-                        member.append(j)
-                #                print ('%s' % ', '.join(map(str, member))+'\n')
-                allList.write('%s' % ', '.join(map(str, member)) + '\n')
-
+def diagnostics_cmd(basepath,k,n_ind=3):
+    datas=diagnostics(basepath,k,n_ind)
+    logging.info(datas.summary)
 
 class Compare:
     """Compare the delimitation resuls and produce Consensus MOTUs
@@ -966,268 +364,159 @@ class Compare:
         if not os.path.exists(os.path.join(path, 'Compare/')):
             os.makedirs(os.path.join(path, 'Compare/'))
         self.path = path
-        self.CompList = CompList.split(',')
+        self.CompList = CompList
+        self.CompList = self.complist_read()
         self.compared = self.compare()
-        self.summary = self.summary_motu()
-        self.fasta = open(fasta, newline='')
-
-    #        self.fasta_comp=self.MOTU_renameFasta_Compare()
-    #        self.comp_warn=self.Compare_warning()
+        self.fasta=fasta
+        # self.fasta = open(fasta, newline='')
+        
+    def complist_read(self):
+        if self.CompList == 'All':
+            comp=[]
+            directories=os.listdir(self.path)
+            for i in directories:
+                if os.path.exists(os.path.join(self.path, i, 'MOTU_list.csv')):
+                    if i != 'Compare':
+                        comp.append(i)
+            if 'Nominal' in comp:
+                comp.remove('Nominal')
+                comp=['Nominal']+comp
+            CompList = comp                    
+        else:
+            CompList = self.CompList.split(',')
+        return CompList
+            
 
     def compare(self):
         """Parse the different results and generate a file with Consensus Motus""" 
-        with open(os.path.join(self.path, 'tmp_file/ALL_MOTUs.txt'), 'w+') as compare_file:
-            lists = []
-            motus_name = []
-
-            if 'n' in self.CompList and os.path.exists(os.path.join(self.path, 'Nominal/nominal_list_sp.txt')):
-                listNOM = open(os.path.join(self.path, 'Nominal/nominal_list_sp.txt'))
-                for line in listNOM:
-                    if line.startswith('MOTU'):
-                        newline = line.strip().split()[:2]
-                        newline.append('(NOM)')
-                        motus_name.append(newline)
-                    else:
-                        line = line.replace(", ", ";")
-                        lists.append(line.strip().split(';'))
-            if 'p' in self.CompList and os.path.exists(os.path.join(self.path, 'PTP', 'PTP.MOTU_list.txt')):
-                listPTP = open(os.path.join(self.path, 'PTP', 'PTP.MOTU_list.txt'))
-                for line in listPTP:
-                    if line.startswith('MOTU'):
-                        newline = line.strip().split()[:2]
-                        newline.append('(PTP)')
-                        motus_name.append(newline)
-                    else:
-                        line = line.replace(", ", ";")
-                        lists.append(line.strip().split(';'))
-            if 't' in self.CompList and os.path.exists(os.path.join(self.path, 'bPTP', 'bPTP.MOTU_list.txt')):
-                listbPTP = open(os.path.join(self.path, 'bPTP', 'bPTP.MOTU_list.txt'))
-                for line in listbPTP:
-                    if line.startswith('MOTU'):
-                        newline = line.strip().split()[:2]
-                        newline.append('(bPTP)')
-                        motus_name.append(newline)
-                    else:
-                        line = line.replace(", ", ";")
-                        lists.append(line.strip().split(";"))
-            if 'g' in self.CompList and os.path.exists(os.path.join(self.path, 'GMYC', 'MOTU_list.txt')):
-                listGMYC = open(os.path.join(self.path, 'GMYC', 'MOTU_list.txt'))
-                for line in listGMYC:
-                    if line.startswith('MOTU'):
-                        newline = line.strip().split()[:2]
-                        newline.append('(GMYC)')
-                        motus_name.append(newline)
-                    else:
-                        line = line.replace(", ", ";")
-                        lists.append(line.strip().split(";"))
-            if 'b' in self.CompList and os.path.exists(os.path.join(self.path, 'BIN', 'MOTU_list.txt')):
-                listBIN = open(os.path.join(self.path, 'BIN','MOTU_list.txt'))
-                for line in listBIN:
-                    if line.startswith('MOTU'):
-                        newline = line.strip().split()[:2]
-                        newline.append('(BIN)')
-                        motus_name.append(newline)
-                    else:
-                        line = line.replace(", ", ";")
-                        lists.append(line.strip().split(";"))
-            if 's' in self.CompList and os.path.exists(os.path.join(self.path, 'OT', 'OT_MOTU_list.txt')):
-                listGMYC = open(os.path.join(self.path, 'OT', 'OT_MOTU_list.txt'))
-                for line in listGMYC:
-                    if line.startswith('MOTU'):
-                        newline = line.strip().split()[:2]
-                        newline.append('(OT)')
-                        motus_name.append(newline)
-                    else:
-                        line = line.replace(", ", ";")
-                        lists.append(line.strip().split(";"))
-
-            #            if self.XList!=None:
-            #                XList=self.XList.split(',')
+        with open(os.path.join(self.path, 'Compare','ALL_MOTUs.txt'), 'w+') as compare_file:
+            AllMOTUs_df = pd.DataFrame() #dataframes with all motus
+            AllMOTUs_dict={} #ditionary with all motus
+            lists = [] #individuals by motu
+            motus_name = [] #names of motus           
+            n_analysis = 0
             for i in self.CompList:
-                if i != 'n' and 't' and 'p' and 'g' and 's' and 'b':
-                    i_folder = i.split('.')[0]
-                    if os.path.exists(os.path.join(self.path, i_folder, 'MOTU_list.txt')):
-                        listX = open(os.path.join(self.path, i_folder, 'MOTU_list.txt'))
-                        for line in listX:
-                            if line.startswith('MOTU'):
-                                newline = line.strip().split()[:2]
-                                newline.append('(' + i_folder + ')')
-                                motus_name.append(newline)
-                            else:
-                                line = line.replace(", ", ";")
-                                lists.append(line.strip().split(";"))
-
-            concordants = []
-            used = []
-            pos_names = []
-            for i in range(len(lists)):
-                elem_sort = lists[i]
-                elem_sort.sort()
-                if elem_sort in used:
-                    continue
-                pos_names_for = []
-                used.append(elem_sort)
-                pos_names_for.append(i)
-                concordant = []
-                concordant.append(lists[i])
-                for j in range(len(lists)):
-                    if i == j or i > j:
-                        continue
-                    h = lists[i]
-                    k = lists[j]
-                    if len(set(h)) == len(set(k)) and len((set(h).intersection(set(k)))) == len(set(h)):
-                        concordant.append(k)
-                        pos_names_for.append(j)
-                concordants.append(concordant)
-                pos_names.append(pos_names_for)
-            #        a=1
-            for i in range(len(concordants)):
-                #            print ('')
-                #            print 'Concordant MOTU',a
-                #            a+=1
-                motus_con = []
-                for j in pos_names[i]:
-                    con = '%s' % ' '.join(map(str, motus_name[j]))
-                    motus_con.append(con)
-                #            print ('%s' % ' & '.join(map(str, motus_con)))
-                compare_file.write(('%s' % ' & '.join(map(str, motus_con))) + '\n')
-                #            print ('%s' % ', '.join(map(str, concordants[i][0])))
-                compare_file.write(('%s' % ', '.join(map(str, concordants[i][0]))) + '\n')
-
-    def summary_motu(self):
-        """Print the Consensus results and write it to file""" 
-        n_analysis = 0
-        if 'p' in self.CompList and os.path.exists(os.path.join(self.path, 'PTP' , 'PTP.MOTU_list.txt')):
-            n_analysis += 1
-        if 't' in self.CompList and os.path.exists(os.path.join(self.path, 'bPTP' , 'bPTP.MOTU_list.txt')):
-            n_analysis += 1
-        if 'g' in self.CompList and os.path.exists(os.path.join(self.path, 'GMYC' , 'MOTU_list.txt')):
-            n_analysis += 1
-        if 'b' in self.CompList and os.path.exists(os.path.join(self.path,  'BIN' , 'MOTU_list.txt')):
-            n_analysis += 1
-        if 's' in self.CompList and os.path.exists(os.path.join(self.path, 'OT' , 'OT_MOTU_list.txt')):
-            n_analysis += 1
-        for i in self.CompList:
-            if i != 'n' and 't' and 'p' and 'g' and 's' and 'b':
-                #            for i in XList:
-                i_folder = i.split('.')[0]
-                if os.path.exists(os.path.join(self.path, i_folder, 'MOTU_list.txt')):
+                i_folder = i
+                if os.path.exists(os.path.join(self.path, i_folder, 'MOTU_list.csv')):
                     n_analysis += 1
+                    MOTUs_df = pd.read_csv(os.path.join(self.path, i_folder, 'MOTU_list.csv'), encoding="ISO-8859-1",index_col=0)
+                    AllMOTUs_df[i] = MOTUs_df
+                    MOTUs = MOTUs_df.groupby(i).groups
+                    # print(MOTUs_df)
+                    for k,v in MOTUs.items():
+                        motus_name.append(k+'_('+i+')')   
+                        lists.append(list(v))
+                        AllMOTUs_dict[k+'_('+i+')']=list(v)
+            used=[]
+            sameind={}
+            for k,v in AllMOTUs_dict.items():
+                if k not in used:
+                    concordants=[]
+                    for l,w in AllMOTUs_dict.items():
+                        if len(set(v)) == len(set(w)) and len(set(v)) == len(set.intersection(set(v), set(w))):
+                            concordants.append(l)
+                            used.append(l)
+                    key='&'.join(concordants)
+                    sameind[key]=v
+            for k,v in sameind.items():                    
+                compare_file.write(('%s' % ' & '.join(map(str, k.split('&')))) + '\n')
+                compare_file.write(('%s' % ', '.join(map(str, v))) + '\n')
 
-        #    print n_analysis
-        if os.path.exists(os.path.join(self.path, 'tmp_file/ALL_MOTUs.txt')):
-            with open(os.path.join(self.path, 'tmp_file/ALL_MOTUs.txt'), newline='') as compare_file, open(
-                    os.path.join(self.path, 'Compare/Summary_MOTUs.txt'), 'w+') as summary_file, open(
-                    os.path.join(self.path, 'Compare/Compare_MOTU_list.txt'), 'w+') as out_list:
-                num_motu = 1
-                lists_TC = []
-                motus_name_TC = []
-                lists_MC = []
-                motus_name_MC = []
-                lists_TD = []
-                motus_name_TD = []
-                lists_MD = []
-                motus_name_MD = []
-
-                a = '########################################\n'
-                if 'n' in self.CompList and os.path.exists(os.path.join(self.path, 'Nominal/nominal_list_sp.txt')):
-                    for line in compare_file:
-                        if line.startswith('MOTU') and '(NOM)' in line:
-                            n_used = 0
-                            n_used = len(line.strip().split("&")) - 1
-                            #                            logging.info(n_used,n_analysis,n_analysis/float(2)) ###############
-                            if n_used == n_analysis:
-                                motus_name_TC.append(line)
-                                lists_TC.append(next(compare_file))
-                            if n_used < n_analysis and n_used >= n_analysis / float(2):
-                                motus_name_MC.append(line)
-                                lists_MC.append(next(compare_file))
-                        if line.startswith('MOTU') and not '(NOM)' in line:
-                            n_used = 0
-                            n_used = len(line.strip().split("&"))
-                            #                            logging.info(n_used,n_analysis,n_analysis/float(2)) ###############
-                            if n_used == n_analysis:
-                                motus_name_TD.append(line)
-                                lists_TD.append(next(compare_file))
-                            if n_used < n_analysis and n_used >= n_analysis / float(2):
-                                motus_name_MD.append(line)
-                                #                            print line
-                                lists_MD.append(next(compare_file))
-
-                    logging.info('### All MOTUs match with the taxonomy ###\n')
-                    summary_file.write('\n' + a + 'All MOTUs agree with the taxonomy\n' + a + '\n')
-                    for i in range(len(motus_name_TC)):
-                        logging.info('Consensus MOTU ' + str(num_motu) + ' [' + motus_name_TC[i].strip() + ']')
-                        summary_file.write('Consensus MOTU ' + str(num_motu) + ' [' + motus_name_TC[i].strip() + ']\n')
-                        out_list.write('MOTU ' + str(num_motu) + '\n')
-                        logging.info(lists_TC[i])
-                        summary_file.write(lists_TC[i] + '\n')
-                        out_list.write(lists_TC[i])
-                        num_motu += 1
-                    logging.info('### Most MOTUs agree with the taxonomy ###\n')
-                    summary_file.write('\n' + a + 'Most MOTUs agree with the taxonomy\n' + a + '\n')
-                    for i in range(len(motus_name_MC)):
-                        logging.info('Consensus MOTU ' + str(num_motu) + ' [' + motus_name_MC[i].strip() + ']')
-                        summary_file.write('Consensus MOTU ' + str(num_motu) + ' [' + motus_name_MC[i].strip() + ']\n')
-                        out_list.write('MOTU ' + str(num_motu) + '\n')
-                        logging.info(lists_MC[i])
-                        summary_file.write(lists_MC[i] + '\n')
-                        out_list.write(lists_MC[i])
-                        num_motu += 1
-                    logging.info('### All MOTUs do not match the taxonomy###\n')
-                    summary_file.write('\n' + a + 'All MOTUs do not match the taxonomy\n' + a + '\n')
-                    for i in range(len(motus_name_TD)):
-                        logging.info('Consensus MOTU ' + str(num_motu) + ' [' + motus_name_TD[i].strip() + ']')
-                        summary_file.write('Consensus MOTU ' + str(num_motu) + ' [' + motus_name_TD[i].strip() + ']\n')
-                        out_list.write('MOTU ' + str(num_motu) + '\n')
-                        logging.info(lists_TD[i])
-                        summary_file.write(lists_TD[i] + '\n')
-                        out_list.write(lists_TD[i])
-                        num_motu += 1
-                    logging.info('### Most MOTUs do not match the taxonomy ###\n')
-                    summary_file.write('\n' + a + 'Most MOTUs do not match the taxonomy\n' + a + '\n')
-                    for i in range(len(motus_name_MD)):
-                        logging.info('Consensus MOTU ' + str(num_motu) + ' [' + motus_name_MD[i].strip() + ']')
-                        summary_file.write('Consensus MOTU ' + str(num_motu) + ' [' + motus_name_MD[i].strip() + ']\n')
-                        out_list.write('MOTU ' + str(num_motu) + '\n')
-                        logging.info(lists_MD[i])
-                        summary_file.write(lists_MD[i] + '\n')
-                        out_list.write(lists_MD[i])
-                        num_motu += 1
-
+        num_motu = 1
+        TC = {}
+        MC = {}
+        TD = {}
+        MD = {}
+        namedf=[]
+        motudf=[]
+        # print(sameind)
+        if 'Nominal' in self.CompList and os.path.exists(os.path.join(self.path, 'Nominal','MOTU_list.csv')):
+            n_analysis += -1
+            for k,v in sameind.items():
+                if '(Nominal)' in k:
+                    # print('motus vistas con nominal',k)
+                    n_used = len(k.strip().split("&"))-1
+                    if n_used == n_analysis:
+                        TC[k]=v
+                    if n_used < n_analysis and n_used >= (n_analysis/float(2)):
+                        MC[k]=v
                 else:
-                    for line in compare_file:
-                        if line.startswith('MOTU'):
-                            n_used = 0
-                            n_used = len(line.strip().split("&"))
-                            #                            logging.info(n_used,n_analysis,n_analysis/float(2)) ###############
-                            if n_used == n_analysis:
-                                motus_name_TC.append(line)
-                                lists_TC.append(next(compare_file))
-                            if n_used < n_analysis and n_used >= n_analysis / float(2):
-                                motus_name_MC.append(line)
-                                lists_MC.append(next(compare_file))
+                    n_used = len(k.strip().split("&"))
+                    if n_used == n_analysis:
+                        TD[k]=v
+                    if n_used < n_analysis and n_used >= n_analysis / float(2):
+                        MD[k]=v 
+           
+            logging.info('### All MOTUs match with the taxonomy ###\n')
+            for k,v in TC.items():
+                logging.info('Consensus MOTU ' + str(num_motu) + ' [' + k + ']')
+                logging.info(', '.join(v)+'\n')
+                namedf.extend(['MOTU_'+str(num_motu)]*len(v))
+                motudf.extend(v)
+                num_motu += 1 
+                
+            logging.info('### Most MOTUs agree with the taxonomy ###\n') 
+            for k,v in MC.items():
+                logging.info('Consensus MOTU ' + str(num_motu) + ' [' + k + ']')
+                logging.info(', '.join(v)+'\n')
+                namedf.extend(['MOTU_'+str(num_motu)]*len(v))
+                motudf.extend(v)
+                num_motu += 1 
+                
+            logging.info('### All MOTUs do not match the taxonomy###\n')
+            for k,v in TD.items():
+                logging.info('Consensus MOTU ' + str(num_motu) + ' [' + k + ']')
+                logging.info(', '.join(v)+'\n')
+                namedf.extend(['MOTU_'+str(num_motu)]*len(v))
+                motudf.extend(v)
+                num_motu += 1 
+                
+            logging.info('### Most MOTUs do not match the taxonomy ###\n')                    
+            for k,v in MD.items():
+                logging.info('Consensus MOTU ' + str(num_motu) + ' [' + k + ']')
+                logging.info(', '.join(v)+'\n')
+                namedf.extend(['MOTU_'+str(num_motu)]*len(v))
+                motudf.extend(v)
+                num_motu += 1 
+                
+            datas = {"Consensus": namedf}
+            prints = pd.DataFrame(datas, index=motudf)
+            prints=prints.sort_index(ascending=True)                     
+            prints.to_csv( os.path.join(self.path, 'Compare','MOTU_list.csv'))
 
-                    logging.info('### MOTUs totally agree ###\n')
-                    summary_file.write('\n' + a + 'All MOTUs match the same delimitation\n' + a + '\n')
-                    for i in range(len(motus_name_TC)):
-                        summary_file.write('Consensus MOTU ' + str(num_motu) + ' [' + motus_name_TC[i].strip() + ']\n')
-                        out_list.write('MOTU ' + str(num_motu) + '\n')
-                        logging.info('Consensus MOTU ' + str(num_motu) + ' [' + motus_name_TC[i].strip() + ']')
-                        summary_file.write(lists_TC[i] + '\n')
-                        out_list.write(lists_TC[i])
-                        logging.info(lists_TC[i])
-                        num_motu += 1
-                    logging.info('### Most MOTUs match the same delimitation ###\n')
-                    summary_file.write('\n' + a + 'MOTUs mostly agree\n' + a + '\n')
-                    for i in range(len(motus_name_MC)):
-                        logging.info('Consensus MOTU ' + str(num_motu) + ' [' + motus_name_MC[i].strip() + ']')
-                        summary_file.write('Consensus MOTU ' + str(num_motu) + ' [' + motus_name_MC[i].strip() + ']\n')
-                        out_list.write('MOTU ' + str(num_motu) + '\n')
-                        logging.info(lists_MC[i])
-                        summary_file.write(lists_MC[i] + '\n')
-                        out_list.write(lists_MC[i])
-                        num_motu += 1
+            
+        else:
+            for k,v in sameind.items():
+                n_used = len(k.strip().split("&"))
+                if n_used == n_analysis:
+                    TC[k]=v
+                if n_used < n_analysis and n_used >= (n_analysis/float(2)):
+                    MC[k]=v
+            logging.info('### MOTUs totally agree ###\n')
+            for k,v in TC.items():
+                logging.info('Consensus MOTU ' + str(num_motu) + ' [' + k + ']')
+                logging.info(', '.join(v)+'\n') 
+                namedf.extend(['MOTU_'+str(num_motu)]*len(v))
+                motudf.extend(v)
+                num_motu += 1 
+                
+            logging.info('### Most MOTUs match the same delimitation ###\n')            
+            for k,v in MC.items():
+                logging.info('Consensus MOTU ' + str(num_motu) + ' [' + k + ']')
+                logging.info(', '.join(v)+'\n')
+                namedf.extend(['MOTU_'+str(num_motu)]*len(v))
+                motudf.extend(v)      
+                num_motu += 1 
+                
+            datas = {"Consensus": namedf}
+            prints = pd.DataFrame(datas, index=motudf)  
+            prints=prints.sort_index(ascending=True)                  
+            prints.to_csv( os.path.join(self.path, 'Compare','MOTU_list.csv'))
+            
+        AllMOTUs_df['Consensus']=prints #AGREGAR CONSENSUS LUEGO DEL WARNING
+        
+        # print(AllMOTUs_df)
+        return AllMOTUs_df
 
     def Compare_warning(self):
         """Rise warnings in case of overlapping Consensus MOTUs and try to resolve it before continue the analysis""" 
@@ -1236,7 +525,7 @@ class Compare:
         motus_name_W = []
         motus_memb_W = []
         a = '########################################\n'
-        with open(os.path.join(self.path, 'Compare/Summary_MOTUs.txt'), 'r+') as summary_file:
+        with open(os.path.join(self.path, 'Compare','Summary_MOTUs.txt'), 'r+') as summary_file:
             summary_file.seek(0)
             for line in summary_file:
                 if line.startswith('Consensus'):
@@ -1315,9 +604,9 @@ class Compare:
                             acpt.append(motus_name_W[i[motu_cho - 1]])
 
                     for ind, i in enumerate(lists_W):
-                        with open(os.path.join(self.path, 'Compare/Compare_MOTU_list.txt'), 'r+') as out_list:
+                        with open(os.path.join(self.path, 'Compare','Compare_MOTU_list.txt'), 'r+') as out_list:
                             list_out = out_list.readlines()
-                        with open(os.path.join(self.path, 'Compare/Compare_MOTU_list.txt'), 'w+') as out_list:
+                        with open(os.path.join(self.path, 'Compare','Compare_MOTU_list.txt'), 'w+') as out_list:
                             for ind2, line in enumerate(list_out):
                                 if line.startswith('MOTU'):
                                     new_line = list_out[ind2 + 1]
@@ -1332,261 +621,271 @@ class Compare:
                     exit()
 
     def MOTU_renameFasta_Compare(self):
-        """Rename the fasta name sequences using Consensus MOTUs""" #rewrite with biopython
+        """Rename the fasta name sequences using Consensus MOTUs""" 
         self.fasta.seek(0)
-        with open(os.path.join(self.path, 'Compare/Compare_MOTU_list.txt'), newline='') as Comp_file, open(
-                os.path.join(self.path, 'Compare/Compare_MOTU.fasta'), 'w+') as newfasta:
-            for line in Comp_file:
-                if line.startswith('MOTU'):
-                    new_name = line.replace(' ', '_').strip()
-                else:
-                    line = line.replace(' ', '').strip().split(',')
-                    for i in line:
-                        self.fasta.seek(0)
-                        s = SeqIO.parse(self.fasta, "fasta")
-                        for seq in s:
-                            #                            print seq.id
-                            if seq.id == i:
-                                newfasta.write('>' + new_name + '_' + i + '\n')
-                                #                                print seq.seq
-                                newfasta.write(str(seq.seq) + '\n')
+        fasta_dict = SeqIO.to_dict(SeqIO.parse(self.fasta,'fasta'))
+        records=[]
+        for k,record in fasta_dict.items():
+            MOTUs_dict=self.compared.to_dict()
+            newname=MOTUs_dict['Consensus'][k]
+            record.id=newname+'_'+k
+            record.description=''
+            records.append(record)
+        SeqIO.write(records,os.path.join(self.path, 'Compare','MOTU.fasta'),'fasta')            
 
 
-class plot_compare_tree:
+def plot_compare_tree(path, tree, motudf, nocons=False, names=True, save=False):
     """To plot the tree graph with MOTUs results
     Parameters
     ----------
     path: str
         The path to folder with the input file.       
     tree: str
-        The tree file.   
+        The tree file. 
+    motudf: df
+        DataFrame with all motus data
     names: boolean
         For hide names leaf in the tree, default=True to show the names.          
     """    
-    def __init__(self, path, tree, names=True):  
-        self.path = path
-        self.tree_loaded = Tree(tree)
-        self.tree2 = toytree.tree(tree)  # ,tree_format=1)
-        self.names = names
-        self.dic_color = self.dic_motu_color()
-        self.plot_tree_con()
-        self.plot_tree_con_line()
+    tree = toytree.tree(tree)  # ,tree_format=1)
+    if nocons == True:
+        del motudf['Consensus']
+    AllMOTUs_dict = motudf.to_dict()
 
-    def dic_motu_color(self):
-        """Read the consensus MOTUs and construct a dcitionary with color by MOTU
-        Returns
-        -------
-        A dictionary with MOTUs by analysis, congruente MOTUs share the same color
-        """        
-        color_used = ['#e6194b', '#3cb44b', '#ffe119', '#0082c8', '#f58231', '#911eb4', '#46f0f0', '#f032e6', '#d2f53c',
-                      '#fabebe', '#008080', '#e6beff', '#aa6e28', '#fffac8', '#800000', '#aaffc3', '#808000', '#ffd8b1',
-                      '#000080', '#808080', '#FFFFFF', '#000000']
-        with open(os.path.join(self.path, 'tmp_file/ALL_MOTUs_con.txt'), 'w+') as motus_file:
-            motus_con_file = open(os.path.join(self.path,'Compare/Compare_MOTU_list.txt'))
-            motus_file2 = open(os.path.join(self.path, 'tmp_file/ALL_MOTUs.txt'))
-            for line in motus_file2:
-                if line.startswith('MOTU'):
-                    motus = next(motus_file2)
-                    motus2 = motus.replace(", ", ";")
-                    h = motus2.strip().split(';')
-                    con_be = 0
-                    for j in motus_con_file:
-                        if j.startswith('MOTU'):
-                            cons = next(motus_con_file)
-                            cons = cons.replace(", ", ";")
-                            k = cons.strip().split(';')
-                            if len(set(h)) == len(set(k)) and len((set(h).intersection(set(k)))) == len(set(h)):
-                                motus_file.write(line.strip() + ' & (CONSENSUS)' + '\n')
-                                motus_file.write(motus)
-                                con_be = +1
-
-                    if con_be == 0:
-                        motus_file.write(line)
-                        motus_file.write(motus)
-                    motus_con_file.seek(0)
-
-        with open(os.path.join(self.path, 'tmp_file/ALL_MOTUs_con.txt')) as motus_file:
-            Ana_name = []
-            for line in motus_file:
-                if line.startswith('MOTU'):
-                    motus = line.strip().split('&')
-                    for i in range(len(motus)):
-                        name = motus[i].replace(')', '')
-                        name = name.replace(' ', '')
-                        name = name.split('(')
-                        if name[1] not in Ana_name:
-                            Ana_name.append(name[1])
-            Ana_name.remove('CONSENSUS')
-            Ana_name.append('CONSENSUS')
-
-        with open(os.path.join(self.path, 'tmp_file/ALL_MOTUs_con.txt')) as motus_file:
-            n = 0
-            dicts = dict((name, {}) for name in Ana_name)
-            #            print(dicts)
-            for line in motus_file:
-                if line.startswith('MOTU'):
-                    if n < 22:
-                        color = color_used[n]
-                        n += 1
-                    else:
-                        color = random_color()
-                        while True:
-                            if color not in color_used:
-                                color_used.append(color)
-                                break
-                            else:
-                                color = random_color()
-                    prevline = line
-                    motus = next(motus_file)
-                    motus = motus.replace(", ", ";")
-                    lists = motus.strip().split(';')
-
-                    for name in Ana_name:
-                        name2 = '(' + name + ')'
-                        if name2 in prevline:
-                            for i in lists:
-                                dicts[name][i] = color
-
-        return dicts
-
-    def layout_tree_compare(self, node):
-        """Layout tree for the plot_tree_con function""" 
-        #        print(self.dic_color)
-        node.collapsed = False
-        n = 0
-        if node.is_leaf():
-            name = node.get_leaf_names()[0]
-            for k in self.dic_color:
-                n += 1
-                add_face_to_node(RectFace(10, 10, 'FFFFFF', self.dic_color[k][name]), node, n, aligned=True)
-
-    def plot_tree_con(self):
-        """Plot MOTUS on the tree using colors""" 
-        ts = TreeStyle()
-        ts.margin_left = 15
-        ts.margin_bottom = 15
-        ts.margin_right = 15
-        ts.margin_right = 15
-        #        ts.show_border=True
-        ts.show_leaf_name = self.names
-        ts.layout_fn = self.layout_tree_compare
-        ts.title.add_face(TextFace("Species delimitation comparision", ftype='Arial', fsize=10), column=0)
-        n = 0
-        for k in self.dic_color:
-            if k == 'NOM':
-                k='NOMINAL'
-            F = TextFace(k, fsize=7)
-            F.rotation = 270
-            n += 1
-            ts.aligned_header.add_face(F, column=n)
-        nstyle = NodeStyle()
-        nstyle['size'] = 0
-        nstyle['vt_line_width'] = 1
-        nstyle['hz_line_width'] = 1
-        for n in self.tree_loaded.traverse():
-            n.set_style(nstyle)
-        #self.tree_loaded.show(tree_style=ts)      #delete?? kernel died every twice
-        self.tree_loaded.render(os.path.join(self.path, "Compare/compare_tree.pdf"), tree_style=ts, dpi=300)
-
-    def plot_tree_con_line(self):
-        """Plot MOTUS on the tree using lines""" 
-        tree = self.tree2
-        tree = tree.mod.node_scale_root_height(2 * len(self.dic_color))
-        tips = (tree.get_tip_labels())
-        canvas, axes, mark = tree.draw(
-            width=800,
-            height=30 * len(tips),
-            tip_labels=False,  # hide labels
-            tip_labels_align=True,
-            tip_labels_style={"-toyplot-anchor-shift": "80px"},
-            scalebar=True,
-        );
-        xsep = 0.5
-        n = 0
-        # add rectangles for delimitation
-        for k in self.dic_color:
-            n += 1
-            coord = tree.get_tip_coordinates()
-            coor_start = [coord[0][1]]
-            coor_end = []
-            for i, j in enumerate(tips):
-                if i < len(tips) - 1:
-                    if self.dic_color[k].get(j) != self.dic_color[k].get(tips[i + 1]):
-                        coor_end.append(coord[i][1])
-                        coor_start.append(coord[i + 1][1])
-            coor_end.append(coord[len(tips) - 1][1])
-            for i in range(len(coor_start)):
-                if k == 'NOM':
-                    axes.rectangle(xsep * n, xsep * n + 0.2,
-                                   coor_start[i] - 0.35,
-                                   coor_end[i] + 0.35,
-                                   color='#0000ff',
-                                   );
-                elif k == 'CONSENSUS':
-                    axes.rectangle(xsep * n, xsep * n + 0.2,
-                                   coor_start[i] - 0.35,
-                                   coor_end[i] + 0.35,
-                                   color='#ff0000',
-                                   );
-                else:
-                    axes.rectangle(xsep * n, xsep * n + 0.2,
-                                   coor_start[i] - 0.35,
-                                   coor_end[i] + 0.35,
-                                   color='#00000',
-                                   );
-        # add tip labels
-        ypos = range(len(tree))
-        xpos = [xsep * n + 0.5] * len(tips)
-
-        tipstyle = {"font-size": "12px",
-                    "text-anchor": "start",
-                    "fill": "#00000"}
-        axes.text(xpos, ypos, tips,
-                  style=tipstyle,
-                  )
-        # add analyses names
-        # labels = [k for k in self.dic_color]
-        labels=[]
-        for k in self.dic_color:
-            if k == 'NOM':
-                k='NOMINAL'            
-            labels.append(k)
-        tipstyle = {"text-anchor": "start", "-toyplot-anchor-shift": "0"}
-        for i in labels:
-            axes.text(
-                [(x + 1) * xsep + 0.1 for x in range(len(labels))],
-                [len(tips)] * len(labels),
-                labels,
-                angle=90,
-                color='#00000',
-                style=tipstyle
-            )
-        if 'NOM' in self.dic_color:
-            num_tax = []
-            num_contigous = []
-            num_con = 0
-            for v in tips:
-                v=v.split('_')[:2]
-                if v not in num_tax:
-                    num_tax.append(v)
-                if v in num_contigous:
-                    pass
-                else:
-                    num_contigous = [v]
-                    num_con += 1
-            if len(num_tax) == num_con:
-                toyplot.svg.render(canvas, os.path.join(self.path, "Compare/compare_tree_lines.svg"))
-            #                toyplot.pdf.render(canvas, self.path+"Compare/compare_tree_lines.pdf")
+    tree = tree.mod.node_scale_root_height(2 * len(AllMOTUs_dict))
+    tips = (tree.get_tip_labels())
+    canvas, axes, mark = tree.draw(
+        width=800,
+        height=30 * len(tips),
+        tip_labels=False,  # hide labels
+        tip_labels_align=True,
+        tip_labels_style={"-toyplot-anchor-shift": "80px"},
+        scalebar=True,
+    );
+    xsep = 0.5
+    n = 0
+    # add rectangles for delimitation
+    for k in AllMOTUs_dict:
+        n += 1
+        coord = tree.get_tip_coordinates()
+        coor_start = [coord[0][1]]
+        coor_end = []
+        for i, j in enumerate(tips):
+            if i < len(tips) - 1:
+                if AllMOTUs_dict[k].get(j) != AllMOTUs_dict[k].get(tips[i + 1]):
+                    coor_end.append(coord[i][1])
+                    coor_start.append(coord[i + 1][1])
+        coor_end.append(coord[len(tips) - 1][1])
+        for i in range(len(coor_start)):
+            if k == 'Nominal':
+                axes.rectangle(xsep * n, xsep * n + 0.2,
+                               coor_start[i] - 0.35,
+                               coor_end[i] + 0.35,
+                               color='#0000ff',
+                               );
+            elif k == 'Consensus':
+                axes.rectangle(xsep * n, xsep * n + 0.2,
+                               coor_start[i] - 0.35,
+                               coor_end[i] + 0.35,
+                               color='#ff0000',
+                               );
             else:
-                logging.info('#####\nWarning: Nominal species not contigous in the tree.\n#####\n')
-                toyplot.svg.render(canvas, os.path.join(self.path, "Compare/compare_tree_lines.svg"))
-        else:
-            toyplot.svg.render(canvas, os.path.join(self.path, "Compare/compare_tree_lines.svg"))
-        return(canvas)
-        
+                axes.rectangle(xsep * n, xsep * n + 0.2,
+                               coor_start[i] - 0.35,
+                               coor_end[i] + 0.35,
+                               color='#00000',
+                               );
+    # add tip labels
+    ypos = range(len(tree))
+    xpos = [xsep * n + 0.5] * len(tips)
 
-#            toyplot.pdf.render(canvas, self.path+"Compare/compare_tree_lines.pdf")
+    tipstyle = {"font-size": "12px",
+                "text-anchor": "start",
+                "fill": "#00000"}
+    axes.text(xpos, ypos, tips,
+              style=tipstyle,
+              )
+    # add analyses names
+    labels = [k for k in AllMOTUs_dict]
+    tipstyle = {"text-anchor": "start", "-toyplot-anchor-shift": "0"}
+    for i in labels:
+        axes.text(
+            [(x + 1) * xsep + 0.1 for x in range(len(labels))],
+            [len(tips)] * len(labels),
+            labels,
+            angle=90,
+            color='#00000',
+            style=tipstyle
+        );
+    if 'Nominal' in AllMOTUs_dict:
+        num_tax = []
+        num_contigous = []
+        num_con = 0
+        for v in tips:
+            v=v.split('_')[:2]
+            if v not in num_tax:
+                num_tax.append(v)
+            if v in num_contigous:
+                pass
+            else:
+                num_contigous = [v]
+                num_con += 1
+        if len(num_tax) != num_con:
+            logging.info('#####\nWarning: Nominal species not contigous in the tree.\n#####\n')
+    if save==True:
+        toyplot.svg.render(canvas, os.path.join(path, "Compare","compare_tree_lines.svg"))            
+    # return(canvas)                   
 
+    
+def reading_data(fasta,tree=None,CODE=None):
+    basepath=os.path.dirname(fasta)
+    targets = logging.StreamHandler(sys.stdout), logging.FileHandler(
+        os.path.join(basepath,'SPdel_output.log'))  # from https://stackoverflow.com/questions/24204898/python-output-on-both-console-and-file/24206109#24206109
+    logging.basicConfig(format='%(message)s', level=logging.INFO, handlers=targets)
+    logging.info('\n\n############################################################################\n')
+    logging.info('SPdel v2.0 - Species delimitation and statistics for DNA Barcoding data sets\n')
+    logging.info('############################################################################\n')    
+    inputs = sorting_data(basepath, fasta, typeCODE=CODE,tree=tree)  # Checking fasta
+    if inputs.check_fasta() is False:
+        sys.exit("Error: different length sequences, please check your alignment")
+    else:
+        logging.info('Sequences are aligned (same size)')                
+    inputs.describe_fasta()  # describing fasta
+    inputs.sort_fasta()  # sorting fasta
+    if tree != None:
+        if inputs.check_tree() is False:
+            sys.exit("Error: different names in tree, please check your tree and fasta alignment")
+    return inputs
+
+def run_nominal(basepath,inputs,gen=1,sp=2,dis='k'):
+    if inputs.check_pattern() == False:
+        sys.exit('Please rename your file using "genera_especies_individual" format or provide a nominal list file')
+    nMOTUs=extract_MOTU_nominal(basepath, os.path.join(basepath,'Nominal/sorted.fasta'))
+    distances=dict_to_matrian(basepath,nMOTUs,inputs.fasta,gen,sp,dis)
+    return distances
+
+def run_PTP(basepath,inputs,gen=1,sp=2,dis='k'):
+    sys.argv = [sys.argv[0]]
+    ptp(basepath, inputs.tree)
+    PTP_df=MOTU_listPTP(os.path.join(basepath, 'PTP'),'PTP.PTPhSupportPartition.txt','PTP')
+    distances=dict_to_matrian(basepath,PTP_df,inputs.fasta,gen,sp,dis)
+    return distances
+    
+def run_bPTP(basepath,inputs,niter='10000',sample='100',burnin='0.1',gen=1,sp=2,dis='k'):
+    sys.argv = [sys.argv[0]]
+    bptp(basepath,inputs.tree,niter,sample,burnin)
+    bPTP_df=MOTU_listPTP(os.path.join(basepath, 'bPTP'),'bPTP.PTPhSupportPartition.txt','bPTP')
+    distances=dict_to_matrian(basepath,bPTP_df,inputs.fasta,gen,sp,dis)
+    return distances
+    
+def run_GMYC(basepath,inputs,gen=1,sp=2,dis='k'):
+    sys.argv = [sys.argv[0]]
+    gmyc_run(basepath,inputs.tree)
+    GMYC_df=MOTU_listGMYC(os.path.join(basepath, 'GMYC'),'GMYC_MOTU.txt','GMYC')
+    distances=dict_to_matrian(basepath,GMYC_df,inputs.fasta,gen,sp,dis) 
+    return distances
+
+def run_PTPList(basepath,inputs,PTPList,gen=1,sp=2,dis='k'):
+    PTP_df=MOTU_listPTP(basepath,PTPList,'PTP')
+    distances=dict_to_matrian(basepath,PTP_df,inputs.fasta,gen,sp,dis)
+    return distances
+    
+def run_bPTPList(basepath,inputs,bPTPList,gen=1,sp=2,dis='k'):
+    bPTP_df=MOTU_listPTP(basepath,bPTPList,'bPTP')  
+    distances=dict_to_matrian(basepath,bPTP_df,inputs.fasta,gen,sp,dis)
+    return distances
+    
+def run_GMYCList(basepath,inputs,GMYCList,gen=1,sp=2,dis='k'):
+    GMYC_df=MOTU_listGMYC(basepath,GMYCList,'GMYC')  
+    distances=dict_to_matrian(basepath,GMYC_df,inputs.fasta,gen,sp,dis)
+    return distances
+
+def run_csvList(basepath,inputs,XList,gen=1,sp=2,dis='k',cmd=False,diagnostic=False,n_ind=3):
+    if XList == None:
+        sys.exit('Please provide a MOTUs List')
+    AllMOTUs = pd.read_csv(XList, encoding="ISO-8859-1",index_col=0)
+    check_file = check_MOTUlist(inputs.fasta, AllMOTUs)
+    if check_file == False:
+        sys.exit('Error: Different individuals in MOTUs List provided')
+    distances=dict_to_matrian(basepath,AllMOTUs,inputs.fasta,gen,sp,dis,cmd,diagnostic,n_ind)
+    return distances
+
+def run_comparison(basepath,inputs,CompList,nocons=False,gen=1,sp=2,dis='k'):
+    logging.info('\n#####################\n Consensus MOTUs\n#####################\n')
+    comp_analize = Compare(basepath, inputs.fasta, CompList)
+    # comp_analize.Compare_warning()
+    comp_analize.MOTU_renameFasta_Compare()
+    # if inputs.tree != None:
+    #     plot_compare_tree(basepath, inputs.tree, comp_analize.compared,nocons)
+    distances=Matrian.main(os.path.join(basepath, 'Compare/'), os.path.join(basepath, 'Compare','MOTU.fasta'), gen, sp, dis)
+    return comp_analize.compared,distances
+    # if 'd' in a:
+    #     Diagnoser.main(os.path.join(basepath, 'Compare/'), 'Compare_MOTU.fasta', n_ind)          
+    
+def run(fasta,a,tree,CODE=None,dis='k',niter='10000',sample='100',burnin='0.1',gen=1,sp=2,n_ind=3,nocons=False,XList=None,PTPList=None,bPTPList=None,GMYCList=None,CompList=None,diagnostic=False):
+    basepath=os.path.dirname(fasta)
+    inputs=reading_data(fasta,tree,CODE)
+    if CODE != None:
+        inputs.stop_codon()   
+    if 'n' in a:
+        distances=run_nominal(basepath,inputs,gen,sp,dis)
+        distances.print_sum()
+        distances.plot_max_min()
+        distances.plot_freq()
+        if diagnostic==True:
+            datas=diagnostics_cmd(basepath,'Nominal',n_ind)
+            logging.info(datas[0])
+    if 'P' in a:
+        distances=run_PTP(basepath,inputs,gen,sp,dis)
+        distances.print_sum()
+        distances.plot_max_min()
+        distances.plot_freq()
+        if diagnostic==True:
+            diagnostics_cmd(basepath,'PTP',n_ind)
+    if 'T' in a:
+        distances=run_bPTP(basepath,inputs,niter,sample,burnin,gen,sp,dis)
+        distances.print_sum()
+        distances.plot_max_min()
+        distances.plot_freq()
+        if diagnostic==True:
+            diagnostics_cmd(basepath,'bPTP',n_ind)
+    if 'G' in a:
+        distances=run_GMYC(basepath,inputs,gen,sp,dis)
+        distances.print_sum()
+        distances.plot_max_min()
+        distances.plot_freq()
+        if diagnostic==True:
+            diagnostics_cmd(basepath,'GMYC',n_ind)          
+    if 'p' in a: #to do: check individual file
+        distances=run_PTPList(basepath,inputs,PTPList,gen,sp,dis)
+        distances.print_sum()
+        distances.plot_max_min()
+        distances.plot_freq() 
+        if diagnostic==True:
+            diagnostics_cmd(basepath,'PTP',n_ind)
+    if 't' in a: #to do: check individual file
+        distances=run_bPTPList(basepath,inputs,bPTPList,gen,sp,dis)
+        distances.print_sum()
+        distances.plot_max_min()
+        distances.plot_freq()
+        if diagnostic==True:
+            diagnostics_cmd(basepath,'bPTP',n_ind)
+    if 'g' in a: #to do: check individual file
+        distances=run_GMYCList(basepath,inputs,GMYCList,gen,sp,dis)         
+        distances.print_sum()
+        distances.plot_max_min()
+        distances.plot_freq() 
+        if diagnostic==True:
+            diagnostics_cmd(basepath,'GMYC',n_ind)
+    if 'x' in a:
+        distances=run_csvList(basepath,inputs,XList,gen,sp,dis,cmd=True,diagnostic=False,n_ind=3)
+    if CompList != None:
+        distances=run_comparison(basepath,inputs,CompList,nocons,gen,sp,dis)
+        if inputs.tree != None:
+            plot_compare_tree(basepath, inputs.tree, distances[0],nocons,save=True)            
+        distances[1].print_sum()
+        distances[1].plot_max_min()
+        distances[1].plot_freq()     
 
 def print_options():
     """Print avaliable options""" 
@@ -1612,6 +911,7 @@ def print_options():
     print("    -T           Specify the bPTP output file.\n")
     print("    -B           Specify the text file including the BIN names obtained from BOLD.\n")
     print("    -X           Specify the text file including the MOTUs names obtained from any external method.\n")
+    print("    -nocons      Dont draw consensus in tree graphic.\n")
     print("    -D           For Diagnostic character analysis.\n")
     print(
         "    -C           Specify the type of analisys to be compared, include n for nominal, p for PTP, t for bPTP, b for BIN, and any filename used in X option for external MOTU list.\n")
@@ -1640,7 +940,7 @@ def main(argu=None):
         genus position on sequence names splited by "_".        
     sp: int
         genus position on sequence names splited by "_".         
-    dis: str
+    distance: str
         Substitution model, k for K2p or p for p-distance (default=k). 
     niter: int
         number of iterations for MCMC
@@ -1687,15 +987,15 @@ def main(argu=None):
     niter = '10000'
     sample = '100'
     burnin = '0.1'
-    BinList = None
-    XList = None
-    NomList = None
-    CompList = None
     PTPList = None
-    GMYCList = None
-    bPTPList = None
+    bPTPList=None
+    GMYCList=None
+    XList = None
+    CompList = None
     n_ind = 3
     CODE = None
+    nocons = False
+    diagnostic=False
 
     for i in range(len(sys.argv)):
         if sys.argv[i] == '-n':
@@ -1706,46 +1006,42 @@ def main(argu=None):
         elif sys.argv[i] == '-distance':
             i = i + 1
             dis = sys.argv[i]
-        elif sys.argv[i] == '-B':
-            i = i + 1
-            a += 'b'
-            BinList = sys.argv[i]
         elif sys.argv[i] == '-D':
-            a += 'd'
+            diagnostic=True
         elif sys.argv[i] == '-P':
             j = i + 1
-            a += 'p'
-            if sys.argv[j].startswith('-'):
-                pass
-            elif sys.argv[j] == None:
-                pass
+            if j == len(sys.argv):
+                a += 'P'
+            elif sys.argv[j].startswith('-'):
+                a += 'P'
             else:
-                PTPList = sys.argv[j]
+                a += 'p'
+                PTPList = sys.argv[j]            
         elif sys.argv[i] == '-G':
             j = i + 1
-            a += 'g'
-            if sys.argv[j].startswith('-'):
-                pass
-            elif sys.argv[j] == None:
-                pass
+            if j == len(sys.argv):
+                a += 'G'
+            elif sys.argv[j].startswith('-'):
+                a += 'G'
             else:
-                GMYCList = sys.argv[j]
+                a += 'g'
+                GMYCList = sys.argv[j] 
         elif sys.argv[i] == '-T':
             j = i + 1
-            a += 't'
-            if sys.argv[j].startswith('-'):
-                pass
-            elif sys.argv[j] == None:
-                pass
+            if j == len(sys.argv):
+                a += 'T'
+            elif sys.argv[j].startswith('-'):
+                a += 'T'
             else:
-                bPTPList = sys.argv[j]
+                a += 't'
+                bPTPList = sys.argv[j] 
         elif sys.argv[i] == '-X':
             i = i + 1
             a += 'x'
             XList = sys.argv[i]
-        elif sys.argv[i] == '-N':
-            i = i + 1
-            NomList = sys.argv[i]
+        # elif sys.argv[i] == '-N':
+        #     i = i + 1
+        #     NomList = sys.argv[i]
         elif sys.argv[i] == '-n_iter':
             i = i + 1
             niter = sys.argv[i]
@@ -1769,177 +1065,23 @@ def main(argu=None):
             a += 'e'
             CODE = sys.argv[i]
         elif sys.argv[i] == '-C':
-            i = i + 1
+            j = i + 1
             a += 'C'
-            CompList = sys.argv[i]
-
-    tex = '#####################\n'
-    basepath=os.path.dirname(fasta)
-    # if path.endswith('/'):
-    #     pass
-    # else:
-    #     path = path + '/'
-    targets = logging.StreamHandler(sys.stdout), logging.FileHandler(
-        os.path.join(basepath,'SPdel_output.log'))  # from https://stackoverflow.com/questions/24204898/python-output-on-both-console-and-file/24206109#24206109
-    logging.basicConfig(format='%(message)s', level=logging.INFO, handlers=targets)
-    logging.info('\n\n############################################################################\n')
-    logging.info('SPdel v1.0 - Species delimitation and statistics for DNA Barcoding data sets\n')
-    logging.info('############################################################################\n')
-    if not os.path.exists(os.path.join(basepath, 'tmp_file/')):
-        os.makedirs(os.path.join(basepath, 'tmp_file/'))
-    if not os.path.exists(os.path.join(basepath,'Nominal/')):
-        os.makedirs(os.path.join(basepath, 'Nominal/'))
-    if any(x in a for x in ('n', 'p', 't', 'g', 'b', 'x', 'e', 'C')):
-        if NomList is not None:
-            check_file = check_list(fasta, NomList)
-            if check_file:
-                pass
+            if j == len(sys.argv):
+                CompList = 'All'
             else:
-                sys.exit('Different number of individuals in Nominal List provided')
-            logging.info('Renaming sequences using nominal list provided')
-            if PTPList is not None:
-                rename_MOTUList(basepath, fasta, PTPList, NomList, 'MOTU_PTP_List_renamed.txt')
-                PTPList = 'tmp_file/MOTU_PTP_List_renamed.txt'
-            if bPTPList is not None:
-                rename_MOTUList(basepath, fasta, bPTPList, NomList, 'MOTU_bPTP_List_renamed.txt')
-                bPTPList = 'tmp_file/MOTU_bPTP_List_renamed.txt'
-            if GMYCList is not None:
-                rename_MOTUList(basepath, fasta, GMYCList, NomList, 'MOTU_GMYC_List_renamed.txt')
-                GMYCList = 'tmp_file/MOTU_GMYC_List_renamed.txt'
-            if tree is not None:
-                rename_NomList(basepath, fasta, NomList, tree)
-                tree = os.path.join(basepath,'tmp_file/tree_renamed.nwk')
-                fasta = os.path.join(basepath,'tmp_file/fasta_renamed.fasta')
-            else:
-                rename_NomList(basepath, fasta, NomList)
-                fasta = os.path.join(basepath,'tmp_file/fasta_renamed.fasta')
-            check = sorting_fasta(basepath, os.path.join(basepath,'tmp_file/fasta_renamed.fasta'), typeCODE=CODE)  # Checking fasta
-            if check.check_fasta() is False:
-                sys.exit("Error: different length sequences, please check your alignment")
-            check.describe_fasta()  # describing fasta
-            if CODE != None:
-                check.stop_codon()
-            check.sort_fasta()  # sorting fasta
-        else:
-            check = sorting_fasta(basepath, fasta, typeCODE=CODE)  # Checking fasta
-            if check.check_fasta() is False:
-                sys.exit("Error: different length sequences, please check your alignment")
-            check.describe_fasta()  # describing fasta
-            if CODE != None:
-                check.stop_codon()
-            check.sort_fasta()  # sorting fasta
-    if 'n' in a:
-        if check.check_pattern() == False:
-            sys.exit('Please rename your file using "genera_especies_individual" format or provide a nominal list file')
-        logging.info('\n' + tex + 'Nominal species\n' + tex)
-        Matrian.main(os.path.join(basepath, 'Nominal/'), os.path.join(basepath, 'Nominal/sorted.fasta'), gen, sp, dis, os.path.join(basepath, 'tmp_file/nominal_list.txt'), n=True)
-        MOTU_nominal(basepath, os.path.join(basepath,'Nominal/sorted.fasta'))
-        if 'd' in a:
-            Diagnoser.main(os.path.join(basepath, 'Nominal/'), 'sorted.fasta', n_ind)
-    if tree != None:
-        ch_tr = check_tree(fasta, tree)
-        if ch_tr.check() is False:
-            sys.exit("Error: different names in tree, please check your tree and alignment")
-    #            new_tree=ch_tr.root_midle() ####### test
-    if 'p' in a:
-        logging.info('\n' + tex + 'PTP MOTUs\n' + tex)
-        #        print tree
-        sys.argv = [sys.argv[0]]
-        PTP_analize = MOTU_PTP(basepath, os.path.join(basepath,'Nominal/sorted.fasta'), PTPList, tree=tree)  # tree=new_tree) test rooted tree
-        logging.info('\n### Delimited MOTUs ###')
-        PTP_analize.print_MOTU_PTP()
-        logging.info('')
-        Matrian.main(os.path.join(basepath,'PTP/'), os.path.join(basepath,'PTP/PTP_MOTU.fasta'), gen, sp, dis)
-        if 'd' in a:
-            Diagnoser.main(os.path.join(basepath, 'PTP/'), 'PTP_MOTU.fasta', n_ind)
-    if 't' in a:
-        logging.info('\n' + tex + 'bPTP MOTUs\n' + tex)
-        sys.argv = [sys.argv[0]]
-        bPTP_analize = MOTU_bPTP(basepath, os.path.join(basepath,'Nominal/sorted.fasta'), bPTPList, tree=tree, niter=niter, sample=sample,
-                                 burnin=burnin)
-        logging.info('')
-        bPTP_analize.print_MOTU_bPTP()
-        logging.info('\n### Delimited MOTUs ###')
-        Matrian.main(os.path.join(basepath, 'bPTP/'), os.path.join(basepath,'bPTP/bPTP_MOTU.fasta'), gen, sp, dis)
-        if 'd' in a:
-            Diagnoser.main(os.path.join(basepath, 'bPTP/'), 'bPTP_MOTU.fasta', n_ind)
-    if 'g' in a:
-        logging.info('\n' + tex + 'GMYC MOTUs\n' + tex)
-        sys.argv = [sys.argv[0]]
-        gmyc_analize = MOTU_GMYC(basepath, os.path.join(basepath,'Nominal/sorted.fasta'), GMYCList, tree=tree)
-        logging.info('\n### Delimited MOTUs ###')
-        gmyc_analize.print_MOTU_GMYC()
-        logging.info('')
-        Matrian.main(os.path.join(basepath, 'GMYC/'), os.path.join(basepath, 'GMYC/GMYC_MOTU.fasta'), gen, sp, dis)
-        if 'd' in a:
-            Diagnoser.main(os.path.join(basepath, 'GMYC/'), 'GMYC_MOTU.fasta', n_ind)
-    if 'b' in a:
-        if BinList == None:
-            sys.exit('Please provide a BIN List')
-        check_file = check_list(fasta, BinList)
-        if check_file == True:
-            pass
-        else:
-            sys.exit('Different number of individuals in BIN List provided')
-        logging.info('\n' + tex + 'BIN MOTUs\n' + tex)
-        sys.argv = [sys.argv[0]]
-        bin_analize = MOTU_BIN(basepath, fasta, BinList=BinList)
-        logging.info('\n### Delimited MOTUs ###')
-        bin_analize.print_MOTU_bin()
-        logging.info('')
-        Matrian.main(os.path.join(basepath, 'BIN/'), os.path.join(basepath, 'BIN/BIN_MOTU_sorted.fasta'), gen, sp, dis)
-        if 'd' in a:
-            Diagnoser.main(os.path.join(basepath, 'BIN/'), 'BIN_MOTU_sorted.fasta', n_ind)
-    if 'x' in a:
-        if XList == None:
-            sys.exit('Please provide a MOTUs List')
-        XList2 = XList.split(',')
-        for i in XList2:
-            check_file = check_list(fasta, i)
-            if check_file == True:
-                #                print(i)
-                pass
-            else:
-                sys.exit('Error: Different number of individuals in MOTUs List provided')
+                CompList = sys.argv[j]
+        elif sys.argv[i] == '-nocons':
+            i = i + 1
+            nocons=True
 
-            i_folder = i.split('.')[0]
-            logging.info('\n' + tex + i_folder + ' MOTUs\n' + tex)
-            sys.argv = [sys.argv[0]]
-
-            X_analize = MOTU_X(basepath, fasta, i_folder, BinList=i)
-            logging.info('\n### Delimited MOTUs ###')
-            X_analize.print_MOTU_X()
-            logging.info('')
-            Matrian.main(os.path.join(basepath, i_folder), os.path.join(basepath,i_folder,'X_MOTU_sorted.fasta'), gen, sp, dis)
-            if 'd' in a:
-                Diagnoser.main(os.path.join(basepath, i_folder), 'X_MOTU_sorted.fasta', n_ind)
-
-    if CompList != None:
-        logging.info('\n' + tex + 'Consensus MOTUs\n' + tex)
-        comp_analize = Compare(basepath, fasta, CompList)
-        comp_analize.Compare_warning()
-        comp_analize.MOTU_renameFasta_Compare()
-        if tree != None:
-            plot_compare_tree(basepath, tree)
-        Matrian.main(os.path.join(basepath, 'Compare/'), os.path.join(basepath, 'Compare/Compare_MOTU.fasta'), gen, sp, dis)
-        if 'd' in a:
-            Diagnoser.main(os.path.join(basepath, 'Compare/'), 'Compare_MOTU.fasta', n_ind)
+    run(fasta,a,tree,CODE,dis,niter,sample,burnin,gen,sp,n_ind,nocons,XList,PTPList,bPTPList,GMYCList,CompList,diagnostic)
 
 
-#    sys.stdout = orig_stdout
-#    f.close()
+    # sys.stdout = orig_stdout
+    # f.close()
 
 
 if __name__ == "__main__":
     #    basepath = os.path.dirname(os.path.abspath(__file__))
     main()
-
-
-# revisar total distancia
-
-# output print to file #HTML?
-# cambiar nombres y cursiva, mostrar texto nominal?,
-
-# testar reenraizar a la mitad?
-
-# casos en que mi sobre posicion no se da bien....cada analisis una delimit

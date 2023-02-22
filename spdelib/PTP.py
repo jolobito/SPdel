@@ -394,7 +394,7 @@ def main(argu=None):
     if argu is not None:
         for i in argu:
             sys.argv.append(i)
-    #     print sys.argv
+    # print(sys.argv)
     args = parse_arguments()
 
     if args.ptpout != "" and args.salignment != "":
