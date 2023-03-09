@@ -16,12 +16,14 @@ if sys_pf == "darwin":
 from matplotlib import pyplot as plt
 import seaborn as sns
 import pandas as pd
+import numpy as np
 from Bio import SeqIO
 from math import log, sqrt
 import logging
 import plotly.graph_objects as go
 import plotly.express as px
 import plotly.io as pio
+from plotly.subplots import make_subplots
 
 pd.set_option('display.max_rows', None)
 pd.set_option('display.max_columns', None)
@@ -203,14 +205,16 @@ class Matrian:
                          },
                          hover_name="names",
                          )
-        fig.update_layout(
-            title_text="Maximum intraspecific vs Minimum to NN", title_x=0.5)
         fig.update_traces(marker=dict(color="LightSkyBlue",
                                       size=10, line=dict(width=1, color="DarkSlateGrey")))
         fig.add_shape(type="line", x0=0, y0=0, x1=data_max + 1, y1=data_max + 1,
                       line=dict(color="Grey", width=1, dash="dash"),
                       layer='below')
-        fig.update_layout(autosize=False, width=700, height=700)
+        fig.update_layout(
+            title_text="Maximum intraspecific vs Minimum to NN",
+            title_x=0.5,
+            autosize=False, width=700, height=700
+        )
         fig.write_image(os.path.join(self.path, "min_max.pdf"))
         fig.show()
 
@@ -220,51 +224,42 @@ class Matrian:
         if newBins_tra == 0:
             newBins_tra = 1
         newBins_ter = len(set(ter)) // 3
-        f, ax = plt.subplots(3, 1, sharex="col", sharey="all")
-        sns.histplot(
-            ter,
-            bins=newBins_ter,
-            color="b",
-            kde=False,
-            label="Intergruop distance",
-            ax=ax[1],
+
+        bin_width = 0.5
+        max_tra = max(tra)
+        max_ter = max(ter)
+        counts_tra, bins_tra = np.histogram(tra, bins=np.arange(
+            min(tra), max(tra) + bin_width, bin_width))
+        counts_ter, bins_ter = np.histogram(tra, bins=np.arange(
+            min(tra), max(tra) + bin_width, bin_width))
+        max_counts_tra = max(counts_tra)
+        max_counts_ter = max(counts_ter)
+
+        fig = go.Figure()
+        fig.add_trace(go.Histogram(x=tra,
+                                   name="Intragroup distance",
+                                   bingroup=1
+                                   ))
+        fig.add_trace(go.Histogram(x=ter,
+                                   name="Intergroup distance",
+                                   bingroup=1
+                                   ))
+
+        fig.update_yaxes(title_text="# of taxon pairs")
+        fig.update_layout(
+            xaxis_range=(0, max(max_ter, max_tra)),
+            yaxis_range=(0, max(max_counts_ter, max_counts_tra))
         )
-        sns.histplot(
-            tra,
-            bins=newBins_tra,
-            color="r",
-            kde=False,
-            label="Intragroup distance",
-            ax=ax[0],
-        )
-        sns.histplot(
-            tra,
-            bins=newBins_tra,
-            color="r",
-            kde=False,
-            label="Intragroup distance",
-            ax=ax[2],
-        )
-        sns.histplot(
-            ter,
-            bins=newBins_ter,
-            color="b",
-            kde=False,
-            label="Intergruop distance",
-            ax=ax[2],
-        )
-        ax[0].set_title("DNA Barcoding gap")
-        ax[0].set_ylabel("# of taxon pairs")
-        ax[1].set_ylabel("# of taxon pairs")
-        ax[2].set_ylabel("# of taxon pairs")
-        ax[0].legend()
-        ax[1].legend()
-        ax[2].legend()
-        ax[2].set_xlabel("Genetic Distance")
-        f.savefig(os.path.join(self.path, "barcoding_gap.pdf"))
-        plt.show()
-        # plt.close(f)
-        # plt.clf()
+        fig.update_layout(
+            barmode='overlay',
+            title_text="DNA Barcoding gap",
+            title_x=0.5,
+            height=350,
+            hovermode="x")
+
+        fig.update_traces(opacity=0.75, xbins_size=0.25)
+        fig.write_image(os.path.join(self.path, "barcoding_gap.pdf"))
+        fig.show()
 
     def Summary_distances(self):  # hace analisis en bloque
         a, b, c, d, e, y = [], [], [], [], [], []
