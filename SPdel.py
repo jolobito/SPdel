@@ -331,7 +331,8 @@ def dict_to_matrian(basepath,AllMOTUs,fasta,gen,sp,dis,cmd=False,diagnostic=Fals
         if cmd==True:
             distances.print_sum()
             distances.plot_max_min()
-            distances.plot_freq() 
+            distances.plot_freq()
+            distances.plot_heatmap()
             if diagnostic==True:
                 logging.info(("\n" + "### Summary of diagnostic character result ###\n"))
                 diagnostics_cmd(basepath,k,n_ind)
@@ -832,6 +833,7 @@ def run(fasta,a,tree,CODE=None,dis='k',niter='10000',sample='100',burnin='0.1',g
         distances.print_sum()
         distances.plot_max_min()
         distances.plot_freq()
+        distances.plot_heatmap()
         if diagnostic==True:
             datas=diagnostics_cmd(basepath,'Nominal',n_ind)
             logging.info(datas[0])
@@ -840,6 +842,7 @@ def run(fasta,a,tree,CODE=None,dis='k',niter='10000',sample='100',burnin='0.1',g
         distances.print_sum()
         distances.plot_max_min()
         distances.plot_freq()
+        distances.plot_heatmap()
         if diagnostic==True:
             diagnostics_cmd(basepath,'PTP',n_ind)
     if 'T' in a:
@@ -847,6 +850,7 @@ def run(fasta,a,tree,CODE=None,dis='k',niter='10000',sample='100',burnin='0.1',g
         distances.print_sum()
         distances.plot_max_min()
         distances.plot_freq()
+        distances.plot_heatmap()
         if diagnostic==True:
             diagnostics_cmd(basepath,'bPTP',n_ind)
     if 'G' in a:
@@ -854,13 +858,15 @@ def run(fasta,a,tree,CODE=None,dis='k',niter='10000',sample='100',burnin='0.1',g
         distances.print_sum()
         distances.plot_max_min()
         distances.plot_freq()
+        distances.plot_heatmap()
         if diagnostic==True:
             diagnostics_cmd(basepath,'GMYC',n_ind)          
     if 'p' in a: #to do: check individual file
         distances=run_PTPList(basepath,inputs,PTPList,gen,sp,dis)
         distances.print_sum()
         distances.plot_max_min()
-        distances.plot_freq() 
+        distances.plot_freq()
+        distances.plot_heatmap()
         if diagnostic==True:
             diagnostics_cmd(basepath,'PTP',n_ind)
     if 't' in a: #to do: check individual file
@@ -868,13 +874,15 @@ def run(fasta,a,tree,CODE=None,dis='k',niter='10000',sample='100',burnin='0.1',g
         distances.print_sum()
         distances.plot_max_min()
         distances.plot_freq()
+        distances.plot_heatmap()
         if diagnostic==True:
             diagnostics_cmd(basepath,'bPTP',n_ind)
     if 'g' in a: #to do: check individual file
         distances=run_GMYCList(basepath,inputs,GMYCList,gen,sp,dis)         
         distances.print_sum()
         distances.plot_max_min()
-        distances.plot_freq() 
+        distances.plot_freq()
+        distances.plot_heatmap()
         if diagnostic==True:
             diagnostics_cmd(basepath,'GMYC',n_ind)
     if 'x' in a:
@@ -885,7 +893,8 @@ def run(fasta,a,tree,CODE=None,dis='k',niter='10000',sample='100',burnin='0.1',g
             plot_compare_tree(basepath, inputs.tree, distances[0],nocons,save=True)            
         distances[1].print_sum()
         distances[1].plot_max_min()
-        distances[1].plot_freq()     
+        distances[1].plot_freq()
+        distances[1].plot_heatmap()
 
 def print_options():
     """Print avaliable options""" 

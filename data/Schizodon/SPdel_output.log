@@ -11133,3 +11133,1242 @@ SC_vit_L0613_COIF, SC_vit_L0750_COIF, SC_vit_L100_COI, SC_vit_L197_COIF, SC_vit_
 
 Using k2p distance
 
+
+
+############################################################################
+
+SPdel v2.0 - Species delimitation and statistics for DNA Barcoding data sets
+
+############################################################################
+
+Sequences are aligned (same size)
+Fasta file with 91 sequences and 627 base pairs
+
+#####################
+Nominal MOTUs
+#####################
+
+#####SC_bor#####
+SC_bor_L0063_COIF, SC_bor_L0086_COI, SC_bor_L0117_ANOSCOIF, SC_bor_L0224_COI, SC_bor_L0899_COIF, SC_bor_L1176_COIF, SC_bor_L1177_COIF
+
+#####SC_dis#####
+SC_dis_B022_COI, SC_dis_B023_COI, SC_dis_B024_COI, SC_dis_B025_COI, SC_dis_B026_COIF, SC_dis_B027_COIF, SC_dis_L236_COI, SC_dis_L237_COI, SC_dis_L239_COIF, SC_dis_L242_COIF, SC_dis_L260_COI, SC_dis_L261_COIF, SC_dis_L262_COI, SC_dis_L263_COI, SC_dis_L264_COI, SC_dis_L265_COIF
+
+#####SC_fas#####
+SC_fas_B011_COI, SC_fas_L0544_COIF, SC_fas_L0629_COIF, SC_fas_L0650_COIF, SC_fas_L082_COI, SC_fas_L0936_COIF, SC_fas_L0951_COI, SC_fas_L0968_COIF, SC_fas_L259_COIF, SC_fas_L541_COI, SC_fas_L542_COI, SC_fas_L626_COI, SC_fas_L698_COI, SC_fas_L918_COI
+
+#####SC_int#####
+SC_int_B014_COI, SC_int_B015_COI, SC_int_L012_COIF, SC_int_L0217_COI, SC_int_L1201_COIF, SC_int_L214_COI, SC_int_L219_COIF, SC_int_L372_COI
+
+#####SC_jac#####
+SC_jac_L546_COI
+
+#####SC_kne#####
+SC_kne_B012_COI, SC_kne_L0857_COIF, SC_kne_L0866_COIF, SC_kne_L270_COIF, SC_kne_L361_COI, SC_kne_L363_COI, SC_kne_L365_COI
+
+#####SC_nas#####
+SC_nas_B016_COI, SC_nas_B017_COI, SC_nas_B018_COI, SC_nas_B019_COI, SC_nas_L0926_COIF, SC_nas_L1066_COI, SC_nas_L1093_ANOSCOIF, SC_nas_L1099_ANOSCOIF, SC_nas_L1100_ANOSCOIF, SC_nas_L1103_ANOSCOIF, SC_nas_L1111_ANOSCOIF, SC_nas_L1178_FISHF, SC_nas_L1179_COIF, SC_nas_L243_COI, SC_nas_L244_COIF, SC_nas_L245_COIF, SC_nas_L889_COI
+
+#####SC_pla#####
+SC_pla_B135, SC_pla_B136, SC_pla_B137, SC_pla_B138, SC_pla_B139
+
+#####SC_sco#####
+SC_sco_B156_COI, SC_sco_B214, SC_sco_L0906_COIF, SC_sco_L905_COI
+
+#####SC_vit#####
+SC_vit_L0613_COIF, SC_vit_L0750_COIF, SC_vit_L100_COI, SC_vit_L197_COIF, SC_vit_L205_COIF, SC_vit_L206_COIF, SC_vit_L207_COI, SC_vit_L208_COIF, SC_vit_L209_COIF, SC_vit_L380_COI, SC_vit_L558_COI, SC_vit_L733_COIF
+
+
+Using k2p distance
+
+
+
+############################################################################
+
+SPdel v2.0 - Species delimitation and statistics for DNA Barcoding data sets
+
+############################################################################
+
+Sequences are aligned (same size)
+Fasta file with 91 sequences and 627 base pairs
+
+#####################
+Nominal MOTUs
+#####################
+
+#####SC_bor#####
+SC_bor_L0063_COIF, SC_bor_L0086_COI, SC_bor_L0117_ANOSCOIF, SC_bor_L0224_COI, SC_bor_L0899_COIF, SC_bor_L1176_COIF, SC_bor_L1177_COIF
+
+#####SC_dis#####
+SC_dis_B022_COI, SC_dis_B023_COI, SC_dis_B024_COI, SC_dis_B025_COI, SC_dis_B026_COIF, SC_dis_B027_COIF, SC_dis_L236_COI, SC_dis_L237_COI, SC_dis_L239_COIF, SC_dis_L242_COIF, SC_dis_L260_COI, SC_dis_L261_COIF, SC_dis_L262_COI, SC_dis_L263_COI, SC_dis_L264_COI, SC_dis_L265_COIF
+
+#####SC_fas#####
+SC_fas_B011_COI, SC_fas_L0544_COIF, SC_fas_L0629_COIF, SC_fas_L0650_COIF, SC_fas_L082_COI, SC_fas_L0936_COIF, SC_fas_L0951_COI, SC_fas_L0968_COIF, SC_fas_L259_COIF, SC_fas_L541_COI, SC_fas_L542_COI, SC_fas_L626_COI, SC_fas_L698_COI, SC_fas_L918_COI
+
+#####SC_int#####
+SC_int_B014_COI, SC_int_B015_COI, SC_int_L012_COIF, SC_int_L0217_COI, SC_int_L1201_COIF, SC_int_L214_COI, SC_int_L219_COIF, SC_int_L372_COI
+
+#####SC_jac#####
+SC_jac_L546_COI
+
+#####SC_kne#####
+SC_kne_B012_COI, SC_kne_L0857_COIF, SC_kne_L0866_COIF, SC_kne_L270_COIF, SC_kne_L361_COI, SC_kne_L363_COI, SC_kne_L365_COI
+
+#####SC_nas#####
+SC_nas_B016_COI, SC_nas_B017_COI, SC_nas_B018_COI, SC_nas_B019_COI, SC_nas_L0926_COIF, SC_nas_L1066_COI, SC_nas_L1093_ANOSCOIF, SC_nas_L1099_ANOSCOIF, SC_nas_L1100_ANOSCOIF, SC_nas_L1103_ANOSCOIF, SC_nas_L1111_ANOSCOIF, SC_nas_L1178_FISHF, SC_nas_L1179_COIF, SC_nas_L243_COI, SC_nas_L244_COIF, SC_nas_L245_COIF, SC_nas_L889_COI
+
+#####SC_pla#####
+SC_pla_B135, SC_pla_B136, SC_pla_B137, SC_pla_B138, SC_pla_B139
+
+#####SC_sco#####
+SC_sco_B156_COI, SC_sco_B214, SC_sco_L0906_COIF, SC_sco_L905_COI
+
+#####SC_vit#####
+SC_vit_L0613_COIF, SC_vit_L0750_COIF, SC_vit_L100_COI, SC_vit_L197_COIF, SC_vit_L205_COIF, SC_vit_L206_COIF, SC_vit_L207_COI, SC_vit_L208_COIF, SC_vit_L209_COIF, SC_vit_L380_COI, SC_vit_L558_COI, SC_vit_L733_COIF
+
+
+Using k2p distance
+
+
+#####################
+Nominal MOTUs
+#####################
+
+#####SC_bor#####
+SC_bor_L0063_COIF, SC_bor_L0086_COI, SC_bor_L0117_ANOSCOIF, SC_bor_L0224_COI, SC_bor_L0899_COIF, SC_bor_L1176_COIF, SC_bor_L1177_COIF
+
+#####SC_dis#####
+SC_dis_B022_COI, SC_dis_B023_COI, SC_dis_B024_COI, SC_dis_B025_COI, SC_dis_B026_COIF, SC_dis_B027_COIF, SC_dis_L236_COI, SC_dis_L237_COI, SC_dis_L239_COIF, SC_dis_L242_COIF, SC_dis_L260_COI, SC_dis_L261_COIF, SC_dis_L262_COI, SC_dis_L263_COI, SC_dis_L264_COI, SC_dis_L265_COIF
+
+#####SC_fas#####
+SC_fas_B011_COI, SC_fas_L0544_COIF, SC_fas_L0629_COIF, SC_fas_L0650_COIF, SC_fas_L082_COI, SC_fas_L0936_COIF, SC_fas_L0951_COI, SC_fas_L0968_COIF, SC_fas_L259_COIF, SC_fas_L541_COI, SC_fas_L542_COI, SC_fas_L626_COI, SC_fas_L698_COI, SC_fas_L918_COI
+
+#####SC_int#####
+SC_int_B014_COI, SC_int_B015_COI, SC_int_L012_COIF, SC_int_L0217_COI, SC_int_L1201_COIF, SC_int_L214_COI, SC_int_L219_COIF, SC_int_L372_COI
+
+#####SC_jac#####
+SC_jac_L546_COI
+
+#####SC_kne#####
+SC_kne_B012_COI, SC_kne_L0857_COIF, SC_kne_L0866_COIF, SC_kne_L270_COIF, SC_kne_L361_COI, SC_kne_L363_COI, SC_kne_L365_COI
+
+#####SC_nas#####
+SC_nas_B016_COI, SC_nas_B017_COI, SC_nas_B018_COI, SC_nas_B019_COI, SC_nas_L0926_COIF, SC_nas_L1066_COI, SC_nas_L1093_ANOSCOIF, SC_nas_L1099_ANOSCOIF, SC_nas_L1100_ANOSCOIF, SC_nas_L1103_ANOSCOIF, SC_nas_L1111_ANOSCOIF, SC_nas_L1178_FISHF, SC_nas_L1179_COIF, SC_nas_L243_COI, SC_nas_L244_COIF, SC_nas_L245_COIF, SC_nas_L889_COI
+
+#####SC_pla#####
+SC_pla_B135, SC_pla_B136, SC_pla_B137, SC_pla_B138, SC_pla_B139
+
+#####SC_sco#####
+SC_sco_B156_COI, SC_sco_B214, SC_sco_L0906_COIF, SC_sco_L905_COI
+
+#####SC_vit#####
+SC_vit_L0613_COIF, SC_vit_L0750_COIF, SC_vit_L100_COI, SC_vit_L197_COIF, SC_vit_L205_COIF, SC_vit_L206_COIF, SC_vit_L207_COI, SC_vit_L208_COIF, SC_vit_L209_COIF, SC_vit_L380_COI, SC_vit_L558_COI, SC_vit_L733_COIF
+
+
+Using p-distance
+
+
+
+############################################################################
+
+SPdel v2.0 - Species delimitation and statistics for DNA Barcoding data sets
+
+############################################################################
+
+Sequences are aligned (same size)
+Fasta file with 91 sequences and 627 base pairs
+Checking stop codons using VER genetic code
+All sequences have at least one ORF without stop codons
+
+
+############################################################################
+
+SPdel v2.0 - Species delimitation and statistics for DNA Barcoding data sets
+
+############################################################################
+
+Sequences are aligned (same size)
+Fasta file with 91 sequences and 627 base pairs
+Checking stop codons using 2 genetic code
+All sequences have at least one ORF without stop codons
+
+
+############################################################################
+
+SPdel v2.0 - Species delimitation and statistics for DNA Barcoding data sets
+
+############################################################################
+
+Sequences are aligned (same size)
+Fasta file with 91 sequences and 627 base pairs
+
+
+############################################################################
+
+SPdel v2.0 - Species delimitation and statistics for DNA Barcoding data sets
+
+############################################################################
+
+Sequences are aligned (same size)
+Fasta file with 91 sequences and 627 base pairs
+
+#####################
+Nominal MOTUs
+#####################
+
+#####SC_bor#####
+SC_bor_L0063_COIF, SC_bor_L0086_COI, SC_bor_L0117_ANOSCOIF, SC_bor_L0224_COI, SC_bor_L0899_COIF, SC_bor_L1176_COIF, SC_bor_L1177_COIF
+
+#####SC_dis#####
+SC_dis_B022_COI, SC_dis_B023_COI, SC_dis_B024_COI, SC_dis_B025_COI, SC_dis_B026_COIF, SC_dis_B027_COIF, SC_dis_L236_COI, SC_dis_L237_COI, SC_dis_L239_COIF, SC_dis_L242_COIF, SC_dis_L260_COI, SC_dis_L261_COIF, SC_dis_L262_COI, SC_dis_L263_COI, SC_dis_L264_COI, SC_dis_L265_COIF
+
+#####SC_fas#####
+SC_fas_B011_COI, SC_fas_L0544_COIF, SC_fas_L0629_COIF, SC_fas_L0650_COIF, SC_fas_L082_COI, SC_fas_L0936_COIF, SC_fas_L0951_COI, SC_fas_L0968_COIF, SC_fas_L259_COIF, SC_fas_L541_COI, SC_fas_L542_COI, SC_fas_L626_COI, SC_fas_L698_COI, SC_fas_L918_COI
+
+#####SC_int#####
+SC_int_B014_COI, SC_int_B015_COI, SC_int_L012_COIF, SC_int_L0217_COI, SC_int_L1201_COIF, SC_int_L214_COI, SC_int_L219_COIF, SC_int_L372_COI
+
+#####SC_jac#####
+SC_jac_L546_COI
+
+#####SC_kne#####
+SC_kne_B012_COI, SC_kne_L0857_COIF, SC_kne_L0866_COIF, SC_kne_L270_COIF, SC_kne_L361_COI, SC_kne_L363_COI, SC_kne_L365_COI
+
+#####SC_nas#####
+SC_nas_B016_COI, SC_nas_B017_COI, SC_nas_B018_COI, SC_nas_B019_COI, SC_nas_L0926_COIF, SC_nas_L1066_COI, SC_nas_L1093_ANOSCOIF, SC_nas_L1099_ANOSCOIF, SC_nas_L1100_ANOSCOIF, SC_nas_L1103_ANOSCOIF, SC_nas_L1111_ANOSCOIF, SC_nas_L1178_FISHF, SC_nas_L1179_COIF, SC_nas_L243_COI, SC_nas_L244_COIF, SC_nas_L245_COIF, SC_nas_L889_COI
+
+#####SC_pla#####
+SC_pla_B135, SC_pla_B136, SC_pla_B137, SC_pla_B138, SC_pla_B139
+
+#####SC_sco#####
+SC_sco_B156_COI, SC_sco_B214, SC_sco_L0906_COIF, SC_sco_L905_COI
+
+#####SC_vit#####
+SC_vit_L0613_COIF, SC_vit_L0750_COIF, SC_vit_L100_COI, SC_vit_L197_COIF, SC_vit_L205_COIF, SC_vit_L206_COIF, SC_vit_L207_COI, SC_vit_L208_COIF, SC_vit_L209_COIF, SC_vit_L380_COI, SC_vit_L558_COI, SC_vit_L733_COIF
+
+
+Using k2p distance
+
+
+
+############################################################################
+
+SPdel v2.0 - Species delimitation and statistics for DNA Barcoding data sets
+
+############################################################################
+
+Sequences are aligned (same size)
+Fasta file with 91 sequences and 627 base pairs
+
+#####################
+Nominal MOTUs
+#####################
+
+#####SC_bor#####
+SC_bor_L0063_COIF, SC_bor_L0086_COI, SC_bor_L0117_ANOSCOIF, SC_bor_L0224_COI, SC_bor_L0899_COIF, SC_bor_L1176_COIF, SC_bor_L1177_COIF
+
+#####SC_dis#####
+SC_dis_B022_COI, SC_dis_B023_COI, SC_dis_B024_COI, SC_dis_B025_COI, SC_dis_B026_COIF, SC_dis_B027_COIF, SC_dis_L236_COI, SC_dis_L237_COI, SC_dis_L239_COIF, SC_dis_L242_COIF, SC_dis_L260_COI, SC_dis_L261_COIF, SC_dis_L262_COI, SC_dis_L263_COI, SC_dis_L264_COI, SC_dis_L265_COIF
+
+#####SC_fas#####
+SC_fas_B011_COI, SC_fas_L0544_COIF, SC_fas_L0629_COIF, SC_fas_L0650_COIF, SC_fas_L082_COI, SC_fas_L0936_COIF, SC_fas_L0951_COI, SC_fas_L0968_COIF, SC_fas_L259_COIF, SC_fas_L541_COI, SC_fas_L542_COI, SC_fas_L626_COI, SC_fas_L698_COI, SC_fas_L918_COI
+
+#####SC_int#####
+SC_int_B014_COI, SC_int_B015_COI, SC_int_L012_COIF, SC_int_L0217_COI, SC_int_L1201_COIF, SC_int_L214_COI, SC_int_L219_COIF, SC_int_L372_COI
+
+#####SC_jac#####
+SC_jac_L546_COI
+
+#####SC_kne#####
+SC_kne_B012_COI, SC_kne_L0857_COIF, SC_kne_L0866_COIF, SC_kne_L270_COIF, SC_kne_L361_COI, SC_kne_L363_COI, SC_kne_L365_COI
+
+#####SC_nas#####
+SC_nas_B016_COI, SC_nas_B017_COI, SC_nas_B018_COI, SC_nas_B019_COI, SC_nas_L0926_COIF, SC_nas_L1066_COI, SC_nas_L1093_ANOSCOIF, SC_nas_L1099_ANOSCOIF, SC_nas_L1100_ANOSCOIF, SC_nas_L1103_ANOSCOIF, SC_nas_L1111_ANOSCOIF, SC_nas_L1178_FISHF, SC_nas_L1179_COIF, SC_nas_L243_COI, SC_nas_L244_COIF, SC_nas_L245_COIF, SC_nas_L889_COI
+
+#####SC_pla#####
+SC_pla_B135, SC_pla_B136, SC_pla_B137, SC_pla_B138, SC_pla_B139
+
+#####SC_sco#####
+SC_sco_B156_COI, SC_sco_B214, SC_sco_L0906_COIF, SC_sco_L905_COI
+
+#####SC_vit#####
+SC_vit_L0613_COIF, SC_vit_L0750_COIF, SC_vit_L100_COI, SC_vit_L197_COIF, SC_vit_L205_COIF, SC_vit_L206_COIF, SC_vit_L207_COI, SC_vit_L208_COIF, SC_vit_L209_COIF, SC_vit_L380_COI, SC_vit_L558_COI, SC_vit_L733_COIF
+
+
+Using k2p distance
+
+
+
+############################################################################
+
+SPdel v2.0 - Species delimitation and statistics for DNA Barcoding data sets
+
+############################################################################
+
+Sequences are aligned (same size)
+Fasta file with 91 sequences and 627 base pairs
+
+#####################
+Nominal MOTUs
+#####################
+
+#####SC_bor#####
+SC_bor_L0063_COIF, SC_bor_L0086_COI, SC_bor_L0117_ANOSCOIF, SC_bor_L0224_COI, SC_bor_L0899_COIF, SC_bor_L1176_COIF, SC_bor_L1177_COIF
+
+#####SC_dis#####
+SC_dis_B022_COI, SC_dis_B023_COI, SC_dis_B024_COI, SC_dis_B025_COI, SC_dis_B026_COIF, SC_dis_B027_COIF, SC_dis_L236_COI, SC_dis_L237_COI, SC_dis_L239_COIF, SC_dis_L242_COIF, SC_dis_L260_COI, SC_dis_L261_COIF, SC_dis_L262_COI, SC_dis_L263_COI, SC_dis_L264_COI, SC_dis_L265_COIF
+
+#####SC_fas#####
+SC_fas_B011_COI, SC_fas_L0544_COIF, SC_fas_L0629_COIF, SC_fas_L0650_COIF, SC_fas_L082_COI, SC_fas_L0936_COIF, SC_fas_L0951_COI, SC_fas_L0968_COIF, SC_fas_L259_COIF, SC_fas_L541_COI, SC_fas_L542_COI, SC_fas_L626_COI, SC_fas_L698_COI, SC_fas_L918_COI
+
+#####SC_int#####
+SC_int_B014_COI, SC_int_B015_COI, SC_int_L012_COIF, SC_int_L0217_COI, SC_int_L1201_COIF, SC_int_L214_COI, SC_int_L219_COIF, SC_int_L372_COI
+
+#####SC_jac#####
+SC_jac_L546_COI
+
+#####SC_kne#####
+SC_kne_B012_COI, SC_kne_L0857_COIF, SC_kne_L0866_COIF, SC_kne_L270_COIF, SC_kne_L361_COI, SC_kne_L363_COI, SC_kne_L365_COI
+
+#####SC_nas#####
+SC_nas_B016_COI, SC_nas_B017_COI, SC_nas_B018_COI, SC_nas_B019_COI, SC_nas_L0926_COIF, SC_nas_L1066_COI, SC_nas_L1093_ANOSCOIF, SC_nas_L1099_ANOSCOIF, SC_nas_L1100_ANOSCOIF, SC_nas_L1103_ANOSCOIF, SC_nas_L1111_ANOSCOIF, SC_nas_L1178_FISHF, SC_nas_L1179_COIF, SC_nas_L243_COI, SC_nas_L244_COIF, SC_nas_L245_COIF, SC_nas_L889_COI
+
+#####SC_pla#####
+SC_pla_B135, SC_pla_B136, SC_pla_B137, SC_pla_B138, SC_pla_B139
+
+#####SC_sco#####
+SC_sco_B156_COI, SC_sco_B214, SC_sco_L0906_COIF, SC_sco_L905_COI
+
+#####SC_vit#####
+SC_vit_L0613_COIF, SC_vit_L0750_COIF, SC_vit_L100_COI, SC_vit_L197_COIF, SC_vit_L205_COIF, SC_vit_L206_COIF, SC_vit_L207_COI, SC_vit_L208_COIF, SC_vit_L209_COIF, SC_vit_L380_COI, SC_vit_L558_COI, SC_vit_L733_COIF
+
+
+Using k2p distance
+
+
+
+############################################################################
+
+SPdel v2.0 - Species delimitation and statistics for DNA Barcoding data sets
+
+############################################################################
+
+Sequences are aligned (same size)
+Fasta file with 91 sequences and 627 base pairs
+
+#####################
+Nominal MOTUs
+#####################
+
+#####SC_bor#####
+SC_bor_L0063_COIF, SC_bor_L0086_COI, SC_bor_L0117_ANOSCOIF, SC_bor_L0224_COI, SC_bor_L0899_COIF, SC_bor_L1176_COIF, SC_bor_L1177_COIF
+
+#####SC_dis#####
+SC_dis_B022_COI, SC_dis_B023_COI, SC_dis_B024_COI, SC_dis_B025_COI, SC_dis_B026_COIF, SC_dis_B027_COIF, SC_dis_L236_COI, SC_dis_L237_COI, SC_dis_L239_COIF, SC_dis_L242_COIF, SC_dis_L260_COI, SC_dis_L261_COIF, SC_dis_L262_COI, SC_dis_L263_COI, SC_dis_L264_COI, SC_dis_L265_COIF
+
+#####SC_fas#####
+SC_fas_B011_COI, SC_fas_L0544_COIF, SC_fas_L0629_COIF, SC_fas_L0650_COIF, SC_fas_L082_COI, SC_fas_L0936_COIF, SC_fas_L0951_COI, SC_fas_L0968_COIF, SC_fas_L259_COIF, SC_fas_L541_COI, SC_fas_L542_COI, SC_fas_L626_COI, SC_fas_L698_COI, SC_fas_L918_COI
+
+#####SC_int#####
+SC_int_B014_COI, SC_int_B015_COI, SC_int_L012_COIF, SC_int_L0217_COI, SC_int_L1201_COIF, SC_int_L214_COI, SC_int_L219_COIF, SC_int_L372_COI
+
+#####SC_jac#####
+SC_jac_L546_COI
+
+#####SC_kne#####
+SC_kne_B012_COI, SC_kne_L0857_COIF, SC_kne_L0866_COIF, SC_kne_L270_COIF, SC_kne_L361_COI, SC_kne_L363_COI, SC_kne_L365_COI
+
+#####SC_nas#####
+SC_nas_B016_COI, SC_nas_B017_COI, SC_nas_B018_COI, SC_nas_B019_COI, SC_nas_L0926_COIF, SC_nas_L1066_COI, SC_nas_L1093_ANOSCOIF, SC_nas_L1099_ANOSCOIF, SC_nas_L1100_ANOSCOIF, SC_nas_L1103_ANOSCOIF, SC_nas_L1111_ANOSCOIF, SC_nas_L1178_FISHF, SC_nas_L1179_COIF, SC_nas_L243_COI, SC_nas_L244_COIF, SC_nas_L245_COIF, SC_nas_L889_COI
+
+#####SC_pla#####
+SC_pla_B135, SC_pla_B136, SC_pla_B137, SC_pla_B138, SC_pla_B139
+
+#####SC_sco#####
+SC_sco_B156_COI, SC_sco_B214, SC_sco_L0906_COIF, SC_sco_L905_COI
+
+#####SC_vit#####
+SC_vit_L0613_COIF, SC_vit_L0750_COIF, SC_vit_L100_COI, SC_vit_L197_COIF, SC_vit_L205_COIF, SC_vit_L206_COIF, SC_vit_L207_COI, SC_vit_L208_COIF, SC_vit_L209_COIF, SC_vit_L380_COI, SC_vit_L558_COI, SC_vit_L733_COIF
+
+
+Using k2p distance
+
+
+
+############################################################################
+
+SPdel v2.0 - Species delimitation and statistics for DNA Barcoding data sets
+
+############################################################################
+
+Sequences are aligned (same size)
+Fasta file with 91 sequences and 627 base pairs
+
+#####################
+Nominal MOTUs
+#####################
+
+#####SC_bor#####
+SC_bor_L0063_COIF, SC_bor_L0086_COI, SC_bor_L0117_ANOSCOIF, SC_bor_L0224_COI, SC_bor_L0899_COIF, SC_bor_L1176_COIF, SC_bor_L1177_COIF
+
+#####SC_dis#####
+SC_dis_B022_COI, SC_dis_B023_COI, SC_dis_B024_COI, SC_dis_B025_COI, SC_dis_B026_COIF, SC_dis_B027_COIF, SC_dis_L236_COI, SC_dis_L237_COI, SC_dis_L239_COIF, SC_dis_L242_COIF, SC_dis_L260_COI, SC_dis_L261_COIF, SC_dis_L262_COI, SC_dis_L263_COI, SC_dis_L264_COI, SC_dis_L265_COIF
+
+#####SC_fas#####
+SC_fas_B011_COI, SC_fas_L0544_COIF, SC_fas_L0629_COIF, SC_fas_L0650_COIF, SC_fas_L082_COI, SC_fas_L0936_COIF, SC_fas_L0951_COI, SC_fas_L0968_COIF, SC_fas_L259_COIF, SC_fas_L541_COI, SC_fas_L542_COI, SC_fas_L626_COI, SC_fas_L698_COI, SC_fas_L918_COI
+
+#####SC_int#####
+SC_int_B014_COI, SC_int_B015_COI, SC_int_L012_COIF, SC_int_L0217_COI, SC_int_L1201_COIF, SC_int_L214_COI, SC_int_L219_COIF, SC_int_L372_COI
+
+#####SC_jac#####
+SC_jac_L546_COI
+
+#####SC_kne#####
+SC_kne_B012_COI, SC_kne_L0857_COIF, SC_kne_L0866_COIF, SC_kne_L270_COIF, SC_kne_L361_COI, SC_kne_L363_COI, SC_kne_L365_COI
+
+#####SC_nas#####
+SC_nas_B016_COI, SC_nas_B017_COI, SC_nas_B018_COI, SC_nas_B019_COI, SC_nas_L0926_COIF, SC_nas_L1066_COI, SC_nas_L1093_ANOSCOIF, SC_nas_L1099_ANOSCOIF, SC_nas_L1100_ANOSCOIF, SC_nas_L1103_ANOSCOIF, SC_nas_L1111_ANOSCOIF, SC_nas_L1178_FISHF, SC_nas_L1179_COIF, SC_nas_L243_COI, SC_nas_L244_COIF, SC_nas_L245_COIF, SC_nas_L889_COI
+
+#####SC_pla#####
+SC_pla_B135, SC_pla_B136, SC_pla_B137, SC_pla_B138, SC_pla_B139
+
+#####SC_sco#####
+SC_sco_B156_COI, SC_sco_B214, SC_sco_L0906_COIF, SC_sco_L905_COI
+
+#####SC_vit#####
+SC_vit_L0613_COIF, SC_vit_L0750_COIF, SC_vit_L100_COI, SC_vit_L197_COIF, SC_vit_L205_COIF, SC_vit_L206_COIF, SC_vit_L207_COI, SC_vit_L208_COIF, SC_vit_L209_COIF, SC_vit_L380_COI, SC_vit_L558_COI, SC_vit_L733_COIF
+
+
+Using k2p distance
+
+
+
+############################################################################
+
+SPdel v2.0 - Species delimitation and statistics for DNA Barcoding data sets
+
+############################################################################
+
+Sequences are aligned (same size)
+Fasta file with 91 sequences and 627 base pairs
+
+#####################
+Nominal MOTUs
+#####################
+
+#####SC_bor#####
+SC_bor_L0063_COIF, SC_bor_L0086_COI, SC_bor_L0117_ANOSCOIF, SC_bor_L0224_COI, SC_bor_L0899_COIF, SC_bor_L1176_COIF, SC_bor_L1177_COIF
+
+#####SC_dis#####
+SC_dis_B022_COI, SC_dis_B023_COI, SC_dis_B024_COI, SC_dis_B025_COI, SC_dis_B026_COIF, SC_dis_B027_COIF, SC_dis_L236_COI, SC_dis_L237_COI, SC_dis_L239_COIF, SC_dis_L242_COIF, SC_dis_L260_COI, SC_dis_L261_COIF, SC_dis_L262_COI, SC_dis_L263_COI, SC_dis_L264_COI, SC_dis_L265_COIF
+
+#####SC_fas#####
+SC_fas_B011_COI, SC_fas_L0544_COIF, SC_fas_L0629_COIF, SC_fas_L0650_COIF, SC_fas_L082_COI, SC_fas_L0936_COIF, SC_fas_L0951_COI, SC_fas_L0968_COIF, SC_fas_L259_COIF, SC_fas_L541_COI, SC_fas_L542_COI, SC_fas_L626_COI, SC_fas_L698_COI, SC_fas_L918_COI
+
+#####SC_int#####
+SC_int_B014_COI, SC_int_B015_COI, SC_int_L012_COIF, SC_int_L0217_COI, SC_int_L1201_COIF, SC_int_L214_COI, SC_int_L219_COIF, SC_int_L372_COI
+
+#####SC_jac#####
+SC_jac_L546_COI
+
+#####SC_kne#####
+SC_kne_B012_COI, SC_kne_L0857_COIF, SC_kne_L0866_COIF, SC_kne_L270_COIF, SC_kne_L361_COI, SC_kne_L363_COI, SC_kne_L365_COI
+
+#####SC_nas#####
+SC_nas_B016_COI, SC_nas_B017_COI, SC_nas_B018_COI, SC_nas_B019_COI, SC_nas_L0926_COIF, SC_nas_L1066_COI, SC_nas_L1093_ANOSCOIF, SC_nas_L1099_ANOSCOIF, SC_nas_L1100_ANOSCOIF, SC_nas_L1103_ANOSCOIF, SC_nas_L1111_ANOSCOIF, SC_nas_L1178_FISHF, SC_nas_L1179_COIF, SC_nas_L243_COI, SC_nas_L244_COIF, SC_nas_L245_COIF, SC_nas_L889_COI
+
+#####SC_pla#####
+SC_pla_B135, SC_pla_B136, SC_pla_B137, SC_pla_B138, SC_pla_B139
+
+#####SC_sco#####
+SC_sco_B156_COI, SC_sco_B214, SC_sco_L0906_COIF, SC_sco_L905_COI
+
+#####SC_vit#####
+SC_vit_L0613_COIF, SC_vit_L0750_COIF, SC_vit_L100_COI, SC_vit_L197_COIF, SC_vit_L205_COIF, SC_vit_L206_COIF, SC_vit_L207_COI, SC_vit_L208_COIF, SC_vit_L209_COIF, SC_vit_L380_COI, SC_vit_L558_COI, SC_vit_L733_COIF
+
+
+Using k2p distance
+
+
+#####################
+Nominal MOTUs
+#####################
+
+#####SC_bor#####
+SC_bor_L0063_COIF, SC_bor_L0086_COI, SC_bor_L0117_ANOSCOIF, SC_bor_L0224_COI, SC_bor_L0899_COIF, SC_bor_L1176_COIF, SC_bor_L1177_COIF
+
+#####SC_dis#####
+SC_dis_B022_COI, SC_dis_B023_COI, SC_dis_B024_COI, SC_dis_B025_COI, SC_dis_B026_COIF, SC_dis_B027_COIF, SC_dis_L236_COI, SC_dis_L237_COI, SC_dis_L239_COIF, SC_dis_L242_COIF, SC_dis_L260_COI, SC_dis_L261_COIF, SC_dis_L262_COI, SC_dis_L263_COI, SC_dis_L264_COI, SC_dis_L265_COIF
+
+#####SC_fas#####
+SC_fas_B011_COI, SC_fas_L0544_COIF, SC_fas_L0629_COIF, SC_fas_L0650_COIF, SC_fas_L082_COI, SC_fas_L0936_COIF, SC_fas_L0951_COI, SC_fas_L0968_COIF, SC_fas_L259_COIF, SC_fas_L541_COI, SC_fas_L542_COI, SC_fas_L626_COI, SC_fas_L698_COI, SC_fas_L918_COI
+
+#####SC_int#####
+SC_int_B014_COI, SC_int_B015_COI, SC_int_L012_COIF, SC_int_L0217_COI, SC_int_L1201_COIF, SC_int_L214_COI, SC_int_L219_COIF, SC_int_L372_COI
+
+#####SC_jac#####
+SC_jac_L546_COI
+
+#####SC_kne#####
+SC_kne_B012_COI, SC_kne_L0857_COIF, SC_kne_L0866_COIF, SC_kne_L270_COIF, SC_kne_L361_COI, SC_kne_L363_COI, SC_kne_L365_COI
+
+#####SC_nas#####
+SC_nas_B016_COI, SC_nas_B017_COI, SC_nas_B018_COI, SC_nas_B019_COI, SC_nas_L0926_COIF, SC_nas_L1066_COI, SC_nas_L1093_ANOSCOIF, SC_nas_L1099_ANOSCOIF, SC_nas_L1100_ANOSCOIF, SC_nas_L1103_ANOSCOIF, SC_nas_L1111_ANOSCOIF, SC_nas_L1178_FISHF, SC_nas_L1179_COIF, SC_nas_L243_COI, SC_nas_L244_COIF, SC_nas_L245_COIF, SC_nas_L889_COI
+
+#####SC_pla#####
+SC_pla_B135, SC_pla_B136, SC_pla_B137, SC_pla_B138, SC_pla_B139
+
+#####SC_sco#####
+SC_sco_B156_COI, SC_sco_B214, SC_sco_L0906_COIF, SC_sco_L905_COI
+
+#####SC_vit#####
+SC_vit_L0613_COIF, SC_vit_L0750_COIF, SC_vit_L100_COI, SC_vit_L197_COIF, SC_vit_L205_COIF, SC_vit_L206_COIF, SC_vit_L207_COI, SC_vit_L208_COIF, SC_vit_L209_COIF, SC_vit_L380_COI, SC_vit_L558_COI, SC_vit_L733_COIF
+
+
+Using p-distance
+
+
+
+############################################################################
+
+SPdel v2.0 - Species delimitation and statistics for DNA Barcoding data sets
+
+############################################################################
+
+Sequences are aligned (same size)
+Fasta file with 91 sequences and 627 base pairs
+Checking stop codons using VER genetic code
+All sequences have at least one ORF without stop codons
+
+
+############################################################################
+
+SPdel v2.0 - Species delimitation and statistics for DNA Barcoding data sets
+
+############################################################################
+
+Sequences are aligned (same size)
+Fasta file with 91 sequences and 627 base pairs
+Checking stop codons using 2 genetic code
+All sequences have at least one ORF without stop codons
+
+
+############################################################################
+
+SPdel v2.0 - Species delimitation and statistics for DNA Barcoding data sets
+
+############################################################################
+
+Sequences are aligned (same size)
+Fasta file with 91 sequences and 627 base pairs
+
+#####################
+PTP MOTUs
+#####################
+
+#####MOTU_1#####
+SC_jac_L546_COI, SC_pla_B136, SC_pla_B138, SC_pla_B137, SC_pla_B139, SC_pla_B135
+
+#####MOTU_10#####
+SC_int_B014_COI, SC_int_L1201_COIF, SC_int_L219_COIF, SC_int_L012_COIF, SC_int_L0217_COI, SC_int_B015_COI, SC_int_L214_COI, SC_int_L372_COI
+
+#####MOTU_11#####
+SC_dis_B022_COI, SC_dis_B023_COI, SC_dis_B024_COI, SC_dis_B025_COI, SC_dis_B026_COIF, SC_dis_B027_COIF
+
+#####MOTU_12#####
+SC_dis_L236_COI, SC_dis_L264_COI, SC_dis_L242_COIF, SC_dis_L261_COIF, SC_dis_L260_COI, SC_dis_L263_COI, SC_dis_L262_COI, SC_dis_L265_COIF, SC_dis_L239_COIF, SC_dis_L237_COI
+
+#####MOTU_13#####
+SC_vit_L0613_COIF, SC_vit_L558_COI
+
+#####MOTU_14#####
+SC_vit_L0750_COIF, SC_vit_L733_COIF
+
+#####MOTU_2#####
+SC_sco_B156_COI, SC_sco_B214, SC_sco_L905_COI, SC_sco_L0906_COIF
+
+#####MOTU_3#####
+SC_kne_B012_COI, SC_kne_L0857_COIF, SC_kne_L0866_COIF, SC_kne_L270_COIF, SC_kne_L363_COI, SC_kne_L365_COI, SC_kne_L361_COI
+
+#####MOTU_4#####
+SC_fas_B011_COI, SC_fas_L698_COI, SC_fas_L918_COI, SC_fas_L0629_COIF, SC_fas_L0650_COIF, SC_fas_L542_COI, SC_fas_L0951_COI, SC_fas_L541_COI, SC_fas_L0968_COIF, SC_fas_L626_COI, SC_fas_L259_COIF, SC_fas_L0544_COIF, SC_fas_L082_COI, SC_fas_L0936_COIF
+
+#####MOTU_5#####
+SC_vit_L100_COI, SC_vit_L208_COIF, SC_vit_L206_COIF, SC_vit_L209_COIF, SC_vit_L205_COIF, SC_vit_L207_COI, SC_vit_L197_COIF, SC_vit_L380_COI
+
+#####MOTU_6#####
+SC_nas_B017_COI, SC_nas_B018_COI, SC_nas_L1178_FISHF, SC_nas_L1103_ANOSCOIF, SC_nas_L0926_COIF, SC_nas_L889_COI
+
+#####MOTU_7#####
+SC_nas_L1179_COIF
+
+#####MOTU_8#####
+SC_nas_B016_COI, SC_nas_B019_COI, SC_nas_L1093_ANOSCOIF, SC_nas_L1100_ANOSCOIF, SC_nas_L1099_ANOSCOIF, SC_nas_L1066_COI, SC_nas_L1111_ANOSCOIF, SC_nas_L243_COI, SC_nas_L244_COIF, SC_nas_L245_COIF
+
+#####MOTU_9#####
+SC_bor_L0063_COIF, SC_bor_L0899_COIF, SC_bor_L0117_ANOSCOIF, SC_bor_L0224_COI, SC_bor_L0086_COI, SC_bor_L1176_COIF, SC_bor_L1177_COIF
+
+
+Using k2p distance
+
+
+
+############################################################################
+
+SPdel v2.0 - Species delimitation and statistics for DNA Barcoding data sets
+
+############################################################################
+
+Sequences are aligned (same size)
+Fasta file with 91 sequences and 627 base pairs
+
+
+############################################################################
+
+SPdel v2.0 - Species delimitation and statistics for DNA Barcoding data sets
+
+############################################################################
+
+Sequences are aligned (same size)
+Fasta file with 91 sequences and 627 base pairs
+
+
+############################################################################
+
+SPdel v2.0 - Species delimitation and statistics for DNA Barcoding data sets
+
+############################################################################
+
+Sequences are aligned (same size)
+Fasta file with 91 sequences and 627 base pairs
+
+
+############################################################################
+
+SPdel v2.0 - Species delimitation and statistics for DNA Barcoding data sets
+
+############################################################################
+
+Sequences are aligned (same size)
+Fasta file with 91 sequences and 627 base pairs
+
+#####################
+PTP MOTUs
+#####################
+
+#####MOTU_1#####
+SC_jac_L546_COI, SC_pla_B136, SC_pla_B138, SC_pla_B137, SC_pla_B139, SC_pla_B135
+
+#####MOTU_10#####
+SC_int_B014_COI, SC_int_L1201_COIF, SC_int_L219_COIF, SC_int_L012_COIF, SC_int_L0217_COI, SC_int_B015_COI, SC_int_L214_COI, SC_int_L372_COI
+
+#####MOTU_11#####
+SC_dis_B022_COI, SC_dis_B023_COI, SC_dis_B024_COI, SC_dis_B025_COI, SC_dis_B026_COIF, SC_dis_B027_COIF
+
+#####MOTU_12#####
+SC_dis_L236_COI, SC_dis_L264_COI, SC_dis_L242_COIF, SC_dis_L261_COIF, SC_dis_L260_COI, SC_dis_L263_COI, SC_dis_L262_COI, SC_dis_L265_COIF, SC_dis_L239_COIF, SC_dis_L237_COI
+
+#####MOTU_13#####
+SC_vit_L0613_COIF, SC_vit_L558_COI
+
+#####MOTU_14#####
+SC_vit_L0750_COIF, SC_vit_L733_COIF
+
+#####MOTU_2#####
+SC_sco_B156_COI, SC_sco_B214, SC_sco_L905_COI, SC_sco_L0906_COIF
+
+#####MOTU_3#####
+SC_kne_B012_COI, SC_kne_L0857_COIF, SC_kne_L0866_COIF, SC_kne_L270_COIF, SC_kne_L363_COI, SC_kne_L365_COI, SC_kne_L361_COI
+
+#####MOTU_4#####
+SC_fas_B011_COI, SC_fas_L698_COI, SC_fas_L918_COI, SC_fas_L0629_COIF, SC_fas_L0650_COIF, SC_fas_L542_COI, SC_fas_L0951_COI, SC_fas_L541_COI, SC_fas_L0968_COIF, SC_fas_L626_COI, SC_fas_L259_COIF, SC_fas_L0544_COIF, SC_fas_L082_COI, SC_fas_L0936_COIF
+
+#####MOTU_5#####
+SC_vit_L100_COI, SC_vit_L208_COIF, SC_vit_L206_COIF, SC_vit_L209_COIF, SC_vit_L205_COIF, SC_vit_L207_COI, SC_vit_L197_COIF, SC_vit_L380_COI
+
+#####MOTU_6#####
+SC_nas_B017_COI, SC_nas_B018_COI, SC_nas_L1178_FISHF, SC_nas_L1103_ANOSCOIF, SC_nas_L0926_COIF, SC_nas_L889_COI
+
+#####MOTU_7#####
+SC_nas_L1179_COIF
+
+#####MOTU_8#####
+SC_nas_B016_COI, SC_nas_B019_COI, SC_nas_L1093_ANOSCOIF, SC_nas_L1100_ANOSCOIF, SC_nas_L1099_ANOSCOIF, SC_nas_L1066_COI, SC_nas_L1111_ANOSCOIF, SC_nas_L243_COI, SC_nas_L244_COIF, SC_nas_L245_COIF
+
+#####MOTU_9#####
+SC_bor_L0063_COIF, SC_bor_L0899_COIF, SC_bor_L0117_ANOSCOIF, SC_bor_L0224_COI, SC_bor_L0086_COI, SC_bor_L1176_COIF, SC_bor_L1177_COIF
+
+
+Using k2p distance
+
+
+
+############################################################################
+
+SPdel v2.0 - Species delimitation and statistics for DNA Barcoding data sets
+
+############################################################################
+
+Sequences are aligned (same size)
+Fasta file with 91 sequences and 627 base pairs
+
+#####################
+bPTP MOTUs
+#####################
+
+#####MOTU_1#####
+SC_jac_L546_COI, SC_pla_B136, SC_pla_B138, SC_pla_B137, SC_pla_B139, SC_pla_B135
+
+#####MOTU_10#####
+SC_int_B014_COI, SC_int_L1201_COIF, SC_int_L219_COIF, SC_int_L012_COIF, SC_int_L0217_COI, SC_int_B015_COI, SC_int_L214_COI, SC_int_L372_COI
+
+#####MOTU_11#####
+SC_vit_L0613_COIF, SC_vit_L558_COI
+
+#####MOTU_12#####
+SC_vit_L0750_COIF, SC_vit_L733_COIF
+
+#####MOTU_13#####
+SC_dis_B022_COI, SC_dis_B023_COI, SC_dis_B024_COI, SC_dis_B025_COI, SC_dis_B026_COIF, SC_dis_B027_COIF
+
+#####MOTU_14#####
+SC_dis_L236_COI, SC_dis_L264_COI, SC_dis_L242_COIF, SC_dis_L261_COIF, SC_dis_L260_COI, SC_dis_L263_COI, SC_dis_L262_COI, SC_dis_L265_COIF, SC_dis_L239_COIF, SC_dis_L237_COI
+
+#####MOTU_2#####
+SC_sco_B156_COI, SC_sco_B214, SC_sco_L905_COI, SC_sco_L0906_COIF
+
+#####MOTU_3#####
+SC_kne_B012_COI, SC_kne_L0857_COIF, SC_kne_L0866_COIF, SC_kne_L270_COIF, SC_kne_L363_COI, SC_kne_L365_COI, SC_kne_L361_COI
+
+#####MOTU_4#####
+SC_fas_B011_COI, SC_fas_L698_COI, SC_fas_L918_COI, SC_fas_L0629_COIF, SC_fas_L0650_COIF, SC_fas_L542_COI, SC_fas_L0951_COI, SC_fas_L541_COI, SC_fas_L0968_COIF, SC_fas_L626_COI, SC_fas_L259_COIF, SC_fas_L0544_COIF, SC_fas_L082_COI, SC_fas_L0936_COIF
+
+#####MOTU_5#####
+SC_vit_L100_COI, SC_vit_L208_COIF, SC_vit_L206_COIF, SC_vit_L209_COIF, SC_vit_L205_COIF, SC_vit_L207_COI, SC_vit_L197_COIF, SC_vit_L380_COI
+
+#####MOTU_6#####
+SC_nas_B016_COI, SC_nas_B019_COI, SC_nas_L1093_ANOSCOIF, SC_nas_L1100_ANOSCOIF, SC_nas_L1099_ANOSCOIF, SC_nas_L1066_COI, SC_nas_L1111_ANOSCOIF, SC_nas_L243_COI, SC_nas_L244_COIF, SC_nas_L245_COIF
+
+#####MOTU_7#####
+SC_nas_B017_COI, SC_nas_B018_COI, SC_nas_L1178_FISHF, SC_nas_L1103_ANOSCOIF, SC_nas_L0926_COIF, SC_nas_L889_COI
+
+#####MOTU_8#####
+SC_nas_L1179_COIF
+
+#####MOTU_9#####
+SC_bor_L0063_COIF, SC_bor_L0899_COIF, SC_bor_L0117_ANOSCOIF, SC_bor_L0224_COI, SC_bor_L0086_COI, SC_bor_L1176_COIF, SC_bor_L1177_COIF
+
+
+Using k2p distance
+
+
+
+############################################################################
+
+SPdel v2.0 - Species delimitation and statistics for DNA Barcoding data sets
+
+############################################################################
+
+Sequences are aligned (same size)
+Fasta file with 91 sequences and 627 base pairs
+
+#####################
+bPTP MOTUs
+#####################
+
+#####MOTU_1#####
+SC_jac_L546_COI, SC_pla_B136, SC_pla_B138, SC_pla_B137, SC_pla_B139, SC_pla_B135
+
+#####MOTU_10#####
+SC_int_B014_COI, SC_int_L1201_COIF, SC_int_L219_COIF, SC_int_L012_COIF, SC_int_L0217_COI, SC_int_B015_COI, SC_int_L214_COI, SC_int_L372_COI
+
+#####MOTU_11#####
+SC_dis_B022_COI, SC_dis_B023_COI, SC_dis_B024_COI, SC_dis_B025_COI, SC_dis_B026_COIF, SC_dis_B027_COIF
+
+#####MOTU_12#####
+SC_dis_L236_COI, SC_dis_L264_COI, SC_dis_L242_COIF, SC_dis_L261_COIF, SC_dis_L260_COI, SC_dis_L263_COI, SC_dis_L262_COI, SC_dis_L265_COIF, SC_dis_L239_COIF, SC_dis_L237_COI
+
+#####MOTU_13#####
+SC_vit_L0613_COIF, SC_vit_L558_COI
+
+#####MOTU_14#####
+SC_vit_L0750_COIF, SC_vit_L733_COIF
+
+#####MOTU_2#####
+SC_sco_B156_COI, SC_sco_B214, SC_sco_L905_COI, SC_sco_L0906_COIF
+
+#####MOTU_3#####
+SC_kne_B012_COI, SC_kne_L0857_COIF, SC_kne_L0866_COIF, SC_kne_L270_COIF, SC_kne_L363_COI, SC_kne_L365_COI, SC_kne_L361_COI
+
+#####MOTU_4#####
+SC_fas_B011_COI, SC_fas_L698_COI, SC_fas_L918_COI, SC_fas_L0629_COIF, SC_fas_L0650_COIF, SC_fas_L542_COI, SC_fas_L0951_COI, SC_fas_L541_COI, SC_fas_L0968_COIF, SC_fas_L626_COI, SC_fas_L259_COIF, SC_fas_L0544_COIF, SC_fas_L082_COI, SC_fas_L0936_COIF
+
+#####MOTU_5#####
+SC_vit_L100_COI, SC_vit_L208_COIF, SC_vit_L206_COIF, SC_vit_L209_COIF, SC_vit_L205_COIF, SC_vit_L207_COI, SC_vit_L197_COIF, SC_vit_L380_COI
+
+#####MOTU_6#####
+SC_nas_B017_COI, SC_nas_B018_COI, SC_nas_L1178_FISHF, SC_nas_L1103_ANOSCOIF, SC_nas_L0926_COIF, SC_nas_L889_COI
+
+#####MOTU_7#####
+SC_nas_L1179_COIF
+
+#####MOTU_8#####
+SC_nas_B016_COI, SC_nas_B019_COI, SC_nas_L1093_ANOSCOIF, SC_nas_L1100_ANOSCOIF, SC_nas_L1099_ANOSCOIF, SC_nas_L1066_COI, SC_nas_L1111_ANOSCOIF, SC_nas_L243_COI, SC_nas_L244_COIF, SC_nas_L245_COIF
+
+#####MOTU_9#####
+SC_bor_L0063_COIF, SC_bor_L0899_COIF, SC_bor_L0117_ANOSCOIF, SC_bor_L0224_COI, SC_bor_L0086_COI, SC_bor_L1176_COIF, SC_bor_L1177_COIF
+
+
+Using k2p distance
+
+
+
+############################################################################
+
+SPdel v2.0 - Species delimitation and statistics for DNA Barcoding data sets
+
+############################################################################
+
+Sequences are aligned (same size)
+Fasta file with 91 sequences and 627 base pairs
+
+#####################
+GMYC MOTUs
+#####################
+
+#####MOTU_1#####
+SC_vit_L100_COI, SC_vit_L208_COIF, SC_vit_L206_COIF, SC_vit_L209_COIF, SC_vit_L205_COIF, SC_vit_L207_COI, SC_vit_L197_COIF, SC_vit_L380_COI
+
+#####MOTU_10#####
+SC_int_B014_COI, SC_int_L1201_COIF, SC_int_L219_COIF, SC_int_L012_COIF, SC_int_L0217_COI, SC_int_B015_COI, SC_int_L214_COI, SC_int_L372_COI
+
+#####MOTU_11#####
+SC_sco_B156_COI, SC_sco_B214, SC_sco_L905_COI, SC_sco_L0906_COIF
+
+#####MOTU_12#####
+SC_dis_B022_COI, SC_dis_B023_COI, SC_dis_B024_COI, SC_dis_B025_COI, SC_dis_B026_COIF, SC_dis_B027_COIF
+
+#####MOTU_13#####
+SC_vit_L0750_COIF, SC_vit_L733_COIF
+
+#####MOTU_14#####
+SC_nas_L1179_COIF
+
+#####MOTU_2#####
+SC_fas_B011_COI, SC_fas_L698_COI, SC_fas_L918_COI, SC_fas_L0629_COIF, SC_fas_L0650_COIF, SC_fas_L542_COI, SC_fas_L0951_COI, SC_fas_L541_COI, SC_fas_L0968_COIF, SC_fas_L626_COI, SC_fas_L259_COIF, SC_fas_L0544_COIF, SC_fas_L082_COI, SC_fas_L0936_COIF
+
+#####MOTU_3#####
+SC_nas_B016_COI, SC_nas_B019_COI, SC_nas_L1093_ANOSCOIF, SC_nas_L1100_ANOSCOIF, SC_nas_L1099_ANOSCOIF, SC_nas_L1066_COI, SC_nas_L1111_ANOSCOIF, SC_nas_L243_COI, SC_nas_L244_COIF, SC_nas_L245_COIF
+
+#####MOTU_4#####
+SC_dis_L236_COI, SC_dis_L264_COI, SC_dis_L242_COIF, SC_dis_L261_COIF, SC_dis_L260_COI, SC_dis_L263_COI, SC_dis_L262_COI, SC_dis_L265_COIF, SC_dis_L239_COIF, SC_dis_L237_COI
+
+#####MOTU_5#####
+SC_bor_L0063_COIF, SC_bor_L0899_COIF, SC_bor_L0117_ANOSCOIF, SC_bor_L0224_COI, SC_bor_L0086_COI, SC_bor_L1176_COIF, SC_bor_L1177_COIF
+
+#####MOTU_6#####
+SC_nas_B017_COI, SC_nas_B018_COI, SC_nas_L1178_FISHF, SC_nas_L1103_ANOSCOIF, SC_nas_L0926_COIF, SC_nas_L889_COI
+
+#####MOTU_7#####
+SC_jac_L546_COI, SC_pla_B136, SC_pla_B138, SC_pla_B137, SC_pla_B139, SC_pla_B135
+
+#####MOTU_8#####
+SC_kne_B012_COI, SC_kne_L0857_COIF, SC_kne_L0866_COIF, SC_kne_L270_COIF, SC_kne_L363_COI, SC_kne_L365_COI, SC_kne_L361_COI
+
+#####MOTU_9#####
+SC_vit_L0613_COIF, SC_vit_L558_COI
+
+
+Using k2p distance
+
+
+
+############################################################################
+
+SPdel v2.0 - Species delimitation and statistics for DNA Barcoding data sets
+
+############################################################################
+
+Sequences are aligned (same size)
+Fasta file with 91 sequences and 627 base pairs
+
+#####################
+GMYC MOTUs
+#####################
+
+#####MOTU_1#####
+SC_vit_L100_COI, SC_vit_L208_COIF, SC_vit_L206_COIF, SC_vit_L209_COIF, SC_vit_L205_COIF, SC_vit_L207_COI, SC_vit_L197_COIF, SC_vit_L380_COI
+
+#####MOTU_10#####
+SC_int_B014_COI, SC_int_L1201_COIF, SC_int_L219_COIF, SC_int_L012_COIF, SC_int_L0217_COI, SC_int_B015_COI, SC_int_L214_COI, SC_int_L372_COI
+
+#####MOTU_11#####
+SC_sco_B156_COI, SC_sco_B214, SC_sco_L905_COI, SC_sco_L0906_COIF
+
+#####MOTU_12#####
+SC_dis_B022_COI, SC_dis_B023_COI, SC_dis_B024_COI, SC_dis_B025_COI, SC_dis_B026_COIF, SC_dis_B027_COIF
+
+#####MOTU_13#####
+SC_vit_L0750_COIF, SC_vit_L733_COIF
+
+#####MOTU_14#####
+SC_nas_L1179_COIF
+
+#####MOTU_2#####
+SC_fas_B011_COI, SC_fas_L698_COI, SC_fas_L918_COI, SC_fas_L0629_COIF, SC_fas_L0650_COIF, SC_fas_L542_COI, SC_fas_L0951_COI, SC_fas_L541_COI, SC_fas_L0968_COIF, SC_fas_L626_COI, SC_fas_L259_COIF, SC_fas_L0544_COIF, SC_fas_L082_COI, SC_fas_L0936_COIF
+
+#####MOTU_3#####
+SC_nas_B016_COI, SC_nas_B019_COI, SC_nas_L1093_ANOSCOIF, SC_nas_L1100_ANOSCOIF, SC_nas_L1099_ANOSCOIF, SC_nas_L1066_COI, SC_nas_L1111_ANOSCOIF, SC_nas_L243_COI, SC_nas_L244_COIF, SC_nas_L245_COIF
+
+#####MOTU_4#####
+SC_dis_L236_COI, SC_dis_L264_COI, SC_dis_L242_COIF, SC_dis_L261_COIF, SC_dis_L260_COI, SC_dis_L263_COI, SC_dis_L262_COI, SC_dis_L265_COIF, SC_dis_L239_COIF, SC_dis_L237_COI
+
+#####MOTU_5#####
+SC_bor_L0063_COIF, SC_bor_L0899_COIF, SC_bor_L0117_ANOSCOIF, SC_bor_L0224_COI, SC_bor_L0086_COI, SC_bor_L1176_COIF, SC_bor_L1177_COIF
+
+#####MOTU_6#####
+SC_nas_B017_COI, SC_nas_B018_COI, SC_nas_L1178_FISHF, SC_nas_L1103_ANOSCOIF, SC_nas_L0926_COIF, SC_nas_L889_COI
+
+#####MOTU_7#####
+SC_jac_L546_COI, SC_pla_B136, SC_pla_B138, SC_pla_B137, SC_pla_B139, SC_pla_B135
+
+#####MOTU_8#####
+SC_kne_B012_COI, SC_kne_L0857_COIF, SC_kne_L0866_COIF, SC_kne_L270_COIF, SC_kne_L363_COI, SC_kne_L365_COI, SC_kne_L361_COI
+
+#####MOTU_9#####
+SC_vit_L0613_COIF, SC_vit_L558_COI
+
+
+Using k2p distance
+
+
+
+############################################################################
+
+SPdel v2.0 - Species delimitation and statistics for DNA Barcoding data sets
+
+############################################################################
+
+Sequences are aligned (same size)
+Fasta file with 91 sequences and 627 base pairs
+
+#####################
+BIN MOTUs
+#####################
+
+#####MOTU_AAC2254#####
+SC_bor_L0063_COIF, SC_bor_L0086_COI, SC_bor_L0117_ANOSCOIF, SC_bor_L0224_COI, SC_bor_L0899_COIF, SC_bor_L1176_COIF, SC_bor_L1177_COIF, SC_int_B014_COI, SC_int_B015_COI, SC_int_L012_COIF, SC_int_L0217_COI, SC_int_L1201_COIF, SC_int_L214_COI, SC_int_L219_COIF, SC_int_L372_COI
+
+#####MOTU_AAD2983#####
+SC_kne_B012_COI, SC_kne_L0857_COIF, SC_kne_L0866_COIF, SC_kne_L270_COIF, SC_kne_L361_COI, SC_kne_L363_COI, SC_kne_L365_COI
+
+#####MOTU_AAI0813#####
+SC_sco_B156_COI, SC_sco_B214, SC_sco_L0906_COIF, SC_sco_L905_COI
+
+#####MOTU_AAO7433#####
+SC_fas_B011_COI, SC_fas_L0544_COIF, SC_fas_L0629_COIF, SC_fas_L0650_COIF, SC_fas_L082_COI, SC_fas_L0936_COIF, SC_fas_L0951_COI, SC_fas_L0968_COIF, SC_fas_L259_COIF, SC_fas_L541_COI, SC_fas_L542_COI, SC_fas_L626_COI, SC_fas_L698_COI, SC_fas_L918_COI
+
+#####MOTU_ACG9260#####
+SC_jac_L546_COI, SC_pla_B135, SC_pla_B136, SC_pla_B137, SC_pla_B138, SC_pla_B139
+
+#####MOTU_ACL3111#####
+SC_vit_L100_COI, SC_vit_L197_COIF, SC_vit_L205_COIF, SC_vit_L206_COIF, SC_vit_L207_COI, SC_vit_L208_COIF, SC_vit_L209_COIF, SC_vit_L380_COI
+
+#####MOTU_ACL3191#####
+SC_dis_B022_COI, SC_dis_B023_COI, SC_dis_B024_COI, SC_dis_B025_COI, SC_dis_B026_COIF, SC_dis_B027_COIF, SC_dis_L236_COI, SC_dis_L237_COI, SC_dis_L239_COIF, SC_dis_L242_COIF, SC_dis_L260_COI, SC_dis_L261_COIF, SC_dis_L262_COI, SC_dis_L263_COI, SC_dis_L264_COI, SC_dis_L265_COIF
+
+#####MOTU_ACL3594#####
+SC_vit_L0613_COIF, SC_vit_L0750_COIF, SC_vit_L558_COI, SC_vit_L733_COIF
+
+#####MOTU_ACY0735#####
+SC_nas_B016_COI, SC_nas_B017_COI, SC_nas_B018_COI, SC_nas_B019_COI, SC_nas_L0926_COIF, SC_nas_L1066_COI, SC_nas_L1093_ANOSCOIF, SC_nas_L1099_ANOSCOIF, SC_nas_L1100_ANOSCOIF, SC_nas_L1103_ANOSCOIF, SC_nas_L1111_ANOSCOIF, SC_nas_L1178_FISHF, SC_nas_L1179_COIF, SC_nas_L243_COI, SC_nas_L244_COIF, SC_nas_L245_COIF, SC_nas_L889_COI
+
+
+Using k2p distance
+
+
+#####################
+GMYC MOTUs
+#####################
+
+#####MOTU_1#####
+SC_vit_L100_COI, SC_vit_L197_COIF, SC_vit_L205_COIF, SC_vit_L206_COIF, SC_vit_L207_COI, SC_vit_L208_COIF, SC_vit_L209_COIF, SC_vit_L380_COI
+
+#####MOTU_10#####
+SC_int_B014_COI, SC_int_B015_COI, SC_int_L012_COIF, SC_int_L0217_COI, SC_int_L1201_COIF, SC_int_L214_COI, SC_int_L219_COIF, SC_int_L372_COI
+
+#####MOTU_11#####
+SC_sco_B156_COI, SC_sco_B214, SC_sco_L0906_COIF, SC_sco_L905_COI
+
+#####MOTU_12#####
+SC_dis_B022_COI, SC_dis_B023_COI, SC_dis_B024_COI, SC_dis_B025_COI, SC_dis_B026_COIF, SC_dis_B027_COIF
+
+#####MOTU_13#####
+SC_vit_L0750_COIF, SC_vit_L733_COIF
+
+#####MOTU_14#####
+SC_nas_L1179_COIF
+
+#####MOTU_2#####
+SC_fas_B011_COI, SC_fas_L0544_COIF, SC_fas_L0629_COIF, SC_fas_L0650_COIF, SC_fas_L082_COI, SC_fas_L0936_COIF, SC_fas_L0951_COI, SC_fas_L0968_COIF, SC_fas_L259_COIF, SC_fas_L541_COI, SC_fas_L542_COI, SC_fas_L626_COI, SC_fas_L698_COI, SC_fas_L918_COI
+
+#####MOTU_3#####
+SC_nas_B016_COI, SC_nas_B019_COI, SC_nas_L1066_COI, SC_nas_L1093_ANOSCOIF, SC_nas_L1099_ANOSCOIF, SC_nas_L1100_ANOSCOIF, SC_nas_L1111_ANOSCOIF, SC_nas_L243_COI, SC_nas_L244_COIF, SC_nas_L245_COIF
+
+#####MOTU_4#####
+SC_dis_L236_COI, SC_dis_L237_COI, SC_dis_L239_COIF, SC_dis_L242_COIF, SC_dis_L260_COI, SC_dis_L261_COIF, SC_dis_L262_COI, SC_dis_L263_COI, SC_dis_L264_COI, SC_dis_L265_COIF
+
+#####MOTU_5#####
+SC_bor_L0063_COIF, SC_bor_L0086_COI, SC_bor_L0117_ANOSCOIF, SC_bor_L0224_COI, SC_bor_L0899_COIF, SC_bor_L1176_COIF, SC_bor_L1177_COIF
+
+#####MOTU_6#####
+SC_nas_B017_COI, SC_nas_B018_COI, SC_nas_L0926_COIF, SC_nas_L1103_ANOSCOIF, SC_nas_L1178_FISHF, SC_nas_L889_COI
+
+#####MOTU_7#####
+SC_jac_L546_COI, SC_pla_B135, SC_pla_B136, SC_pla_B137, SC_pla_B138, SC_pla_B139
+
+#####MOTU_8#####
+SC_kne_B012_COI, SC_kne_L0857_COIF, SC_kne_L0866_COIF, SC_kne_L270_COIF, SC_kne_L361_COI, SC_kne_L363_COI, SC_kne_L365_COI
+
+#####MOTU_9#####
+SC_vit_L0613_COIF, SC_vit_L558_COI
+
+
+Using k2p distance
+
+
+#####################
+PTP1 MOTUs
+#####################
+
+#####MOTU_1#####
+SC_vit_L100_COI, SC_vit_L197_COIF, SC_vit_L205_COIF, SC_vit_L206_COIF, SC_vit_L207_COI, SC_vit_L208_COIF, SC_vit_L209_COIF, SC_vit_L380_COI
+
+#####MOTU_10#####
+SC_int_B014_COI, SC_int_B015_COI, SC_int_L012_COIF, SC_int_L0217_COI, SC_int_L1201_COIF, SC_int_L214_COI, SC_int_L219_COIF, SC_int_L372_COI
+
+#####MOTU_11#####
+SC_sco_B156_COI, SC_sco_B214, SC_sco_L0906_COIF, SC_sco_L905_COI
+
+#####MOTU_12#####
+SC_dis_B022_COI, SC_dis_B023_COI, SC_dis_B024_COI, SC_dis_B025_COI, SC_dis_B026_COIF, SC_dis_B027_COIF
+
+#####MOTU_13#####
+SC_vit_L0750_COIF, SC_vit_L733_COIF
+
+#####MOTU_14#####
+SC_nas_L1179_COIF
+
+#####MOTU_2#####
+SC_fas_B011_COI, SC_fas_L0544_COIF, SC_fas_L0629_COIF, SC_fas_L0650_COIF, SC_fas_L082_COI, SC_fas_L0936_COIF, SC_fas_L0951_COI, SC_fas_L0968_COIF, SC_fas_L259_COIF, SC_fas_L541_COI, SC_fas_L542_COI, SC_fas_L626_COI, SC_fas_L698_COI, SC_fas_L918_COI
+
+#####MOTU_3#####
+SC_nas_B016_COI, SC_nas_B019_COI, SC_nas_L1066_COI, SC_nas_L1093_ANOSCOIF, SC_nas_L1099_ANOSCOIF, SC_nas_L1100_ANOSCOIF, SC_nas_L1111_ANOSCOIF, SC_nas_L243_COI, SC_nas_L244_COIF, SC_nas_L245_COIF
+
+#####MOTU_4#####
+SC_dis_L236_COI, SC_dis_L237_COI, SC_dis_L239_COIF, SC_dis_L242_COIF, SC_dis_L260_COI, SC_dis_L261_COIF, SC_dis_L262_COI, SC_dis_L263_COI, SC_dis_L264_COI, SC_dis_L265_COIF
+
+#####MOTU_5#####
+SC_bor_L0063_COIF, SC_bor_L0086_COI, SC_bor_L0117_ANOSCOIF, SC_bor_L0224_COI, SC_bor_L0899_COIF, SC_bor_L1176_COIF, SC_bor_L1177_COIF
+
+#####MOTU_6#####
+SC_nas_B017_COI, SC_nas_B018_COI, SC_nas_L0926_COIF, SC_nas_L1103_ANOSCOIF, SC_nas_L1178_FISHF, SC_nas_L889_COI
+
+#####MOTU_7#####
+SC_jac_L546_COI, SC_pla_B135, SC_pla_B136, SC_pla_B137, SC_pla_B138, SC_pla_B139
+
+#####MOTU_8#####
+SC_kne_B012_COI, SC_kne_L0857_COIF, SC_kne_L0866_COIF, SC_kne_L270_COIF, SC_kne_L361_COI, SC_kne_L363_COI, SC_kne_L365_COI
+
+#####MOTU_9#####
+SC_vit_L0613_COIF, SC_vit_L558_COI
+
+
+Using k2p distance
+
+
+#####################
+bPTP1 MOTUs
+#####################
+
+#####MOTU_1#####
+SC_vit_L100_COI, SC_vit_L197_COIF, SC_vit_L205_COIF, SC_vit_L206_COIF, SC_vit_L207_COI, SC_vit_L208_COIF, SC_vit_L209_COIF, SC_vit_L380_COI
+
+#####MOTU_10#####
+SC_int_B014_COI, SC_int_B015_COI, SC_int_L012_COIF, SC_int_L0217_COI, SC_int_L1201_COIF, SC_int_L214_COI, SC_int_L219_COIF, SC_int_L372_COI
+
+#####MOTU_11#####
+SC_sco_B156_COI, SC_sco_B214, SC_sco_L0906_COIF, SC_sco_L905_COI
+
+#####MOTU_12#####
+SC_dis_B022_COI, SC_dis_B023_COI, SC_dis_B024_COI, SC_dis_B025_COI, SC_dis_B026_COIF, SC_dis_B027_COIF
+
+#####MOTU_13#####
+SC_vit_L0750_COIF, SC_vit_L733_COIF
+
+#####MOTU_14#####
+SC_nas_L1179_COIF
+
+#####MOTU_2#####
+SC_fas_B011_COI, SC_fas_L0544_COIF, SC_fas_L0629_COIF, SC_fas_L0650_COIF, SC_fas_L082_COI, SC_fas_L0936_COIF, SC_fas_L0951_COI, SC_fas_L0968_COIF, SC_fas_L259_COIF, SC_fas_L541_COI, SC_fas_L542_COI, SC_fas_L626_COI, SC_fas_L698_COI, SC_fas_L918_COI
+
+#####MOTU_3#####
+SC_nas_B016_COI, SC_nas_B019_COI, SC_nas_L1066_COI, SC_nas_L1093_ANOSCOIF, SC_nas_L1099_ANOSCOIF, SC_nas_L1100_ANOSCOIF, SC_nas_L1111_ANOSCOIF, SC_nas_L243_COI, SC_nas_L244_COIF, SC_nas_L245_COIF
+
+#####MOTU_4#####
+SC_dis_L236_COI, SC_dis_L237_COI, SC_dis_L239_COIF, SC_dis_L242_COIF, SC_dis_L260_COI, SC_dis_L261_COIF, SC_dis_L262_COI, SC_dis_L263_COI, SC_dis_L264_COI, SC_dis_L265_COIF
+
+#####MOTU_5#####
+SC_bor_L0063_COIF, SC_bor_L0086_COI, SC_bor_L0117_ANOSCOIF, SC_bor_L0224_COI, SC_bor_L0899_COIF, SC_bor_L1176_COIF, SC_bor_L1177_COIF
+
+#####MOTU_6#####
+SC_nas_B017_COI, SC_nas_B018_COI, SC_nas_L0926_COIF, SC_nas_L1103_ANOSCOIF, SC_nas_L1178_FISHF, SC_nas_L889_COI
+
+#####MOTU_7#####
+SC_jac_L546_COI, SC_pla_B135, SC_pla_B136, SC_pla_B137, SC_pla_B138, SC_pla_B139
+
+#####MOTU_8#####
+SC_kne_B012_COI, SC_kne_L0857_COIF, SC_kne_L0866_COIF, SC_kne_L270_COIF, SC_kne_L361_COI, SC_kne_L363_COI, SC_kne_L365_COI
+
+#####MOTU_9#####
+SC_vit_L0613_COIF, SC_vit_L558_COI
+
+
+Using k2p distance
+
+
+
+############################################################################
+
+SPdel v2.0 - Species delimitation and statistics for DNA Barcoding data sets
+
+############################################################################
+
+Sequences are aligned (same size)
+Fasta file with 91 sequences and 627 base pairs
+
+#####################
+ Consensus MOTUs
+#####################
+
+### All MOTUs match with the taxonomy ###
+
+Consensus MOTU 1 [SC_fas_(Nominal)&MOTU_AAO7433_(BIN)&MOTU_4_(bPTP)&MOTU_2_(bPTP1)&MOTU_2_(GMYC)&MOTU_4_(PTP)&MOTU_2_(PTP1)]
+SC_fas_B011_COI, SC_fas_L0544_COIF, SC_fas_L0629_COIF, SC_fas_L0650_COIF, SC_fas_L082_COI, SC_fas_L0936_COIF, SC_fas_L0951_COI, SC_fas_L0968_COIF, SC_fas_L259_COIF, SC_fas_L541_COI, SC_fas_L542_COI, SC_fas_L626_COI, SC_fas_L698_COI, SC_fas_L918_COI
+
+Consensus MOTU 2 [SC_kne_(Nominal)&MOTU_AAD2983_(BIN)&MOTU_3_(bPTP)&MOTU_8_(bPTP1)&MOTU_8_(GMYC)&MOTU_3_(PTP)&MOTU_8_(PTP1)]
+SC_kne_B012_COI, SC_kne_L0857_COIF, SC_kne_L0866_COIF, SC_kne_L270_COIF, SC_kne_L361_COI, SC_kne_L363_COI, SC_kne_L365_COI
+
+Consensus MOTU 3 [SC_sco_(Nominal)&MOTU_AAI0813_(BIN)&MOTU_2_(bPTP)&MOTU_11_(bPTP1)&MOTU_11_(GMYC)&MOTU_2_(PTP)&MOTU_11_(PTP1)]
+SC_sco_B156_COI, SC_sco_B214, SC_sco_L0906_COIF, SC_sco_L905_COI
+
+### Most MOTUs agree with the taxonomy ###
+
+Consensus MOTU 4 [SC_bor_(Nominal)&MOTU_9_(bPTP)&MOTU_5_(bPTP1)&MOTU_5_(GMYC)&MOTU_9_(PTP)&MOTU_5_(PTP1)]
+SC_bor_L0063_COIF, SC_bor_L0086_COI, SC_bor_L0117_ANOSCOIF, SC_bor_L0224_COI, SC_bor_L0899_COIF, SC_bor_L1176_COIF, SC_bor_L1177_COIF
+
+Consensus MOTU 5 [SC_int_(Nominal)&MOTU_10_(bPTP)&MOTU_10_(bPTP1)&MOTU_10_(GMYC)&MOTU_10_(PTP)&MOTU_10_(PTP1)]
+SC_int_B014_COI, SC_int_B015_COI, SC_int_L012_COIF, SC_int_L0217_COI, SC_int_L1201_COIF, SC_int_L214_COI, SC_int_L219_COIF, SC_int_L372_COI
+
+### All MOTUs do not match the taxonomy###
+
+Consensus MOTU 6 [MOTU_ACG9260_(BIN)&MOTU_1_(bPTP)&MOTU_7_(bPTP1)&MOTU_7_(GMYC)&MOTU_1_(PTP)&MOTU_7_(PTP1)]
+SC_jac_L546_COI, SC_pla_B136, SC_pla_B138, SC_pla_B137, SC_pla_B139, SC_pla_B135
+
+Consensus MOTU 7 [MOTU_ACL3111_(BIN)&MOTU_5_(bPTP)&MOTU_1_(bPTP1)&MOTU_1_(GMYC)&MOTU_5_(PTP)&MOTU_1_(PTP1)]
+SC_vit_L100_COI, SC_vit_L208_COIF, SC_vit_L206_COIF, SC_vit_L209_COIF, SC_vit_L205_COIF, SC_vit_L207_COI, SC_vit_L197_COIF, SC_vit_L380_COI
+
+### Most MOTUs do not match the taxonomy ###
+
+Consensus MOTU 8 [MOTU_11_(bPTP)&MOTU_9_(bPTP1)&MOTU_9_(GMYC)&MOTU_13_(PTP)&MOTU_9_(PTP1)]
+SC_vit_L0613_COIF, SC_vit_L558_COI
+
+Consensus MOTU 9 [MOTU_12_(bPTP)&MOTU_13_(bPTP1)&MOTU_13_(GMYC)&MOTU_14_(PTP)&MOTU_13_(PTP1)]
+SC_vit_L0750_COIF, SC_vit_L733_COIF
+
+Consensus MOTU 10 [MOTU_13_(bPTP)&MOTU_12_(bPTP1)&MOTU_12_(GMYC)&MOTU_11_(PTP)&MOTU_12_(PTP1)]
+SC_dis_B022_COI, SC_dis_B023_COI, SC_dis_B024_COI, SC_dis_B025_COI, SC_dis_B026_COIF, SC_dis_B027_COIF
+
+Consensus MOTU 11 [MOTU_14_(bPTP)&MOTU_4_(bPTP1)&MOTU_4_(GMYC)&MOTU_12_(PTP)&MOTU_4_(PTP1)]
+SC_dis_L236_COI, SC_dis_L264_COI, SC_dis_L242_COIF, SC_dis_L261_COIF, SC_dis_L260_COI, SC_dis_L263_COI, SC_dis_L262_COI, SC_dis_L265_COIF, SC_dis_L239_COIF, SC_dis_L237_COI
+
+Consensus MOTU 12 [MOTU_6_(bPTP)&MOTU_3_(bPTP1)&MOTU_3_(GMYC)&MOTU_8_(PTP)&MOTU_3_(PTP1)]
+SC_nas_B016_COI, SC_nas_B019_COI, SC_nas_L1093_ANOSCOIF, SC_nas_L1100_ANOSCOIF, SC_nas_L1099_ANOSCOIF, SC_nas_L1066_COI, SC_nas_L1111_ANOSCOIF, SC_nas_L243_COI, SC_nas_L244_COIF, SC_nas_L245_COIF
+
+Consensus MOTU 13 [MOTU_7_(bPTP)&MOTU_6_(bPTP1)&MOTU_6_(GMYC)&MOTU_6_(PTP)&MOTU_6_(PTP1)]
+SC_nas_B017_COI, SC_nas_B018_COI, SC_nas_L1178_FISHF, SC_nas_L1103_ANOSCOIF, SC_nas_L0926_COIF, SC_nas_L889_COI
+
+Consensus MOTU 14 [MOTU_8_(bPTP)&MOTU_14_(bPTP1)&MOTU_14_(GMYC)&MOTU_7_(PTP)&MOTU_14_(PTP1)]
+SC_nas_L1179_COIF
+
+Using k2p distance
+
+#####
+Warning: Nominal species not contigous in the tree.
+#####
+
+#####
+Warning: Nominal species not contigous in the tree.
+#####
+
+
+#####################
+ Consensus MOTUs
+#####################
+
+### All MOTUs match with the taxonomy ###
+
+Consensus MOTU 1 [SC_fas_(Nominal)&MOTU_AAO7433_(BIN)&MOTU_4_(bPTP)&MOTU_4_(PTP)]
+SC_fas_B011_COI, SC_fas_L0544_COIF, SC_fas_L0629_COIF, SC_fas_L0650_COIF, SC_fas_L082_COI, SC_fas_L0936_COIF, SC_fas_L0951_COI, SC_fas_L0968_COIF, SC_fas_L259_COIF, SC_fas_L541_COI, SC_fas_L542_COI, SC_fas_L626_COI, SC_fas_L698_COI, SC_fas_L918_COI
+
+Consensus MOTU 2 [SC_kne_(Nominal)&MOTU_AAD2983_(BIN)&MOTU_3_(bPTP)&MOTU_3_(PTP)]
+SC_kne_B012_COI, SC_kne_L0857_COIF, SC_kne_L0866_COIF, SC_kne_L270_COIF, SC_kne_L361_COI, SC_kne_L363_COI, SC_kne_L365_COI
+
+Consensus MOTU 3 [SC_sco_(Nominal)&MOTU_AAI0813_(BIN)&MOTU_2_(bPTP)&MOTU_2_(PTP)]
+SC_sco_B156_COI, SC_sco_B214, SC_sco_L0906_COIF, SC_sco_L905_COI
+
+### Most MOTUs agree with the taxonomy ###
+
+Consensus MOTU 4 [SC_bor_(Nominal)&MOTU_9_(bPTP)&MOTU_9_(PTP)]
+SC_bor_L0063_COIF, SC_bor_L0086_COI, SC_bor_L0117_ANOSCOIF, SC_bor_L0224_COI, SC_bor_L0899_COIF, SC_bor_L1176_COIF, SC_bor_L1177_COIF
+
+Consensus MOTU 5 [SC_int_(Nominal)&MOTU_10_(bPTP)&MOTU_10_(PTP)]
+SC_int_B014_COI, SC_int_B015_COI, SC_int_L012_COIF, SC_int_L0217_COI, SC_int_L1201_COIF, SC_int_L214_COI, SC_int_L219_COIF, SC_int_L372_COI
+
+### All MOTUs do not match the taxonomy###
+
+Consensus MOTU 6 [MOTU_ACG9260_(BIN)&MOTU_1_(bPTP)&MOTU_1_(PTP)]
+SC_jac_L546_COI, SC_pla_B136, SC_pla_B138, SC_pla_B137, SC_pla_B139, SC_pla_B135
+
+Consensus MOTU 7 [MOTU_ACL3111_(BIN)&MOTU_5_(bPTP)&MOTU_5_(PTP)]
+SC_vit_L100_COI, SC_vit_L208_COIF, SC_vit_L206_COIF, SC_vit_L209_COIF, SC_vit_L205_COIF, SC_vit_L207_COI, SC_vit_L197_COIF, SC_vit_L380_COI
+
+### Most MOTUs do not match the taxonomy ###
+
+Consensus MOTU 8 [MOTU_11_(bPTP)&MOTU_13_(PTP)]
+SC_vit_L0613_COIF, SC_vit_L558_COI
+
+Consensus MOTU 9 [MOTU_12_(bPTP)&MOTU_14_(PTP)]
+SC_vit_L0750_COIF, SC_vit_L733_COIF
+
+Consensus MOTU 10 [MOTU_13_(bPTP)&MOTU_11_(PTP)]
+SC_dis_B022_COI, SC_dis_B023_COI, SC_dis_B024_COI, SC_dis_B025_COI, SC_dis_B026_COIF, SC_dis_B027_COIF
+
+Consensus MOTU 11 [MOTU_14_(bPTP)&MOTU_12_(PTP)]
+SC_dis_L236_COI, SC_dis_L264_COI, SC_dis_L242_COIF, SC_dis_L261_COIF, SC_dis_L260_COI, SC_dis_L263_COI, SC_dis_L262_COI, SC_dis_L265_COIF, SC_dis_L239_COIF, SC_dis_L237_COI
+
+Consensus MOTU 12 [MOTU_6_(bPTP)&MOTU_8_(PTP)]
+SC_nas_B016_COI, SC_nas_B019_COI, SC_nas_L1093_ANOSCOIF, SC_nas_L1100_ANOSCOIF, SC_nas_L1099_ANOSCOIF, SC_nas_L1066_COI, SC_nas_L1111_ANOSCOIF, SC_nas_L243_COI, SC_nas_L244_COIF, SC_nas_L245_COIF
+
+Consensus MOTU 13 [MOTU_7_(bPTP)&MOTU_6_(PTP)]
+SC_nas_B017_COI, SC_nas_B018_COI, SC_nas_L1178_FISHF, SC_nas_L1103_ANOSCOIF, SC_nas_L0926_COIF, SC_nas_L889_COI
+
+Consensus MOTU 14 [MOTU_8_(bPTP)&MOTU_7_(PTP)]
+SC_nas_L1179_COIF
+
+Using k2p distance
+
+#####
+Warning: Nominal species not contigous in the tree.
+#####
+

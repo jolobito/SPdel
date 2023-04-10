@@ -13,8 +13,6 @@ if sys_pf == "darwin":
 
     matplotlib.use("Qt5Agg")
 
-from matplotlib import pyplot as plt
-import seaborn as sns
 import pandas as pd
 import numpy as np
 from Bio import SeqIO
@@ -23,7 +21,7 @@ import logging
 import plotly.graph_objects as go
 import plotly.express as px
 import plotly.io as pio
-from plotly.subplots import make_subplots
+
 
 pd.set_option('display.max_rows', None)
 pd.set_option('display.max_columns', None)
@@ -261,6 +259,54 @@ class Matrian:
         fig.write_image(os.path.join(self.path, "barcoding_gap.pdf"))
         fig.show()
 
+    def plot_heatmap(self):
+        dfinv=self.data[['ind2', 'ind1', 'distance']].copy()
+        dfinv.rename(columns = {'ind2':'ind1', 'ind1':'ind2'}, inplace = True)
+        dftot=pd.concat([self.data,dfinv])
+        heatDF=dftot.pivot(index='ind1', columns='ind2', values='distance')
+        heatDF=heatDF.fillna(0)
+        sizebackground=len(heatDF)*10
+        listnames=list(heatDF.columns)
+        nameused=[]
+        sppos = []
+        spinf= []
+        for pos,i in enumerate(listnames):
+          i=i.split('_')[0:2]
+          if i not in nameused:
+            sppos.append(pos)
+            spinf.append(pos-1)
+            nameused.append(i)
+        spinf=spinf[1:]
+        spinf.append(len(listnames)-1)
+        
+        fig = px.imshow(heatDF, color_continuous_scale="teal_r", width=sizebackground+20, height=sizebackground)
+        fig.update(data=[{'hovertemplate':'Individual 1:%{x}<br>Individual 2: %{y}<br><b>Distance: %{z}</b><extra></extra>'}])
+        fig.update_xaxes(title_text='', tickprefix = ' ',tickmode='linear')
+        fig.update_yaxes(title_text='', ticksuffix = '  ',tickmode='linear')
+        fig.update_layout(plot_bgcolor='rgba(0,0,0,0)', xaxis={'side':'top','tickangle':-90}, 
+                          font={'family':'Arial','size':8,'color':'rgb(42, 86, 116)'},
+            title={
+                'text': "Genetic pairwise distance matrix",
+                'y':0.05,
+                'x':0.5,'font':{'size':20}})        
+        #y lines        
+        for i in range(len(sppos)):
+          fig.add_shape(type="line",
+              x0=-1, y0=sppos[i]-0.3, x1=-1, y1=spinf[i]+0.3,
+              line=dict(color='darksalmon',width=8)
+          )
+        
+        #x lines
+        for i in range(len(sppos)):
+          fig.add_shape(type="line",
+              x0=sppos[i]-0.3, y0=-1, x1=spinf[i]+0.3, y1=-1,
+              line=dict(color='darksalmon',width=8)      
+          )
+        fig.write_image(os.path.join(self.path, "heatmap.pdf"))
+        fig.show()
+                
+        
+        
     def Summary_distances(self):  # hace analisis en bloque
         a, b, c, d, e, y = [], [], [], [], [], []
         inter = self.min_media_max_inter()
@@ -278,8 +324,8 @@ class Matrian:
         datas = {"Mean": b, "Max": c, "NN": d, "DtoNN": e}
         summ = pd.DataFrame(datas, index=a)
         ####data for plot max vc min graph####
-        print(e)
-        print(self.Lname)
+        # print(e)
+        # print(self.Lname)
         datas2 = {"inter": e, "intra2": y, "names": self.Lname}
         df = pd.DataFrame(datas2, index=a)
         title = ["minimum", "mean", "maximum"]
@@ -354,7 +400,7 @@ if __name__ == "__main__":
     main()
 # import time
 # h=time.time()
-# tmp=Matrian('C:/Users/jramirez/OneDrive/Python/SPdel/SPdel_github/data',"C:/Users/jramirez/OneDrive/Python/SPdel/SPdel_github/data/LA_nominal.fasta",1,2,'k')
+# tmp=Matrian('C:/Users/JORGE/OneDrive/Python/SPdel/SPdel_2023_lite/data',"C:/Users/JORGE/OneDrive/Python/SPdel/SPdel_2023_lite/data/Laemolyta/LA_nominal.fasta",1,2,'k')
 # tmp.analyze()
 # g=time.time()
 # print(g-h)
