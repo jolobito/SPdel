@@ -13,10 +13,11 @@ import shutil
 from math import ceil
 
 import pandas as pd
-import plotly
+import plotly 
 
 # import plotly.plotly as py
-import plotly.graph_objs as go
+import plotly.graph_objs as go 
+from plotly.subplots import make_subplots
 from Bio import AlignIO
 from Bio.Align import MultipleSeqAlignment
 from Bio.Seq import Seq
@@ -37,9 +38,10 @@ class diagnostic_character:
     fasta: str
         The fasta file.
     """
-    def __init__(self, basepath, fasta, n_ind=3, gen=1, sp=2):
+    def __init__(self, basepath, fasta, specList='all', n_ind=3, gen=1, sp=2):
         self.path = basepath
         self.fasta = fasta
+        self.specList = specList
         self.n_ind=int(n_ind)
         self.gen=gen
         self.sp=sp
@@ -48,7 +50,7 @@ class diagnostic_character:
         self.spec_list = self.n_spec[1]
         self.n_ind_spec = self.n_spec[2]
         self.n_spec = self.n_spec[0]
-        self.list_all = self.diagnoser()     
+        self.list_all = self.diagnoser()        
         self.summary_tmp = self.summary_all()
         self.summary = self.summary_tmp[0]
         self.spec_list2 = self.summary_tmp[1]
@@ -125,16 +127,17 @@ class diagnostic_character:
             if new_seq_id not in spec:
                 spec.append(new_seq_id)
                 n_spec += 1
+
         for i in range(n_spec):
             n = 0
-            with open(os.path.join(path, "spec" + str(i) + ".fasta"), "w+") as fasta:
+            with open(os.path.join(path, spec[i] + ".fasta"), "w+") as fasta:
                 for seq in alig:
                     if seq.id.startswith(spec[i]):
                         fasta.write(">" + seq.description + "\n")
                         fasta.write(str(seq.seq).replace("-", "N") + "\n")
                         n += 1
             n_ind_spec.append(n)
-    
+   
         return n_spec, spec, n_ind_spec
 
     def diagnoser(self):
@@ -154,9 +157,9 @@ class diagnostic_character:
         lists_var = []
         for i in range(self.n_spec):
             lists_var.append(
-                self.consensus_fasta(os.path.join(self.path, "tmp/"), "spec" + str(i) + ".fasta", self.n_ind)
+                self.consensus_fasta(os.path.join(self.path, "tmp/"), self.spec_list[i] + ".fasta", self.n_ind)
             )
-        len_lists_var=max([len(i) for i in lists_var if i is not None])
+        len_lists_var=max([len(i) for i in lists_var if i is not None])      
         list_all = []
         for j in range(len_lists_var):
             list_D = []
@@ -252,23 +255,23 @@ class diagnostic_character:
         return list_all, lists_var
 
     def consensus_fasta(self,path, fasta, n_ind):  # modified from biopython  #add bases degeneradas
-        alig = AlignIO.read(os.path.join(path, fasta), "fasta")
-        #    print alig
+        alig = AlignIO.read(os.path.join(path, fasta), "fasta")     
         consensus = []
         con_len = alig.get_alignment_length()
         n_seq = len(alig)
-        if n_seq >= n_ind:
-            for n in range(con_len):
-                pos_bases = []
-                for record in alig:
-                    if n < len(record.seq):
-                        if record.seq[n] not in pos_bases:
-                            pos_bases.append(record.seq[n])
-                consensus.append(pos_bases)
-            #        print consensus
-            return consensus
+        if self.specList == 'all' or fasta.split('.')[0] in self.specList:
+            if n_seq >= n_ind:
+                for n in range(con_len):
+                    pos_bases = []
+                    for record in alig:
+                        if n < len(record.seq):
+                            if record.seq[n] not in pos_bases:
+                                pos_bases.append(record.seq[n])
+                    consensus.append(pos_bases)
+                return consensus
+            else:
+                return None
         else:
-            #        print None
             return None
 
     def summary_all(self):
@@ -283,9 +286,10 @@ class diagnostic_character:
             spec_list2 = []
             n_ind_spec2 = []
             for i in range(len(self.spec_list)):
-                if self.n_ind_spec[i] >= self.n_ind:
-                    spec_list2.append(self.spec_list[i])
-                    n_ind_spec2.append(self.n_ind_spec[i])
+                if self.specList == 'all' or self.spec_list[i] in self.specList:
+                    if self.n_ind_spec[i] >= self.n_ind:
+                        spec_list2.append(self.spec_list[i])
+                        n_ind_spec2.append(self.n_ind_spec[i])
             for k in range(len(spec_list2)):
                 u_sum, w_sum, x_sum, y_sum, z_sum = 0, 0, 0, 0, 0
                 for j in list_all:
@@ -526,9 +530,7 @@ class diagnostic_character:
         df2 = pd.DataFrame(data_lgnd) #dataframe with legend
         
         trace_legend = go.Table(
-            type="table",
             columnwidth=[40, 400],
-            domain=dict(x=[0, 0.35], y=[0, 1]),
             header=dict(
                 values=["", "<b>Legend</b>"],
                 line=dict(color="#506784"),
@@ -551,10 +553,9 @@ class diagnostic_character:
         )
         
         layout2 = dict(
-            height=250,
-            autosize=True,
-            margin=dict(l=10, r=0, t=20, b=0),
-            showlegend=False,
+            height=200,
+            width=600,
+            margin=dict(l=30, r=30, t=30, b=0),
                 )
                 
         fig = go.Figure(data=trace_legend, layout=layout2)
@@ -598,18 +599,14 @@ class diagnostic_character:
                     seq_snp[i][j] = ""
                 else:
                     seq_snp[i][j] = list_var[j][i][0]
-        # print(seq_snp)
-        # print(pos_cc_ls)
-        # print(cod_color)
-        # print(list_n_pos)
-    
+                    
         #    Code for do the tables with the data prepared above
-        n_div = 20 #number of columns in the table
-        lists_data = [[] for i in range(int(ceil(len(pos_cc_ls) / float(n_div))))]
-        div = int(ceil(len(pos_cc_ls) / float(n_div))) #number of tables necessaries if considering n_div columns
-        n_col = 6 + ((len(spec_list) + 1) * div) #number of rows considering also the legend
-        fct = 1 / float(n_col) #size of each row
-        sz = round(1 - (6 * fct), 2)
+        n_div = 20 #number of columns in the table       
+        div = int(ceil(len(pos_cc_ls) / float(n_div))) #number of tables necessaries if considering n_div columns # 4
+        speclist=[[{"type": "table"}] for i in range(div)]
+        
+        fig = make_subplots(rows=div, cols=1, specs=speclist, vertical_spacing = 0)
+        
         for i in range(int(ceil(len(pos_cc_ls) / float(n_div)))):  # 0 1 2
             if i + 1 < len(pos_cc_ls) / float(n_div):  # i < 2.1
                 seq_snp_tmp = seq_snp[n_div * i : (n_div * (i + 1))]
@@ -623,7 +620,7 @@ class diagnostic_character:
                 cod_color_tmp = cod_color[n_div * i : (n_div * (i + 1))]
             else:
                 cod_color_tmp = cod_color[n_div * i :]
-    
+        
             cod_ini = []
             for j in range(len(cod_color_tmp[0])):
                 cod_ini.append(0)
@@ -654,7 +651,7 @@ class diagnostic_character:
             for l in list_n_pos_tmp:
                 head.append("<b>" + str(l) + "</b>")
             df = pd.DataFrame(data)  #data frame with diagnostic characters
-    
+        
             val = []
             col = []
             for column in df:
@@ -665,25 +662,13 @@ class diagnostic_character:
             for m in col:
                 val.append(df[str(m)])
             val = [df.Group_Name] + val
-    
+        
             width_1 = 200
             width_2 = 40
-            yvalue = sz - ((len(spec_list) + 1) * fct)
-            # print(yvalue)
-            # print(sz)
-            if yvalue < 0:
-                yvalue = 0
+        
             trace = go.Table(
                 type="table",
                 columnwidth=[width_1, width_2],
-                domain=dict(
-                    x=[
-                        0,
-                        float(width_1 + (width_2 * len(list_n_pos_tmp)))
-                        / (width_1 + (width_2 * n_div)),
-                    ],
-                    y=[yvalue, sz - 0.02],
-                ),
                 header=dict(
                     values=head,
                     line=dict(color="#506784"),
@@ -699,28 +684,16 @@ class diagnostic_character:
                     font=dict(color="black", size=11),
                 ),
             )
-    
-            lists_data[i] = trace
-    
-            sz = sz - ((len(spec_list) + 1) * fct)
-    
-    
-        height_per = (len(spec_list) + 2) * 35 * div # change for separate elements
-    
-        layout2 = dict(
-            width=950,
-            height=height_per,
-            autosize=False,
-            # title="Diagnostic Character detailed",
-            margin=dict(t=10),
-            showlegend=False,
-        )
-    
-        fig = go.Figure(data=lists_data, layout=layout2)
-        # dict(data=lists_data, layout=layout2)
+        
+            fig.add_trace(trace,row=i+1,col=1)
+        
+        height_per = 30*div + (len(spec_list)+1)*div*20 # 30 for header 20 for row
+        
+        fig.update_layout(height=height_per, width=950,margin=dict(l=10, r=10, t=10, b=10),)
+          
         fig.show()
     
-def main(path, fasta, n_ind=3, gen=1, sp=2):
+def main(path, fasta, specList='all', n_ind=3, gen=1, sp=2):
     """calculate and print diagnostic characters.
     Parameters
     ----------
@@ -742,7 +715,7 @@ def main(path, fasta, n_ind=3, gen=1, sp=2):
     # n_spec = n_spec[0]
     # list_all = diagnoser(path, n_spec, n_ind)
     # logging.info(("\n" + "### Summary of diagnostic character result ###\n"))
-    datadc = diagnostic_character(path, fasta, n_ind, gen, sp)
+    datadc = diagnostic_character(path, fasta, specList, n_ind, gen, sp)
     # datas = summary(path, list_all[0], spec_list, n_ind_spec, n_ind)
     # plot_dc(path, list_all[1], list_all[0], datas[1], list_n_pos)
 
@@ -754,7 +727,8 @@ def main(path, fasta, n_ind=3, gen=1, sp=2):
 
 if __name__ == "__main__":
     main()
-#
 
-# diagnoser("C:\Users\ramir\OneDrive\Python\Barcode example\Schizodon/",'SC_COI_ALINHADO.fasta',10,3)
-# w.main()
+
+# test=diagnostic_character("C:/Users/JORGE/OneDrive/Python/SPdel/Spde_gitbhub_lite/SPdel/data/Megaleporinus/Nominal/",'MOTU_sorted.fasta',['LS_obt','LS_piv'],n_ind=10)
+# test=diagnostic_character("C:/Users/JORGE/OneDrive/Python/SPdel/Spde_gitbhub_lite/SPdel/data/Megaleporinus/Nominal/",'MOTU_sorted.fasta','all',n_ind=10)
+# print(test.summary)

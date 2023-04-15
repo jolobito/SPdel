@@ -69,7 +69,7 @@ class sorting_data:
     outname: str
         The name of fasta sorted by name.   
     """
-    def __init__(self, basepath, fasta, typeCODE=None, outname='Nominal/sorted.fasta',tree=None):
+    def __init__(self, basepath, fasta, typeCODE=None, outname='Nominal/MOTU_sorted.fasta',tree=None):
         self.basepath = basepath
         self.fasta = open(fasta, newline='')
         self.outname = outname
@@ -194,7 +194,7 @@ def MOTU_listPTP(path,infile,analisis):
     -------
     A df with MOTUs
     """          
-    listPTP = open(os.path.join(path, infile))
+    listPTP = open(infile)
     listPTP.seek(0)
     name = []
     ind = []
@@ -208,7 +208,7 @@ def MOTU_listPTP(path,infile,analisis):
             n+=1
         else:
             for i in line.split(','):
-                name.append('MOTU_'+str(n))
+                name.append('MOTU_'+str(f"{n:02}")) #f"{n:02}"
                 ind.append(i)
     datas = {analisis: name}
     PTP_df = pd.DataFrame(datas, index=ind)  
@@ -217,17 +217,23 @@ def MOTU_listPTP(path,infile,analisis):
 
 def ptp(path,tree):
     """Run the PTP analysis"""
+    if not os.path.exists(os.path.join(path, 'PTP')):
+        os.makedirs(os.path.join(path, 'PTP'))    
     from spdelib import PTP     
     PTP.main(['-t', tree, '-o', os.path.join(path, 'PTP', 'PTP'), '-r'])
     
 def bptp(path,tree,niter,sample,burnin):
     """Run the bPTP analysis"""
+    if not os.path.exists(os.path.join(path, 'bPTP')):
+        os.makedirs(os.path.join(path, 'bPTP'))      
     from spdelib import bPTP          
     bPTP.main(['-t', tree, '-o', os.path.join(path, 'bPTP', 'bPTP'), '-s', '1234', '-r', '-i', niter, '-n',
                 sample, '-b', burnin])
 
 def gmyc_run(path,tree):
-    """Run the GMYC analysis""" 
+    """Run the GMYC analysis"""
+    if not os.path.exists(os.path.join(path, 'GMYC')):
+        os.makedirs(os.path.join(path, 'GMYC'))       
     from spdelib import GMYC
     GMYC.main(['-t', tree, '-ps','path',path])
 
@@ -241,7 +247,7 @@ def MOTU_listGMYC(path,infile,analisis):
     -------
     A df with MOTUs
     """          
-    listGMYC = open(os.path.join(path, infile))
+    listGMYC = open(infile)
     listGMYC.seek(0)
     name = []
     ind = []
@@ -255,7 +261,7 @@ def MOTU_listGMYC(path,infile,analisis):
             n+=1
         else:
             for i in line.split(','):
-                name.append('MOTU_'+str(n))
+                name.append('MOTU_'+str(f"{n:02}"))
                 ind.append(i)
     datas = {analisis: name}
     GMYC_df = pd.DataFrame(datas, index=ind)  
@@ -275,9 +281,11 @@ def MOTU_X(path, fasta, folder, MOTUDict, k):
     MOTUDict: dict
         Dictionary with species delimitation results file precalculated.        
     """    
-    if not os.path.exists(os.path.join(path, folder)):
-        os.makedirs(os.path.join(path, folder))
-    path = os.path.join(path, folder)
+    if folder.endswith('Nominal'):
+        return   
+    if not os.path.exists(folder):
+        os.makedirs(folder)
+    #path = os.path.join(path, folder)
     # fasta = open(fasta, newline='')
     fasta.seek(0)
     fasta_dict = SeqIO.to_dict(SeqIO.parse(fasta,'fasta'))
@@ -287,9 +295,9 @@ def MOTU_X(path, fasta, folder, MOTUDict, k):
         record.id=newname+'_'+k
         record.description=''
         records.append(record)
-    SeqIO.write(records,os.path.join(path, 'MOTU.fasta'),'fasta')
+    SeqIO.write(records,os.path.join(folder, 'MOTU.fasta'),'fasta')
 
-    newfasta2 = sorting_data(path, os.path.join(path,'MOTU.fasta'), outname='MOTU_sorted.fasta')  # Checking fasta
+    newfasta2 = sorting_data(folder, os.path.join(folder,'MOTU.fasta'), outname='MOTU_sorted.fasta')  # Checking fasta
     if newfasta2.check_fasta() is False:
         sys.exit("Error: different length sequences, please check your alignment")
     newfasta2.sort_fasta()  # sorting fasta
@@ -304,8 +312,6 @@ def print_MOTU_X(path,MOTUs_df,k):
     MOTUs_df.to_csv(os.path.join(path, 'MOTU_list.csv')) 
         
 def extract_MOTU_nominal(basepath, fasta, gen=1, sp=2):
-    if not os.path.exists(os.path.join(basepath,'Nominal/')):
-        os.makedirs(os.path.join(basepath, 'Nominal/'))  
     with open(fasta, newline='') as handle:
         fasta_seqIO = SeqIO.parse(handle, 'fasta')
         names=[records.id for records in fasta_seqIO]
@@ -314,7 +320,7 @@ def extract_MOTU_nominal(basepath, fasta, gen=1, sp=2):
         MOTUs = pd.DataFrame(datas, index=names)                   
         return MOTUs
 
-def dict_to_matrian(basepath,AllMOTUs,fasta,gen,sp,dis,cmd=False,diagnostic=False,n_ind=3):
+def dict_to_matrian(basepath,AllMOTUs,fasta,gen,sp,dis,cmd=False,diagnostic=False,csv=False,n_ind=3):
     MOTUs_dict=AllMOTUs.to_dict()
     disdic={}
     for k,v in MOTUs_dict.items():
@@ -322,9 +328,9 @@ def dict_to_matrian(basepath,AllMOTUs,fasta,gen,sp,dis,cmd=False,diagnostic=Fals
         logging.info('\n#####################\n' + k + ' MOTUs\n#####################\n')
         # sys.argv = [sys.argv[0]]
         MOTU_X(basepath, fasta, out_folder, v, k)
-        print_MOTU_X(basepath,AllMOTUs[[k]],k)
+        print_MOTU_X(out_folder,AllMOTUs[[k]],k)
         logging.info('')
-        distances = Matrian.main(os.path.join(basepath, out_folder), os.path.join(basepath,out_folder,'MOTU_sorted.fasta'), gen, sp, dis)
+        distances = Matrian.main(out_folder, os.path.join(out_folder,'MOTU_sorted.fasta'), gen, sp, dis)
         disdic[k]=distances
         # if diagnostic == True:
         #     Diagnoser.main(os.path.join(basepath, out_folder), 'MOTU_sorted.fasta', n_ind)
@@ -336,18 +342,18 @@ def dict_to_matrian(basepath,AllMOTUs,fasta,gen,sp,dis,cmd=False,diagnostic=Fals
             if diagnostic==True:
                 logging.info(("\n" + "### Summary of diagnostic character result ###\n"))
                 diagnostics_cmd(basepath,k,n_ind)
-    if len(MOTUs_dict)>1:
+    if csv==True:
         return disdic
     else:
         return distances
     
-def diagnostics(basepath,k,n_ind=3):
+def diagnostics(basepath,k,specList='all',n_ind=3):
     out_folder= os.path.join(basepath, k)
-    datas=Diagnoser.main(os.path.join(basepath, out_folder), 'MOTU_sorted.fasta', n_ind)
+    datas=Diagnoser.main(out_folder, 'MOTU_sorted.fasta',specList,n_ind)
     return datas
 
-def diagnostics_cmd(basepath,k,n_ind=3):
-    datas=diagnostics(basepath,k,n_ind)
+def diagnostics_cmd(basepath,k,specList='all',n_ind=3):
+    datas=diagnostics(basepath,k,specList,n_ind)
     logging.info(datas.summary)
 
 class Compare:
@@ -362,8 +368,8 @@ class Compare:
         list of delimitation methods used.       
     """
     def __init__(self, path, fasta, CompList):
-        if not os.path.exists(os.path.join(path, 'Compare/')):
-            os.makedirs(os.path.join(path, 'Compare/'))
+        if not os.path.exists(os.path.join(path, 'Consensus/')):
+            os.makedirs(os.path.join(path, 'Consensus/'))
         self.path = path
         self.CompList = CompList
         self.CompList = self.complist_read()
@@ -377,7 +383,7 @@ class Compare:
             directories=os.listdir(self.path)
             for i in directories:
                 if os.path.exists(os.path.join(self.path, i, 'MOTU_list.csv')):
-                    if i != 'Compare':
+                    if i != 'Consensus':
                         comp.append(i)
             if 'Nominal' in comp:
                 comp.remove('Nominal')
@@ -390,7 +396,7 @@ class Compare:
 
     def compare(self):
         """Parse the different results and generate a file with Consensus Motus""" 
-        with open(os.path.join(self.path, 'Compare','ALL_MOTUs.txt'), 'w+') as compare_file:
+        with open(os.path.join(self.path, 'Consensus','ALL_MOTUs.txt'), 'w+') as compare_file:
             AllMOTUs_df = pd.DataFrame() #dataframes with all motus
             AllMOTUs_dict={} #ditionary with all motus
             lists = [] #individuals by motu
@@ -483,7 +489,7 @@ class Compare:
             datas = {"Consensus": namedf}
             prints = pd.DataFrame(datas, index=motudf)
             prints=prints.sort_index(ascending=True)                     
-            prints.to_csv( os.path.join(self.path, 'Compare','MOTU_list.csv'))
+            prints.to_csv( os.path.join(self.path, 'Consensus','MOTU_list.csv'))
 
             
         else:
@@ -512,7 +518,7 @@ class Compare:
             datas = {"Consensus": namedf}
             prints = pd.DataFrame(datas, index=motudf)  
             prints=prints.sort_index(ascending=True)                  
-            prints.to_csv( os.path.join(self.path, 'Compare','MOTU_list.csv'))
+            prints.to_csv( os.path.join(self.path, 'Consensus','MOTU_list.csv'))
             
         AllMOTUs_df['Consensus']=prints #AGREGAR CONSENSUS LUEGO DEL WARNING
         
@@ -526,7 +532,7 @@ class Compare:
         motus_name_W = []
         motus_memb_W = []
         a = '########################################\n'
-        with open(os.path.join(self.path, 'Compare','Summary_MOTUs.txt'), 'r+') as summary_file:
+        with open(os.path.join(self.path, 'Consensus','Summary_MOTUs.txt'), 'r+') as summary_file:
             summary_file.seek(0)
             for line in summary_file:
                 if line.startswith('Consensus'):
@@ -605,9 +611,9 @@ class Compare:
                             acpt.append(motus_name_W[i[motu_cho - 1]])
 
                     for ind, i in enumerate(lists_W):
-                        with open(os.path.join(self.path, 'Compare','Compare_MOTU_list.txt'), 'r+') as out_list:
+                        with open(os.path.join(self.path, 'Consensus','Consensus_MOTU_list.txt'), 'r+') as out_list:
                             list_out = out_list.readlines()
-                        with open(os.path.join(self.path, 'Compare','Compare_MOTU_list.txt'), 'w+') as out_list:
+                        with open(os.path.join(self.path, 'Consensus','Compare_MOTU_list.txt'), 'w+') as out_list:
                             for ind2, line in enumerate(list_out):
                                 if line.startswith('MOTU'):
                                     new_line = list_out[ind2 + 1]
@@ -632,7 +638,7 @@ class Compare:
             record.id=newname+'_'+k
             record.description=''
             records.append(record)
-        SeqIO.write(records,os.path.join(self.path, 'Compare','MOTU.fasta'),'fasta')            
+        SeqIO.write(records,os.path.join(self.path, 'Consensus','MOTU_sorted.fasta'),'fasta')            
 
 
 def plot_compare_tree(path, tree, motudf, nocons=False, names=True, save=False):
@@ -734,7 +740,7 @@ def plot_compare_tree(path, tree, motudf, nocons=False, names=True, save=False):
         if len(num_tax) != num_con:
             logging.info('#####\nWarning: Nominal species not contigous in the tree.\n#####\n')
     if save==True:
-        toyplot.svg.render(canvas, os.path.join(path, "Compare","compare_tree_lines.svg"))            
+        toyplot.svg.render(canvas, os.path.join(path, "Consensus","compare_tree_lines.svg"))            
     # return(canvas)                   
 
     
@@ -746,6 +752,8 @@ def reading_data(fasta,tree=None,CODE=None):
     logging.info('\n\n############################################################################\n')
     logging.info('SPdel v2.0 - Species delimitation and statistics for DNA Barcoding data sets\n')
     logging.info('############################################################################\n')    
+    if not os.path.exists(os.path.join(basepath,'Nominal/')):
+        os.makedirs(os.path.join(basepath, 'Nominal/'))
     inputs = sorting_data(basepath, fasta, typeCODE=CODE,tree=tree)  # Checking fasta
     if inputs.check_fasta() is False:
         sys.exit("Error: different length sequences, please check your alignment")
@@ -761,28 +769,28 @@ def reading_data(fasta,tree=None,CODE=None):
 def run_nominal(basepath,inputs,gen=1,sp=2,dis='k'):
     if inputs.check_pattern() == False:
         sys.exit('Please rename your file using "genera_especies_individual" format or provide a nominal list file')
-    nMOTUs=extract_MOTU_nominal(basepath, os.path.join(basepath,'Nominal/sorted.fasta'))
+    nMOTUs=extract_MOTU_nominal(basepath, os.path.join(basepath,'Nominal/MOTU_sorted.fasta'))
     distances=dict_to_matrian(basepath,nMOTUs,inputs.fasta,gen,sp,dis)
     return distances
 
 def run_PTP(basepath,inputs,gen=1,sp=2,dis='k'):
     sys.argv = [sys.argv[0]]
     ptp(basepath, inputs.tree)
-    PTP_df=MOTU_listPTP(os.path.join(basepath, 'PTP'),'PTP.PTPhSupportPartition.txt','PTP')
+    PTP_df=MOTU_listPTP(os.path.join(basepath, 'PTP'),os.path.join(basepath,'PTP/PTP.PTPhSupportPartition.txt'),'PTP')
     distances=dict_to_matrian(basepath,PTP_df,inputs.fasta,gen,sp,dis)
     return distances
     
 def run_bPTP(basepath,inputs,niter='10000',sample='100',burnin='0.1',gen=1,sp=2,dis='k'):
     sys.argv = [sys.argv[0]]
     bptp(basepath,inputs.tree,niter,sample,burnin)
-    bPTP_df=MOTU_listPTP(os.path.join(basepath, 'bPTP'),'bPTP.PTPhSupportPartition.txt','bPTP')
+    bPTP_df=MOTU_listPTP(os.path.join(basepath, 'bPTP'),os.path.join(basepath, 'bPTP/bPTP.PTPhSupportPartition.txt'),'bPTP')
     distances=dict_to_matrian(basepath,bPTP_df,inputs.fasta,gen,sp,dis)
     return distances
     
 def run_GMYC(basepath,inputs,gen=1,sp=2,dis='k'):
     sys.argv = [sys.argv[0]]
     gmyc_run(basepath,inputs.tree)
-    GMYC_df=MOTU_listGMYC(os.path.join(basepath, 'GMYC'),'GMYC_MOTU.txt','GMYC')
+    GMYC_df=MOTU_listGMYC(os.path.join(basepath, 'GMYC'),os.path.join(basepath,'GMYC/GMYC_MOTU.txt'),'GMYC')
     distances=dict_to_matrian(basepath,GMYC_df,inputs.fasta,gen,sp,dis) 
     return distances
 
@@ -808,7 +816,8 @@ def run_csvList(basepath,inputs,XList,gen=1,sp=2,dis='k',cmd=False,diagnostic=Fa
     check_file = check_MOTUlist(inputs.fasta, AllMOTUs)
     if check_file == False:
         sys.exit('Error: Different individuals in MOTUs List provided')
-    distances=dict_to_matrian(basepath,AllMOTUs,inputs.fasta,gen,sp,dis,cmd,diagnostic,n_ind)
+    csv=True
+    distances=dict_to_matrian(basepath,AllMOTUs,inputs.fasta,gen,sp,dis,cmd,diagnostic,csv,n_ind)
     return distances
 
 def run_comparison(basepath,inputs,CompList,nocons=False,gen=1,sp=2,dis='k'):
@@ -818,12 +827,12 @@ def run_comparison(basepath,inputs,CompList,nocons=False,gen=1,sp=2,dis='k'):
     comp_analize.MOTU_renameFasta_Compare()
     # if inputs.tree != None:
     #     plot_compare_tree(basepath, inputs.tree, comp_analize.compared,nocons)
-    distances=Matrian.main(os.path.join(basepath, 'Compare/'), os.path.join(basepath, 'Compare','MOTU.fasta'), gen, sp, dis)
+    distances=Matrian.main(os.path.join(basepath, 'Consensus/'), os.path.join(basepath, 'Consensus','MOTU_sorted.fasta'), gen, sp, dis)
     return comp_analize.compared,distances
     # if 'd' in a:
     #     Diagnoser.main(os.path.join(basepath, 'Compare/'), 'Compare_MOTU.fasta', n_ind)          
     
-def run(fasta,a,tree,CODE=None,dis='k',niter='10000',sample='100',burnin='0.1',gen=1,sp=2,n_ind=3,nocons=False,XList=None,PTPList=None,bPTPList=None,GMYCList=None,CompList=None,diagnostic=False):
+def run(fasta,a,tree,CODE=None,dis='k',niter='10000',sample='100',burnin='0.1',gen=1,sp=2,specList='all',n_ind=3,nocons=False,XList=None,PTPList=None,bPTPList=None,GMYCList=None,CompList=None,diagnostic=False):
     basepath=os.path.dirname(fasta)
     inputs=reading_data(fasta,tree,CODE)
     if CODE != None:
@@ -835,7 +844,7 @@ def run(fasta,a,tree,CODE=None,dis='k',niter='10000',sample='100',burnin='0.1',g
         distances.plot_freq()
         distances.plot_heatmap()
         if diagnostic==True:
-            datas=diagnostics_cmd(basepath,'Nominal',n_ind)
+            datas=diagnostics_cmd(basepath,'Nominal',specList,n_ind)
             logging.info(datas[0])
     if 'P' in a:
         distances=run_PTP(basepath,inputs,gen,sp,dis)
@@ -844,7 +853,7 @@ def run(fasta,a,tree,CODE=None,dis='k',niter='10000',sample='100',burnin='0.1',g
         distances.plot_freq()
         distances.plot_heatmap()
         if diagnostic==True:
-            diagnostics_cmd(basepath,'PTP',n_ind)
+            diagnostics_cmd(basepath,'PTP',specList,n_ind)
     if 'T' in a:
         distances=run_bPTP(basepath,inputs,niter,sample,burnin,gen,sp,dis)
         distances.print_sum()
@@ -852,7 +861,7 @@ def run(fasta,a,tree,CODE=None,dis='k',niter='10000',sample='100',burnin='0.1',g
         distances.plot_freq()
         distances.plot_heatmap()
         if diagnostic==True:
-            diagnostics_cmd(basepath,'bPTP',n_ind)
+            diagnostics_cmd(basepath,'bPTP',specList,n_ind)
     if 'G' in a:
         distances=run_GMYC(basepath,inputs,gen,sp,dis)
         distances.print_sum()
@@ -860,7 +869,7 @@ def run(fasta,a,tree,CODE=None,dis='k',niter='10000',sample='100',burnin='0.1',g
         distances.plot_freq()
         distances.plot_heatmap()
         if diagnostic==True:
-            diagnostics_cmd(basepath,'GMYC',n_ind)          
+            diagnostics_cmd(basepath,'GMYC',specList,n_ind)          
     if 'p' in a: #to do: check individual file
         distances=run_PTPList(basepath,inputs,PTPList,gen,sp,dis)
         distances.print_sum()
@@ -868,7 +877,7 @@ def run(fasta,a,tree,CODE=None,dis='k',niter='10000',sample='100',burnin='0.1',g
         distances.plot_freq()
         distances.plot_heatmap()
         if diagnostic==True:
-            diagnostics_cmd(basepath,'PTP',n_ind)
+            diagnostics_cmd(basepath,'PTP',specList,n_ind)
     if 't' in a: #to do: check individual file
         distances=run_bPTPList(basepath,inputs,bPTPList,gen,sp,dis)
         distances.print_sum()
@@ -876,7 +885,7 @@ def run(fasta,a,tree,CODE=None,dis='k',niter='10000',sample='100',burnin='0.1',g
         distances.plot_freq()
         distances.plot_heatmap()
         if diagnostic==True:
-            diagnostics_cmd(basepath,'bPTP',n_ind)
+            diagnostics_cmd(basepath,'bPTP',specList,n_ind)
     if 'g' in a: #to do: check individual file
         distances=run_GMYCList(basepath,inputs,GMYCList,gen,sp,dis)         
         distances.print_sum()
@@ -884,7 +893,7 @@ def run(fasta,a,tree,CODE=None,dis='k',niter='10000',sample='100',burnin='0.1',g
         distances.plot_freq()
         distances.plot_heatmap()
         if diagnostic==True:
-            diagnostics_cmd(basepath,'GMYC',n_ind)
+            diagnostics_cmd(basepath,'GMYC',specList,n_ind)
     if 'x' in a:
         distances=run_csvList(basepath,inputs,XList,gen,sp,dis,cmd=True,diagnostic=False,n_ind=3)
     if CompList != None:
@@ -971,6 +980,8 @@ def main(argu=None):
         GMYC species delimitation results file precalculated.
     bPTPList: str
         bPTP species delimitation results file precalculated.
+    specList: List
+        List of species to be included in the diagnostic character analysis (default=all).
     n_ind: int
         Minimum number of individuals for species to be considered in the diagnostic character analysis (default=3).   
     CODE: str
@@ -1002,6 +1013,7 @@ def main(argu=None):
     XList = None
     CompList = None
     n_ind = 3
+    specList='all'
     CODE = None
     nocons = False
     diagnostic=False
@@ -1066,6 +1078,9 @@ def main(argu=None):
         elif sys.argv[i] == '-sp':
             i = i + 1
             sp = sys.argv[i]
+        elif sys.argv[i] == '-specList':
+            i = i + 1
+            specList = sys.argv[i]
         elif sys.argv[i] == '-n_ind':
             i = i + 1
             n_ind = sys.argv[i]
@@ -1084,7 +1099,7 @@ def main(argu=None):
             i = i + 1
             nocons=True
 
-    run(fasta,a,tree,CODE,dis,niter,sample,burnin,gen,sp,n_ind,nocons,XList,PTPList,bPTPList,GMYCList,CompList,diagnostic)
+    run(fasta,a,tree,CODE,dis,niter,sample,burnin,gen,sp,specList,n_ind,nocons,XList,PTPList,bPTPList,GMYCList,CompList,diagnostic)
 
 
     # sys.stdout = orig_stdout

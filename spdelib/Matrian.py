@@ -44,7 +44,7 @@ class Matrian:
         Substitution model, k for K2p or p for p-distance (default=k).
     """
 
-    def __init__(self, path, fasta, gen, sp, distance):
+    def __init__(self, path, fasta, gen, sp, distance,upper):
         self.path = path
         self.fasta = open(fasta, newline="")
         self.fasta_seqIO = SeqIO.parse(self.fasta, "fasta")  # sequence object
@@ -56,7 +56,6 @@ class Matrian:
         )  # dictionary of sequences
         self.Lname = self.name_sp(gen, sp)  # list of species
         self.data = self.matrix(distance)  # matrix genetic distances
-        # TODO: named dict or class with values
         self.summary = self.Summary_distances()
         self.tograph = self.summary[2:]
 
@@ -221,8 +220,6 @@ class Matrian:
         newBins_tra = len(set(tra)) // 3
         if newBins_tra == 0:
             newBins_tra = 1
-        newBins_ter = len(set(ter)) // 3
-
         bin_width = 0.5
         max_tra = max(tra)
         max_ter = max(ter)
@@ -259,13 +256,18 @@ class Matrian:
         fig.write_image(os.path.join(self.path, "barcoding_gap.pdf"))
         fig.show()
 
-    def plot_heatmap(self):
+    def plot_heatmap(self,upper=100):
         dfinv=self.data[['ind2', 'ind1', 'distance']].copy()
         dfinv.rename(columns = {'ind2':'ind1', 'ind1':'ind2'}, inplace = True)
         dftot=pd.concat([self.data,dfinv])
         heatDF=dftot.pivot(index='ind1', columns='ind2', values='distance')
         heatDF=heatDF.fillna(0)
-        sizebackground=len(heatDF)*10
+        if len(heatDF) >= 100:
+            sizebackground=len(heatDF)*10 
+        elif len(heatDF) >= 50:
+            sizebackground=len(heatDF)*20
+        elif len(heatDF) < 50:
+            sizebackground=len(heatDF)*30             
         listnames=list(heatDF.columns)
         nameused=[]
         sppos = []
@@ -279,12 +281,12 @@ class Matrian:
         spinf=spinf[1:]
         spinf.append(len(listnames)-1)
         
-        fig = px.imshow(heatDF, color_continuous_scale="teal_r", width=sizebackground+20, height=sizebackground)
+        fig = px.imshow(heatDF, color_continuous_scale="teal_r", width=sizebackground+20, height=sizebackground, zmin=0, zmax=3)
         fig.update(data=[{'hovertemplate':'Individual 1:%{x}<br>Individual 2: %{y}<br><b>Distance: %{z}</b><extra></extra>'}])
         fig.update_xaxes(title_text='', tickprefix = ' ',tickmode='linear')
         fig.update_yaxes(title_text='', ticksuffix = '  ',tickmode='linear')
         fig.update_layout(plot_bgcolor='rgba(0,0,0,0)', xaxis={'side':'top','tickangle':-90}, 
-                          font={'family':'Arial','size':8,'color':'rgb(42, 86, 116)'},
+                          font={'family':'Arial','size':10,'color':'rgb(42, 86, 116)'},
             title={
                 'text': "Genetic pairwise distance matrix",
                 'y':0.05,
@@ -357,18 +359,9 @@ class Matrian:
     def print_summary_all(self):
         return self.summary[1].transpose()
 
-    # def save_csv(self, out_name):
-    #     out_name_csv = os.path.splitext(out_name)[0] + ".csv"
-    #     with open(out_name_csv, "w", newline="") as out_file:
-    #         writer = csv.writer(out_file, delimiter=",")
-    #         writer.writerow(["name"] + self.fasta_names)
-    #         for r in self.fasta_names:
-    #             writer.writerow(
-    #                 [r] + [value for value in self.data[r].values()]
-    #             )
 
 
-def main(path, fasta_file, gen, sp, distance, out_name=None, n=False):
+def main(path, fasta_file, gen, sp, distance, upper=100, out_name=None, n=False):
     """A function to calculate and print main genetic distances results.
     Parameters
     ----------
@@ -387,7 +380,7 @@ def main(path, fasta_file, gen, sp, distance, out_name=None, n=False):
     n: boolean
         True if nominal analysis.
     """
-    tmp = Matrian(path, fasta_file, gen, sp, distance)
+    tmp = Matrian(path, fasta_file, gen, sp, distance,upper)
    # tmp.analyze()
     return tmp
     # tmp.graphics(tograph[0],tograph[1],tograph[2])
