@@ -1,0 +1,55 @@
+# Most supported partition found by simple heuristic search
+Species 1 (support = 0.999)
+     LS_muy_L913,LS_muy_L915,LS_muy_L914
+
+Species 2 (support = 1.000)
+     LS_muy_L907
+
+Species 3 (support = 0.998)
+     LS_brn_L930,LS_brn_L931,LS_brn_L932
+
+Species 4 (support = 0.996)
+     LS_gar_L293,LS_gar_L298,LS_gar_L294,LS_gar_L296,LS_gar_L295
+
+Species 5 (support = 0.999)
+     LS_tri_L179,LS_tri_L180,LS_tri_L182
+
+Species 6 (support = 1.000)
+     LS_con_L286,LS_con_L820,LS_con_L291,LS_con_L292
+
+Species 7 (support = 0.999)
+     LS_con_L210,LS_con_L211
+
+Species 8 (support = 0.917)
+     LS_tri_L519,LS_tri_L690,LS_tri_L618,LS_tri_L955,LS_tri_L621
+
+Species 9 (support = 0.974)
+     LS_obt_B074,LS_obt_L016,LS_obt_B077,LS_obt_B075,LS_obt_L009,LS_obt_L548,LS_obt_L004,LS_obt_L013,LS_obt_L283,LS_obt_L282,LS_obt_L547,LS_obt_L007,LS_obt_L008,LS_obt_B100,LS_obt_B103,LS_obt_B101,LS_obt_B102
+
+Species 10 (support = 0.832)
+     LS_elo_L1041,LS_elo_L287,LS_elo_L309,LS_elo_L1046,LS_elo_L300,LS_elo_L305,LS_elo_L307,LS_elo_L308,LS_elo_L1047
+
+Species 11 (support = 0.940)
+     LS_obt_B031,LS_obt_B090,LS_obt_B070,LS_obt_L268,LS_obt_L266,LS_obt_L316,LS_obt_B071,LS_obt_L267,LS_obt_L269,LS_obt_L253,LS_obt_L314,LS_obt_L315,LS_obt_L320
+
+Species 12 (support = 1.000)
+     LS_obt_L084
+
+Species 13 (support = 0.978)
+     LS_mac_B061,LS_mac_B086,LS_mac_B089,LS_mac_B087,LS_mac_B088
+
+Species 14 (support = 0.781)
+     LS_mac_B082,LS_mac_L890,LS_mac_L083,LS_mac_L085,LS_mac_L178,LS_mac_L225,LS_mac_L212,LS_mac_L891,LS_mac_L290
+
+Species 15 (support = 0.991)
+     LS_rei_L773,LS_rei_L777,LS_rei_L778,LS_rei_L779
+
+Species 16 (support = 0.962)
+     LS_rei_B072,LS_rei_L342,LS_rei_B073,LS_rei_L341,LS_rei_L338,LS_rei_L355,LS_rei_L339,LS_rei_L343,LS_rei_L353
+
+Species 17 (support = 0.796)
+     LS_piv_B140,LS_piv_B141,LS_piv_B142,LS_piv_B144
+
+Species 18 (support = 0.787)
+     LS_piv_B060,LS_piv_B095,LS_piv_B093,LS_piv_L002,LS_piv_L003,LS_piv_L011,LS_piv_L010,LS_piv_B076,LS_piv_B094,LS_piv_L284,LS_piv_L371,LS_piv_B078,LS_piv_L005,LS_piv_L006,LS_piv_L014,LS_piv_B096,LS_piv_B097,LS_piv_B098,LS_piv_B099
+
