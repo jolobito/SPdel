@@ -6,8 +6,6 @@ from distutils.core import setup
 dependencies = [
                 "biopython",
                 "scipy",
-                "matplotlib",
-                "seaborn",
                 "pandas",
                 "plotly",
                 "numpy"
@@ -18,7 +16,8 @@ scripts = [
            "spdelib/summary.py",
            "spdelib/PTP.py",
            "spdelib/bPTP.py",
-           "spdelib/GMYC.py"
+           "spdelib/GMYC.py",
+           "spdelib/Diagnoser.py"           
            ]
 
 setup(

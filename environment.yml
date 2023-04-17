@@ -1,4 +1,4 @@
-name: spdel 
+name: spdel_git
 channels:
   - eaton-lab
   - etetoolkit
