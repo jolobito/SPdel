@@ -454,35 +454,35 @@ class Compare:
                     if n_used < n_analysis and n_used >= n_analysis / float(2):
                         MD[k]=v 
            
-            logging.info('### All MOTUs match with the taxonomy ###\n')
+            logging.info('### MOTU tottaly matching the taxonomy ###\n')
             for k,v in TC.items():
-                logging.info('Consensus MOTU ' + str(num_motu) + ' [' + k + ']')
+                logging.info('Consensus MOTU ' + str(f"{num_motu:02}") + ' [' + k + ']')
                 logging.info(', '.join(v)+'\n')
-                namedf.extend(['MOTU_'+str(num_motu)]*len(v))
+                namedf.extend(['MOTU_'+str(f"{num_motu:02}")]*len(v))
                 motudf.extend(v)
                 num_motu += 1 
                 
-            logging.info('### Most MOTUs agree with the taxonomy ###\n') 
+            logging.info('### MOTU mostly matching the taxonomy ###\n') 
             for k,v in MC.items():
-                logging.info('Consensus MOTU ' + str(num_motu) + ' [' + k + ']')
+                logging.info('Consensus MOTU ' + str(f"{num_motu:02}") + ' [' + k + ']')
                 logging.info(', '.join(v)+'\n')
-                namedf.extend(['MOTU_'+str(num_motu)]*len(v))
+                namedf.extend(['MOTU_'+str(f"{num_motu:02}")]*len(v))
                 motudf.extend(v)
                 num_motu += 1 
                 
-            logging.info('### All MOTUs do not match the taxonomy###\n')
+            logging.info("### MOTUs totally doesn't match the taxonomy###\n")
             for k,v in TD.items():
-                logging.info('Consensus MOTU ' + str(num_motu) + ' [' + k + ']')
+                logging.info('Consensus MOTU ' + str(f"{num_motu:02}") + ' [' + k + ']')
                 logging.info(', '.join(v)+'\n')
-                namedf.extend(['MOTU_'+str(num_motu)]*len(v))
+                namedf.extend(['MOTU_'+str(f"{num_motu:02}")]*len(v))
                 motudf.extend(v)
                 num_motu += 1 
                 
-            logging.info('### Most MOTUs do not match the taxonomy ###\n')                    
+            logging.info("### MOTUs mostly doesn't match the taxonomy###\n")                    
             for k,v in MD.items():
-                logging.info('Consensus MOTU ' + str(num_motu) + ' [' + k + ']')
+                logging.info('Consensus MOTU ' + str(f"{num_motu:02}") + ' [' + k + ']')
                 logging.info(', '.join(v)+'\n')
-                namedf.extend(['MOTU_'+str(num_motu)]*len(v))
+                namedf.extend(['MOTU_'+str(f"{num_motu:02}")]*len(v))
                 motudf.extend(v)
                 num_motu += 1 
                 
@@ -499,19 +499,19 @@ class Compare:
                     TC[k]=v
                 if n_used < n_analysis and n_used >= (n_analysis/float(2)):
                     MC[k]=v
-            logging.info('### MOTUs totally agree ###\n')
+            logging.info('### MOTU totally concordant ###\n')
             for k,v in TC.items():
-                logging.info('Consensus MOTU ' + str(num_motu) + ' [' + k + ']')
+                logging.info('Consensus MOTU ' + str(f"{num_motu:02}") + ' [' + k + ']')
                 logging.info(', '.join(v)+'\n') 
-                namedf.extend(['MOTU_'+str(num_motu)]*len(v))
+                namedf.extend(['MOTU_'+str(f"{num_motu:02}")]*len(v))
                 motudf.extend(v)
                 num_motu += 1 
                 
-            logging.info('### Most MOTUs match the same delimitation ###\n')            
+            logging.info('### MOTU mostly concordant ###\n')            
             for k,v in MC.items():
-                logging.info('Consensus MOTU ' + str(num_motu) + ' [' + k + ']')
+                logging.info('Consensus MOTU ' + str(f"{num_motu:02}") + ' [' + k + ']')
                 logging.info(', '.join(v)+'\n')
-                namedf.extend(['MOTU_'+str(num_motu)]*len(v))
+                namedf.extend(['MOTU_'+str(f"{num_motu:02}")]*len(v))
                 motudf.extend(v)      
                 num_motu += 1 
                 
@@ -520,113 +520,12 @@ class Compare:
             prints=prints.sort_index(ascending=True)                  
             prints.to_csv( os.path.join(self.path, 'Consensus','MOTU_list.csv'))
             
-        AllMOTUs_df['Consensus']=prints #AGREGAR CONSENSUS LUEGO DEL WARNING
-        
-        # print(AllMOTUs_df)
+        try:
+            AllMOTUs_df['Consensus']=prints
+        except ValueError:
+            logging.info("\n ### WARNING: overlapping MOTUS. Please add more delimiation analysis. Consensus MOTUs don't generated ###\n")     
         return AllMOTUs_df
-
-    def Compare_warning(self):
-        """Rise warnings in case of overlapping Consensus MOTUs and try to resolve it before continue the analysis""" 
-        lists_w_temp = []
-        lists_W = []
-        motus_name_W = []
-        motus_memb_W = []
-        a = '########################################\n'
-        with open(os.path.join(self.path, 'Consensus','Summary_MOTUs.txt'), 'r+') as summary_file:
-            summary_file.seek(0)
-            for line in summary_file:
-                if line.startswith('Consensus'):
-                    motus_name_W.append(line.strip())
-                    member = next(summary_file)
-                    lists_w_temp.append(member.strip().split(', '))
-                    motus_memb_W.append(member)
-            for i in range(len(lists_w_temp)):  # MC vs MC
-                for j in range(len(lists_w_temp)):
-                    if i != j and i > j:
-                        if set(lists_w_temp[i]) & set(lists_w_temp[j]) != set([]):
-                            lists_W.append([i, j])
-
-            if lists_W != []:
-                logging.info('\n' + '### WARNING: overlapping MOTUS  ###\n')
-                summary_file.write('\n' + a + 'WARNING: overlapping MOTUS\n' + a + '\n')
-                n = 0
-                for i in lists_W:
-                    n += 1
-                    logging.info('\n' + 'Overlapping consensus MOTUs ' + str(n) + '\n')
-                    summary_file.write('\n' + 'Overlapping consensus MOTUs ' + str(n) + '\n')
-                    logging.info(motus_name_W[i[0]].strip())
-                    summary_file.write(motus_name_W[i[0]])
-                    logging.info(motus_memb_W[i[0]])
-                    summary_file.write(motus_memb_W[i[0]] + '\n')
-                    logging.info(motus_name_W[i[1]].strip())
-                    summary_file.write(motus_name_W[i[1]])
-                    logging.info(motus_memb_W[i[1]])
-                    summary_file.write(motus_memb_W[i[1]] + '\n')
-
-                warn_chos = str(input(
-                    'Do you want to choice between the overlapping MOTUs before calculate DNA barcoding statistics? (Y/N)').strip())
-                while warn_chos != 'Y' and warn_chos != 'y' and warn_chos != 'n' and warn_chos != 'N':
-                    logging.info('Error: Answer must be Y or N')
-                    warn_chos = str(input(
-                        'Do you want to chose between the overlapping MOTUs before calculate DNA barcoding statistics? (Y/N)').strip())
-                if warn_chos == 'Y' or warn_chos == 'y':
-                    rmvd, acpt, num_del = [], [], []
-                    for i in lists_W:
-                        motuA = motus_name_W[i[0]].strip()
-                        motuB = motus_name_W[i[1]].strip()
-                        text_cho = '1)' + motuA + ' or 2)' + motuB + ' (1/2)'
-                        motu_cho = int(input(text_cho))
-                        while motu_cho != 1 and motu_cho != 2:
-                            logging.info('Error: Answer must be 1 or 2')
-                            motu_cho = int(input(text_cho))
-                        logging.info('\nMOTU chosen ' + motus_name_W[i[motu_cho - 1]] + '\n')
-                        summary_file.write('MOTU chosen ' + motus_name_W[i[motu_cho - 1]] + '\n')
-                        if motu_cho - 1 == 0:
-                            motu_del = 1
-                        else:
-                            motu_del = 0
-                        rmvd.append(motus_name_W[i[motu_del]])
-                        acpt.append(motus_name_W[i[motu_cho - 1]])
-                        num_del.append(motu_del)
-
-                    while set(rmvd) & set(acpt) != set([]):
-                        logging.info('You cant remove and acepted the same MOTU!!!!\n')
-
-                        rmvd, acpt = [], []
-                        for i in lists_W:
-                            motuA = motus_name_W[i[0]].strip()
-                            motuB = motus_name_W[i[1]].strip()
-                            text_cho = '1)' + motuA + ' or 2)' + motuB + ' (1/2)'
-                            motu_cho = int(input(text_cho))
-                            while motu_cho != 1 and motu_cho != 2:
-                                logging.info('Error: Answer must be 1 or 2')
-                                motu_cho = int(input(text_cho))
-                            logging.info('\nMOTU chosen ' + motus_name_W[i[motu_cho - 1]] + '\n')
-                            summary_file.write('MOTU chosen ' + motus_name_W[i[motu_cho - 1]] + '\n')
-                            if motu_cho - 1 == 0:
-                                motu_del = 1
-                            else:
-                                motu_del = 0
-                            rmvd.append(motus_name_W[i[motu_del]])
-                            acpt.append(motus_name_W[i[motu_cho - 1]])
-
-                    for ind, i in enumerate(lists_W):
-                        with open(os.path.join(self.path, 'Consensus','Consensus_MOTU_list.txt'), 'r+') as out_list:
-                            list_out = out_list.readlines()
-                        with open(os.path.join(self.path, 'Consensus','Compare_MOTU_list.txt'), 'w+') as out_list:
-                            for ind2, line in enumerate(list_out):
-                                if line.startswith('MOTU'):
-                                    new_line = list_out[ind2 + 1]
-                                    if new_line == motus_memb_W[i[num_del[ind]]]:
-                                        pass
-                                    else:
-                                        out_list.write(line)
-                                        out_list.write(new_line)
-
-                elif warn_chos == 'N' or warn_chos == 'n':
-                    logging.info('You need to choice a consensus MOTUS to calculate distances and graphs')
-                    exit()
-
+       
     def MOTU_renameFasta_Compare(self):
         """Rename the fasta name sequences using Consensus MOTUs""" 
         self.fasta.seek(0)
@@ -656,7 +555,8 @@ def plot_compare_tree(path, tree, motudf, nocons=False, names=True, save=False):
     """    
     tree = toytree.tree(tree)  # ,tree_format=1)
     if nocons == True:
-        del motudf['Consensus']
+        if 'Consensus' in motudf.columns:
+            del motudf['Consensus']
     AllMOTUs_dict = motudf.to_dict()
 
     tree = tree.mod.node_scale_root_height(2 * len(AllMOTUs_dict))
@@ -823,14 +723,12 @@ def run_csvList(basepath,inputs,XList,gen=1,sp=2,dis='k',cmd=False,diagnostic=Fa
 def run_comparison(basepath,inputs,CompList,nocons=False,gen=1,sp=2,dis='k'):
     logging.info('\n#####################\n Consensus MOTUs\n#####################\n')
     comp_analize = Compare(basepath, inputs.fasta, CompList)
-    # comp_analize.Compare_warning()
-    comp_analize.MOTU_renameFasta_Compare()
-    # if inputs.tree != None:
-    #     plot_compare_tree(basepath, inputs.tree, comp_analize.compared,nocons)
-    distances=Matrian.main(os.path.join(basepath, 'Consensus/'), os.path.join(basepath, 'Consensus','MOTU_sorted.fasta'), gen, sp, dis)
-    return comp_analize.compared,distances
-    # if 'd' in a:
-    #     Diagnoser.main(os.path.join(basepath, 'Compare/'), 'Compare_MOTU.fasta', n_ind)          
+    if 'Consensus' in comp_analize.compared.columns:
+        comp_analize.MOTU_renameFasta_Compare()
+        distances=Matrian.main(os.path.join(basepath, 'Consensus/'), os.path.join(basepath, 'Consensus','MOTU_sorted.fasta'), gen, sp, dis)
+        return comp_analize.compared,distances
+    else:
+        return comp_analize.compared,None
     
 def run(fasta,a,tree,CODE=None,dis='k',niter='10000',sample='100',burnin='0.1',gen=1,sp=2,specList='all',n_ind=3,nocons=False,XList=None,PTPList=None,bPTPList=None,GMYCList=None,CompList=None,diagnostic=False):
     basepath=os.path.dirname(fasta)
@@ -904,7 +802,9 @@ def run(fasta,a,tree,CODE=None,dis='k',niter='10000',sample='100',burnin='0.1',g
         distances[1].plot_max_min()
         distances[1].plot_freq()
         distances[1].plot_heatmap()
-
+        if diagnostic==True:
+            diagnostics_cmd(basepath,'Consensus',specList,n_ind)
+            
 def print_options():
     """Print avaliable options""" 
     print('')

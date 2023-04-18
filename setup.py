@@ -6,9 +6,11 @@ from distutils.core import setup
 dependencies = [
                 "biopython",
                 "scipy",
+                "matplotlib",
                 "pandas",
                 "plotly",
-                "numpy"
+                "numpy",
+                "python-kaleido
                 ]
 
 scripts = [

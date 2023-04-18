@@ -256,7 +256,7 @@ class Matrian:
         fig.write_image(os.path.join(self.path, "barcoding_gap.pdf"))
         fig.show()
 
-    def plot_heatmap(self,upper=100):
+    def plot_heatmap(self,upper=None):
         dfinv=self.data[['ind2', 'ind1', 'distance']].copy()
         dfinv.rename(columns = {'ind2':'ind1', 'ind1':'ind2'}, inplace = True)
         dftot=pd.concat([self.data,dfinv])
@@ -281,7 +281,10 @@ class Matrian:
         spinf=spinf[1:]
         spinf.append(len(listnames)-1)
         
-        fig = px.imshow(heatDF, color_continuous_scale="teal_r", width=sizebackground+20, height=sizebackground, zmin=0, zmax=upper)
+        if upper==None:
+            fig = px.imshow(heatDF, color_continuous_scale="teal_r", width=sizebackground+20, height=sizebackground)
+        else:            
+            fig = px.imshow(heatDF, color_continuous_scale="teal_r", width=sizebackground+20, height=sizebackground, zmin=0, zmax=upper)
         fig.update(data=[{'hovertemplate':'Individual 1:%{x}<br>Individual 2: %{y}<br><b>Distance: %{z}</b><extra></extra>'}])
         fig.update_xaxes(title_text='', tickprefix = ' ',tickmode='linear')
         fig.update_yaxes(title_text='', ticksuffix = '  ',tickmode='linear')
@@ -361,7 +364,7 @@ class Matrian:
 
 
 
-def main(path, fasta_file, gen, sp, distance, upper=100, out_name=None, n=False):
+def main(path, fasta_file, gen, sp, distance, upper=None, out_name=None, n=False):
     """A function to calculate and print main genetic distances results.
     Parameters
     ----------
