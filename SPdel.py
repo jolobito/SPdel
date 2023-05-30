@@ -454,7 +454,7 @@ class Compare:
                     if n_used < n_analysis and n_used >= n_analysis / float(2):
                         MD[k]=v 
            
-            logging.info('### MOTU tottaly matching the taxonomy ###\n')
+            logging.info('### MOTU totally matching the taxonomy ###\n')
             for k,v in TC.items():
                 logging.info('Consensus MOTU ' + str(f"{num_motu:02}") + ' [' + k + ']')
                 logging.info(', '.join(v)+'\n')
@@ -470,7 +470,7 @@ class Compare:
                 motudf.extend(v)
                 num_motu += 1 
                 
-            logging.info("### MOTUs totally doesn't match the taxonomy###\n")
+            logging.info("### MOTU totally mismatching the taxonomy ###\n")
             for k,v in TD.items():
                 logging.info('Consensus MOTU ' + str(f"{num_motu:02}") + ' [' + k + ']')
                 logging.info(', '.join(v)+'\n')
@@ -478,7 +478,7 @@ class Compare:
                 motudf.extend(v)
                 num_motu += 1 
                 
-            logging.info("### MOTUs mostly doesn't match the taxonomy###\n")                    
+            logging.info("### MOTUs mostly mismatching the taxonomy ###\n")                    
             for k,v in MD.items():
                 logging.info('Consensus MOTU ' + str(f"{num_motu:02}") + ' [' + k + ']')
                 logging.info(', '.join(v)+'\n')
@@ -499,7 +499,7 @@ class Compare:
                     TC[k]=v
                 if n_used < n_analysis and n_used >= (n_analysis/float(2)):
                     MC[k]=v
-            logging.info('### MOTU totally concordant ###\n')
+            logging.info('### MOTU recovered by all analyses ###\n')
             for k,v in TC.items():
                 logging.info('Consensus MOTU ' + str(f"{num_motu:02}") + ' [' + k + ']')
                 logging.info(', '.join(v)+'\n') 
@@ -507,7 +507,7 @@ class Compare:
                 motudf.extend(v)
                 num_motu += 1 
                 
-            logging.info('### MOTU mostly concordant ###\n')            
+            logging.info('### MOTU recovered by most of the analyses ###\n')            
             for k,v in MC.items():
                 logging.info('Consensus MOTU ' + str(f"{num_motu:02}") + ' [' + k + ']')
                 logging.info(', '.join(v)+'\n')
