@@ -10,7 +10,7 @@ dependencies = [
                 "pandas",
                 "plotly",
                 "numpy",
-                "python-kaleido
+                "python-kaleido"
                 ]
 
 scripts = [
