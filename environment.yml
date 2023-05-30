@@ -1,4 +1,4 @@
-name: spdel_git
+name: spdel
 channels:
   - eaton-lab
   - etetoolkit
@@ -10,6 +10,9 @@ dependencies:
   - pip
   - ete3 
   - toytree
+  - ipykernel
+  - jupyter
   - pip:
-    - git+https://github.com/jolobito/SPdel.git#spdel
+    - git+https://github.com/jolobito/SPdel.git@lite#spdel
+
 
