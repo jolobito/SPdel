@@ -117,8 +117,8 @@ class Matrian:
             logging.info("Using p-distance\n")
         ind1, ind2, value, = [], [], []
         ind_number = len(self.fasta_names)
-        for i in range(ind_number - 1):
-            for j in range(i + 1, ind_number - 1):
+        for i in range(ind_number):
+            for j in range(i + 1, ind_number):
                 ind1.append(self.fasta_names[i])
                 ind2.append(self.fasta_names[j])
                 if distance == "k":
@@ -266,8 +266,10 @@ class Matrian:
             sizebackground=len(heatDF)*10 
         elif len(heatDF) >= 50:
             sizebackground=len(heatDF)*20
-        elif len(heatDF) < 50:
-            sizebackground=len(heatDF)*30             
+        elif len(heatDF) >= 25:
+            sizebackground=len(heatDF)*30
+        elif len(heatDF) >= 1:
+            sizebackground=len(heatDF)*100           
         listnames=list(heatDF.columns)
         nameused=[]
         sppos = []
