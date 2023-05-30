@@ -268,6 +268,8 @@ class Matrian:
             sizebackground=len(heatDF)*20
         elif len(heatDF) >= 25:
             sizebackground=len(heatDF)*30
+        elif len(heatDF) >= 10:
+            sizebackground=len(heatDF)*50              
         elif len(heatDF) >= 1:
             sizebackground=len(heatDF)*100           
         listnames=list(heatDF.columns)
