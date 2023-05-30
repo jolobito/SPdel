@@ -13,6 +13,6 @@ dependencies:
   - ipykernel
   - jupyter
   - pip:
-    - git+https://github.com/jolobito/SPdel.git@lite#spdel
+    - git+https://github.com/jolobito/SPdel.git#spdel
 
 
