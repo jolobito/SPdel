@@ -10,8 +10,7 @@ dependencies:
   - pip
   - ete3 
   - toytree
-  - ipykernel
-  - jupyter
+  - python-kaleido
   - pip:
     - git+https://github.com/jolobito/SPdel.git#spdel
 
