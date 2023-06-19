@@ -9,7 +9,9 @@ dependencies = [
                 "matplotlib",
                 "pandas",
                 "plotly",
-                "numpy"
+                "numpy",
+                "ipykernel",
+                "nbformat"
                 ]
 
 scripts = [
