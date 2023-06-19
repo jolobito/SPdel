@@ -14,6 +14,10 @@ Open Anaconda prompt or terminal:
 conda env create -f environment.yml
 conda activate spdel 
 ```
+Before use jupyter version for first time:
+```
+python -m ipykernel install --user --name spdel
+```
 ### Overview
 
 The pipeline SPdel can run PTP, BPTP and GMYC analyses locally in your computer using original codes and then parse the results. Also, SPdel can interpretate output files from PTP and bPTP web server (https://species.h-its.org/) or python distribution (https://github.com/zhangjiajie/PTP). For GMYC the pipeline works with the outfile from python version (https://github.com/zhangjiajie/pGMYC), but you can use the R version or the web server (https://species.h-its.org/gmyc/) and include your results using -X option. Please check the example files included. 
@@ -77,19 +81,5 @@ Options for bPTP
 Options for diagnostic character:
 
     -n_ind       Minimum number of individuals for species to be considered in the diagnostic character analysis (default=3)
-
-### Develop:
-
-After activating the environment
-
-```
-conda activate spdel
-```
-
-Install the develop requirements:
-
-```
-conda install --file requirements_dev.txt
-```
 
  
