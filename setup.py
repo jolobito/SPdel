@@ -21,7 +21,7 @@ elif myos == 'linux' or myos == "linux2":
     bins = ['./ext_bin/abgd_linux','./ext_bin/asap_linux','./ext_bin/mptp_linux']
 
 elif myos == 'win32':
-    bins = ['./ext_bin/abgd.exe','./ext_bin/asap_linux','./ext_bin/mptp.exe']
+    bins = ['./ext_bin/abgd.exe','./ext_bin/asap.exe','./ext_bin/mptp.exe']
     
 else:
     sys.stderr.write('Package does not work with %s operative system'  % myos)
