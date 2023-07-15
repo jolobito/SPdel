@@ -1,8 +1,7 @@
 #! /usr/bin/env python
 
 # SPdel v 2.0
-import os
-import sys
+import os, sys, subprocess
 import logging
 # from sys import platform as sys_pf
 
@@ -214,6 +213,33 @@ def MOTU_listPTP(path,infile,analisis):
     PTP_df = pd.DataFrame(datas, index=ind)  
     return PTP_df
 
+def MOTU_listmPTP(path,infile,analisis):
+    """Read the input precalclate and construct a df with the MOTUs
+    Parameters
+    ----------
+    infile: str
+        species delimitation results file precalculated.
+    Returns
+    -------
+    A df with MOTUs
+    """          
+    listmPTP = open(infile)
+    listmPTP.seek(0)
+    name = []
+    ind = []
+    n=0
+    for line in listmPTP:
+        line = line.strip()
+        if line.startswith("Species"):
+            n+=1
+            line = next(listmPTP)  
+            while line != None:
+                name.append('MOTU_'+str(f"{n:02}"))
+                ind.append(line)
+                line = next(listmPTP)            
+    datas = {analisis: name}
+    mPTP_df = pd.DataFrame(datas, index=ind)  
+    return mPTP_df
 
 def ptp(path,tree):
     """Run the PTP analysis"""
@@ -267,6 +293,81 @@ def MOTU_listGMYC(path,infile,analisis):
     GMYC_df = pd.DataFrame(datas, index=ind)  
     return GMYC_df
 
+def MOTU_listABGD(infile,Pcut):
+    ABGDoutput = open(infile,"r")
+    for line in ABGDoutput:
+      if line.startswith("N_subsets ="):
+        subsets=line.rstrip().replace(' ','').replace(';','').split('=')[1].split("/")         
+      if line.rstrip() == "[Barcode gap distance :]":
+        pvalues = next(ABGDoutput)
+        pvalues = pvalues.replace("[","").replace("]","").replace(" ","").rstrip()
+        pvalues = pvalues.split("/")
+        pvalues = [float(i) for i in pvalues]
+      if line.rstrip() == "Individual_assignment =":
+        break
+    DelimitationList=[]
+    head = ["ABGD_" + str(i+1) for i in range(len(pvalues))]
+    for line in ABGDoutput:
+      if "end" in line:
+        break
+      line = line.replace(":","/").replace(" ","").replace(';','').rstrip()
+      line = line.split("/")
+      line = [line[0]]+['MOTU_'+str(f"{int(i):02}") for i in line[1:]]      
+      DelimitationList.append(line)
+    headDel = ['ID'] + head
+    datas = {'groups':subsets,'P':pvalues}
+    ABGDres_df = pd.DataFrame(datas, index=head)
+    ABGDdf = pd.DataFrame(DelimitationList, columns= headDel)
+    ABGDdf = ABGDdf.set_index("ID")
+    logging.info(ABGDres_df)
+    # logging.info(P)
+    if Pcut=='all':    
+        return ABGDdf
+    elif type(Pcut) is float:
+        ABGDres_df = abs(ABGDres_df[['P']]-Pcut)
+        # ABGDres_df.eval("P = abs(P - 0.01)", inplace=True)          
+        best=ABGDres_df[ABGDres_df.P==ABGDres_df.P.min()]
+        best=best.index[0]
+        ABGDdf = ABGDdf[[best]]
+        return ABGDdf
+
+def MOTU_listASAP(infile,Ascore):
+    ASAPoutput = open(infile,"r")
+    for line in ASAPoutput:
+      if line.startswith("N_subsets ="):
+        subsets=line.rstrip().replace(' ','').replace(';','').split('=')[1].split("/")
+        subsets=[i.split(':')[0] for i in subsets]         
+      if line.rstrip() == "[Asap scores for the N_subset above are:]":
+        ASAPscores = next(ASAPoutput)
+        ASAPscores = ASAPscores.replace("[","").replace("]","").replace(" ","").rstrip()
+        ASAPscores = ASAPscores.split("/")
+        ASAPscores = [float(i) for i in ASAPscores]
+      if line.rstrip() == "Individual_assignment =":
+        break
+    DelimitationList=[]
+    head = ["ASAP_" + str(i+1) for i in range(len(ASAPscores))]
+    for line in ASAPoutput:
+      if "end" in line:
+        break
+      line = line.replace(":","/").replace(" ","").replace(';','').rstrip()
+      line = line.split("/")
+      line = [line[0]]+['MOTU_'+str(f"{int(i):02}") for i in line[1:]]      
+      DelimitationList.append(line)
+    headDel = ['ID'] + head
+    datas = {'groups':subsets,'ASAPscores':ASAPscores}
+    ASAPres_df = pd.DataFrame(datas, index=head)
+    ASAPdf = pd.DataFrame(DelimitationList, columns= headDel)
+    ASAPdf = ASAPdf.set_index("ID")
+    logging.info(ASAPres_df)
+    # logging.info(P)
+    if Ascore == None:      
+        best=ASAPres_df[ASAPres_df.ASAPscores==ASAPres_df.ASAPscores.min()]
+        best=best.index[0]
+        ASAPdf = ASAPdf[[best]]
+        return ASAPdf    
+    else:
+        return ASAPdf[[Ascore]]
+        
 
 def MOTU_X(path, fasta, folder, MOTUDict, k):
     """Rename the fasta name sequences using MOTUs Dictionary
@@ -686,12 +787,57 @@ def run_bPTP(basepath,inputs,niter='10000',sample='100',burnin='0.1',gen=1,sp=2,
     bPTP_df=MOTU_listPTP(os.path.join(basepath, 'bPTP'),os.path.join(basepath, 'bPTP/bPTP.PTPhSupportPartition.txt'),'bPTP')
     distances=dict_to_matrian(basepath,bPTP_df,inputs.fasta,gen,sp,dis)
     return distances
+
+def run_mPTP(basepath,inputs,gen=1,sp=2,dis='k'):
+    #mptp --ml --multi --tree_file testTree --output_file out
+    subprocess.call(['mptp', '--ml', '--multi', '--tree_file', inputs.tree, '--output_file',os.path.join(basepath, 'mPTP/out_mptp')])
+    mPTP_df=MOTU_listmPTP(os.path.join(basepath, 'mPTP'),os.path.join(basepath, 'mPTP/out_mptp.txt'),'mPTP')
+    distances=dict_to_matrian(basepath,mPTP_df,inputs.fasta,gen,sp,dis)
+    return distances
     
 def run_GMYC(basepath,inputs,gen=1,sp=2,dis='k'):
     sys.argv = [sys.argv[0]]
     gmyc_run(basepath,inputs.tree)
-    GMYC_df=MOTU_listGMYC(os.path.join(basepath, 'GMYC'),os.path.join(basepath,'GMYC/GMYC_MOTU.txt'),'GMYC')
+    GMYC_df=MOTU_listGMYC(os.path.join(basepath, 'GMYC'),os.path.join(basepath,'GMYC/GMYC_MOTU.rec.spart'),'GMYC')
     distances=dict_to_matrian(basepath,GMYC_df,inputs.fasta,gen,sp,dis) 
+    return distances
+
+def run_ABGD(basepath,inputs,gen=1,sp=2,dis='k',pmin=0.001,Pmax=0.1,P=0.01,cmd=False,diagnostic=False,n_ind=3):
+    if dis=='k':
+        d='0'
+    elif dis=='jc':
+        d='1'
+    elif dis=='p':
+        d='3'
+    file=str(inputs.fasta)
+    file=file.split('name=')[1].split('mode=')[0]
+    file=file.replace("'","").rstrip()
+    subprocess.call(['abgd', '-a', '-d', d, '-p', str(pmin), '-P', str(Pmax), '-o',os.path.join(basepath, 'ABGD'), file])
+    ABGD_df=MOTU_listABGD(os.path.join(basepath,'ABGD',os.path.splitext(os.path.basename(file))[0]+'.rec.spart'),P)
+    if P== 'all':
+        csv=True
+    else:
+        csv=False
+    distances=dict_to_matrian(basepath,ABGD_df,inputs.fasta,gen,sp,dis,cmd,diagnostic,csv,n_ind) 
+    return distances
+
+def run_ASAP(basepath,inputs,ASAPout,gen=1,sp=2,dis='k',P=None,cmd=False,diagnostic=False,n_ind=3):
+    if dis=='k':
+        d='0'
+    elif dis=='jc':
+        d='1'
+    elif dis=='p':
+        d='3'    
+    file=str(inputs.fasta)
+    file=file.split('name=')[1].split('mode=')[0]
+    file=file.replace("'","").rstrip()
+    subprocess.call(['asap', '-d', d, '-o',os.path.join(basepath, 'ASAP'), file])    
+    ABGD_df=MOTU_listASAP(ASAPout,P)
+    if P== 'all':
+        csv=True
+    else:
+        csv=False
+    distances=dict_to_matrian(basepath,ABGD_df,inputs.fasta,gen,sp,dis,cmd,diagnostic,csv,n_ind) 
     return distances
 
 def run_PTPList(basepath,inputs,PTPList,gen=1,sp=2,dis='k'):
@@ -760,6 +906,14 @@ def run(fasta,a,tree,CODE=None,dis='k',niter='10000',sample='100',burnin='0.1',g
         distances.plot_heatmap()
         if diagnostic==True:
             diagnostics_cmd(basepath,'bPTP',specList,n_ind)
+    if 'M' in a:
+        distances=run_mPTP(basepath,inputs,gen,sp,dis)
+        distances.print_sum()
+        distances.plot_max_min()
+        distances.plot_freq()
+        distances.plot_heatmap()
+        if diagnostic==True:
+            diagnostics_cmd(basepath,'mPTP',specList,n_ind)            
     if 'G' in a:
         distances=run_GMYC(basepath,inputs,gen,sp,dis)
         distances.print_sum()
@@ -767,7 +921,23 @@ def run(fasta,a,tree,CODE=None,dis='k',niter='10000',sample='100',burnin='0.1',g
         distances.plot_freq()
         distances.plot_heatmap()
         if diagnostic==True:
-            diagnostics_cmd(basepath,'GMYC',specList,n_ind)          
+            diagnostics_cmd(basepath,'GMYC',specList,n_ind)      
+    if 'A' in a:
+        distances=run_ABGD(basepath,inputs,gen,sp,dis)
+        distances.print_sum()
+        distances.plot_max_min()
+        distances.plot_freq()
+        distances.plot_heatmap()
+        if diagnostic==True:
+            diagnostics_cmd(basepath,'ABGD',specList,n_ind)   
+    if 'S' in a:
+        distances=run_ASAP(basepath,inputs,gen,sp,dis)
+        distances.print_sum()
+        distances.plot_max_min()
+        distances.plot_freq()
+        distances.plot_heatmap()
+        if diagnostic==True:
+            diagnostics_cmd(basepath,'ASAP',specList,n_ind)               
     if 'p' in a: #to do: check individual file
         distances=run_PTPList(basepath,inputs,PTPList,gen,sp,dis)
         distances.print_sum()
@@ -956,6 +1126,12 @@ def main(argu=None):
             else:
                 a += 't'
                 bPTPList = sys.argv[j] 
+        elif sys.argv[i] == '-A':
+            a += 'A'
+        elif sys.argv[i] == '-S':
+            a += 'S'
+        elif sys.argv[i] == '-M':
+            a += 'M'             
         elif sys.argv[i] == '-X':
             i = i + 1
             a += 'x'

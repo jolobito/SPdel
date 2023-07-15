@@ -15,13 +15,13 @@ if platform.architecture()[0] != '64bit':
 myos = sys.platform
 
 if myos == 'darwin':
-    bins = ['./ext_bin/abgd_darwin']
+    bins = ['./ext_bin/abgd_darwin','./ext_bin/asap_darwin','./ext_bin/mptp_darwin']
 
 elif myos == 'linux' or myos == "linux2":
-    bins = ['./ext_bin/abgd_linux']
+    bins = ['./ext_bin/abgd_linux','./ext_bin/asap_linux','./ext_bin/mptp_linux']
 
 elif myos == 'win32':
-    bins = ['./ext_bin/abgd.exe']
+    bins = ['./ext_bin/abgd.exe','./ext_bin/asap_linux','./ext_bin/mptp.exe']
     
 else:
     sys.stderr.write('Package does not work with %s operative system'  % myos)
