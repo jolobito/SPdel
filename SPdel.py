@@ -232,11 +232,14 @@ def MOTU_listmPTP(path,infile,analisis):
         line = line.strip()
         if line.startswith("Species"):
             n+=1
-            line = next(listmPTP)  
-            while line != None:
+            line = next(listmPTP).rstrip()   
+            while line != '':
                 name.append('MOTU_'+str(f"{n:02}"))
                 ind.append(line)
-                line = next(listmPTP)            
+                try:
+                    line = next(listmPTP).rstrip()
+                except StopIteration:
+                    break
     datas = {analisis: name}
     mPTP_df = pd.DataFrame(datas, index=ind)  
     return mPTP_df
@@ -789,7 +792,8 @@ def run_bPTP(basepath,inputs,niter='10000',sample='100',burnin='0.1',gen=1,sp=2,
     return distances
 
 def run_mPTP(basepath,inputs,gen=1,sp=2,dis='k'):
-    #mptp --ml --multi --tree_file testTree --output_file out
+    if not os.path.exists(os.path.join(basepath, 'mPTP')):
+        os.makedirs(os.path.join(basepath, 'mPTP'))     
     subprocess.call(['mptp', '--ml', '--multi', '--tree_file', inputs.tree, '--output_file',os.path.join(basepath, 'mPTP/out_mptp')])
     mPTP_df=MOTU_listmPTP(os.path.join(basepath, 'mPTP'),os.path.join(basepath, 'mPTP/out_mptp.txt'),'mPTP')
     distances=dict_to_matrian(basepath,mPTP_df,inputs.fasta,gen,sp,dis)
@@ -821,7 +825,7 @@ def run_ABGD(basepath,inputs,gen=1,sp=2,dis='k',pmin=0.001,Pmax=0.1,P=0.01,cmd=F
     distances=dict_to_matrian(basepath,ABGD_df,inputs.fasta,gen,sp,dis,cmd,diagnostic,csv,n_ind) 
     return distances
 
-def run_ASAP(basepath,inputs,ASAPout,gen=1,sp=2,dis='k',P=None,cmd=False,diagnostic=False,n_ind=3):
+def run_ASAP(basepath,inputs,gen=1,sp=2,dis='k',P=None,cmd=False,diagnostic=False,n_ind=3):
     if dis=='k':
         d='0'
     elif dis=='jc':
@@ -830,9 +834,9 @@ def run_ASAP(basepath,inputs,ASAPout,gen=1,sp=2,dis='k',P=None,cmd=False,diagnos
         d='3'    
     file=str(inputs.fasta)
     file=file.split('name=')[1].split('mode=')[0]
-    file=file.replace("'","").rstrip()
+    file=file.replace("'","").rstrip()  
     subprocess.call(['asap', '-d', d, '-o',os.path.join(basepath, 'ASAP'), file])    
-    ABGD_df=MOTU_listASAP(ASAPout,P)
+    ABGD_df=MOTU_listASAP(os.path.join(basepath, 'ASAP',os.path.splitext(os.path.basename(file))[0][:20]+'.spart'),P)
     if P== 'all':
         csv=True
     else:
