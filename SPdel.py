@@ -562,8 +562,8 @@ class Compare:
                         if n_used == n_analysis:
                             TD[k]=v
                         if n_used < n_analysis and n_used >= n_analysis / float(2):
-                            MD[k]=v 
-               
+                            MD[k]=v
+                logging.info('\n#####################\n Consensus MOTUs\n#####################\n')               
                 logging.info('### MOTU totally matching the taxonomy ###\n')
                 for k,v in TC.items():
                     logging.info('Consensus MOTU ' + str(f"{num_motu:02}") + ' [' + k + ']')
@@ -609,6 +609,7 @@ class Compare:
                         TC[k]=v
                     if n_used < n_analysis and n_used >= (n_analysis/float(2)):
                         MC[k]=v
+                logging.info('\n#####################\n Consensus MOTUs\n#####################\n')
                 logging.info('### MOTU recovered by all analyses ###\n')
                 for k,v in TC.items():
                     logging.info('Consensus MOTU ' + str(f"{num_motu:02}") + ' [' + k + ']')
@@ -786,7 +787,6 @@ def run_nominal(basepath,inputs,gen=1,sp=2,dis='k'):
 def run_PTP(basepath,inputs,gen=1,sp=2,dis='k'):
     sys.argv = [sys.argv[0]]
     ptp(basepath, inputs.tree)
-    logging.info('HERE')
     PTP_df=MOTU_listPTP(os.path.join(basepath, 'PTP'),os.path.join(basepath,'PTP/PTP.PTPhSupportPartition.txt'),'PTP')
     distances=dict_to_matrian(basepath,PTP_df,inputs.fasta,gen,sp,dis)
     return distances
@@ -880,7 +880,6 @@ def run_csvList(basepath,inputs,XList,gen=1,sp=2,dis='k',cmd=False,diagnostic=Fa
 def run_comparison(basepath,inputs,CompList,nocons=False,gen=1,sp=2,dis='k'):
     comp_analize = Compare(basepath, inputs.fasta, CompList,nocons)
     if 'Consensus' in comp_analize.compared.columns:
-        logging.info('\n#####################\n Consensus MOTUs\n#####################\n')
         comp_analize.MOTU_renameFasta_Compare()
         distances=Matrian.main(os.path.join(basepath, 'Consensus/'), os.path.join(basepath, 'Consensus','MOTU_sorted.fasta'), gen, sp, dis)
         return comp_analize.compared,distances
