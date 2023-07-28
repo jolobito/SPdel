@@ -34,9 +34,9 @@ Calculates genetic distances for nominal species
 ```
 SPdel.py path/LA_nominal.fasta -n
 ```
-Calculate PTP, bPTP and GMYC locally and perfom genetic distances analyses
+Calculate ABGD, ASAP, PTP, bPTP and GMYC locally and perfom genetic distances analyses
 ```
-SPdel.py path/LA_nominal.fasta -n -P -T -G -t path/LA_nominal.nwk
+SPdel.py path/LA_nominal.fasta -n -A -S -P -T -G -t path/LA_nominal.nwk
 ```
 Calculates genetics distances from MOTUs delimited for BIN using outfiles calculated outside the pipeline
 ```
@@ -44,11 +44,11 @@ SPdel.py path/LA_nominal.fasta -B path/LA_BinList.txt -t path/LA_nominal.nwk
 ```
 Compare analyses previously calculated
 ```
-SPdel.py path/LA_nominal.fasta -C n,p,t,g -t path/LA_nominal.nwk
+SPdel.py path/LA_nominal.fasta -C n,a,s,p,t,g -t path/LA_nominal.nwk
 ```
 Calculate all analyses and compare the results
 ```
-SPdel.py path/LA_nominal.fasta -P -T -G -B path/LA_BinList.txt -t path/LA_nominal.nwk -C n,p,t,g,b
+SPdel.py path/LA_nominal.fasta -n -A -S -P -T -G -B path/LA_BinList.txt -t path/LA_nominal.nwk -C n,a,s,p,t,g,b
 ```
 
 Options:   
@@ -57,11 +57,13 @@ Options:
     -distance    Substitution model, k for K2p or p for p-distance (default=k)
     -t           Specify the path of the input newick tree for PTP, bPTP and GMYC analysis.
     -N           Specify the path of the text file including the nominal names for rename the sequences.
-    -P           Specify the path of the PTP output file.
-    -G           Specify the path of the GMYC output file.
-    -T           Specify the path of the bPTP output file.     
-    -B           Specify the path of the text file including the BIN names obtained from BOLD.
-    -X           Specify the path of the text file including the MOTUs names obtained from any external method.
+    -A           ABGD analysis.
+    -S           ASAP analysis. 
+    -P           PTP analysis.
+    -T           bPTP analysis.
+    -M           mPTP analysis.    
+    -G           GMYC analysis.             
+    -X           Specify the path of the CSV file including the MOTUs names obtained from any external method (e.g. BIN).
     -D           For Diagnostic character analysis.
     -C           Specify the type of analisys to be compared, include n for nominal, p for PTP, t for bPTP, b for BIN, and any filename  used in X option for external MOTU lists. 
     -code        Specify the genetic code used to test stop codon, VER or INV.
