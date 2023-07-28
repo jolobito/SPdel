@@ -1,12 +1,11 @@
 name: spdel
 channels:
-  - eaton-lab
   - etetoolkit
   - bioconda
   - conda-forge
   - defaults
 dependencies:
-  - python=3.7
+  - python=3.10
   - pip
   - ete3 
   - toytree

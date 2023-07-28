@@ -37,7 +37,8 @@ dependencies = [
                 "plotly",
                 "numpy",
                 "ipykernel",
-                "nbformat"
+                "nbformat",
+                "notebook"
                 ]
 
 scripts = [

@@ -191,7 +191,7 @@ class Matrian:
         dister.extend(list(data_tmp3['distance']))
         return min_inter_dict, mean_inter_dict, max_inter_dict, NN_dict, dister
 
-    def plot_max_min(self):  # max vs min graph
+    def plot_max_min(self,cmd=False):  # max vs min graph
         data = self.tograph[0]
         data_max = max([data["inter"].max(), data["intra2"].max()])
 
@@ -213,9 +213,10 @@ class Matrian:
             autosize=False, width=700, height=700
         )
         fig.write_image(os.path.join(self.path, "min_max.pdf"))
-        fig.show()
+        if cmd==False:
+            fig.show()
 
-    def plot_freq(self):  # Barcoding gap graph
+    def plot_freq(self,cmd=False):  # Barcoding gap graph
         tra, ter = self.tograph[1][-1], self.tograph[2][-1]
         newBins_tra = len(set(tra)) // 3
         if newBins_tra == 0:
@@ -254,9 +255,10 @@ class Matrian:
 
         fig.update_traces(opacity=0.75, xbins_size=0.25)
         fig.write_image(os.path.join(self.path, "barcoding_gap.pdf"))
-        fig.show()
+        if cmd==False:
+            fig.show()
 
-    def plot_heatmap(self,upper=None):
+    def plot_heatmap(self,cmd=False,upper=None):
         dfinv=self.data[['ind2', 'ind1', 'distance']].copy()
         dfinv.rename(columns = {'ind2':'ind1', 'ind1':'ind2'}, inplace = True)
         dftot=pd.concat([self.data,dfinv])
@@ -312,7 +314,8 @@ class Matrian:
               line=dict(color='darksalmon',width=8)      
           )
         fig.write_image(os.path.join(self.path, "heatmap.pdf"))
-        fig.show()
+        if cmd==False:
+            fig.show()
                 
         
         

@@ -331,7 +331,8 @@ def MOTU_listABGD(infile,Pcut):
         # ABGDres_df.eval("P = abs(P - 0.01)", inplace=True)          
         best=ABGDres_df[ABGDres_df.P==ABGDres_df.P.min()]
         best=best.index[0]
-        ABGDdf = ABGDdf[[best]]
+        ABGDdf = ABGDdf[[best]] 
+        ABGDdf.rename(columns = {best:'ABGD'}, inplace = True)
         return ABGDdf
 
 def MOTU_listASAP(infile,Ascore):
@@ -363,10 +364,13 @@ def MOTU_listASAP(infile,Ascore):
     ASAPdf = ASAPdf.set_index("ID")
     logging.info(ASAPres_df)
     # logging.info(P)
+    if Ascore=='all':    
+        return ASAPdf    
     if Ascore == None:      
         best=ASAPres_df[ASAPres_df.ASAPscores==ASAPres_df.ASAPscores.min()]
         best=best.index[0]
         ASAPdf = ASAPdf[[best]]
+        ASAPdf.rename(columns = {best:'ASAP'}, inplace = True)
         return ASAPdf    
     else:
         return ASAPdf[[Ascore]]
@@ -440,9 +444,9 @@ def dict_to_matrian(basepath,AllMOTUs,fasta,gen,sp,dis,cmd=False,diagnostic=Fals
         #     Diagnoser.main(os.path.join(basepath, out_folder), 'MOTU_sorted.fasta', n_ind)
         if cmd==True:
             distances.print_sum()
-            distances.plot_max_min()
-            distances.plot_freq()
-            distances.plot_heatmap()
+            distances.plot_max_min(cmd)
+            distances.plot_freq(cmd)
+            distances.plot_heatmap(cmd)
             if diagnostic==True:
                 logging.info(("\n" + "### Summary of diagnostic character result ###\n"))
                 diagnostics_cmd(basepath,k,n_ind)
@@ -471,10 +475,11 @@ class Compare:
     CompList: str
         list of delimitation methods used.       
     """
-    def __init__(self, path, fasta, CompList):
+    def __init__(self, path, fasta, CompList,nocons):
         if not os.path.exists(os.path.join(path, 'Consensus/')):
             os.makedirs(os.path.join(path, 'Consensus/'))
         self.path = path
+        self.nocons=nocons
         self.CompList = CompList
         self.CompList = self.complist_read()
         self.compared = self.compare()
@@ -541,93 +546,94 @@ class Compare:
         namedf=[]
         motudf=[]
         # print(sameind)
-        if 'Nominal' in self.CompList and os.path.exists(os.path.join(self.path, 'Nominal','MOTU_list.csv')):
-            n_analysis += -1
-            for k,v in sameind.items():
-                if '(Nominal)' in k:
-                    # print('motus vistas con nominal',k)
-                    n_used = len(k.strip().split("&"))-1
+        if  self.nocons==False:
+            if 'Nominal' in self.CompList and os.path.exists(os.path.join(self.path, 'Nominal','MOTU_list.csv')):
+                n_analysis += -1
+                for k,v in sameind.items():
+                    if '(Nominal)' in k:
+                        # print('motus vistas con nominal',k)
+                        n_used = len(k.strip().split("&"))-1
+                        if n_used == n_analysis:
+                            TC[k]=v
+                        if n_used < n_analysis and n_used >= (n_analysis/float(2)):
+                            MC[k]=v
+                    else:
+                        n_used = len(k.strip().split("&"))
+                        if n_used == n_analysis:
+                            TD[k]=v
+                        if n_used < n_analysis and n_used >= n_analysis / float(2):
+                            MD[k]=v 
+               
+                logging.info('### MOTU totally matching the taxonomy ###\n')
+                for k,v in TC.items():
+                    logging.info('Consensus MOTU ' + str(f"{num_motu:02}") + ' [' + k + ']')
+                    logging.info(', '.join(v)+'\n')
+                    namedf.extend(['MOTU_'+str(f"{num_motu:02}")]*len(v))
+                    motudf.extend(v)
+                    num_motu += 1 
+                    
+                logging.info('### MOTU mostly matching the taxonomy ###\n') 
+                for k,v in MC.items():
+                    logging.info('Consensus MOTU ' + str(f"{num_motu:02}") + ' [' + k + ']')
+                    logging.info(', '.join(v)+'\n')
+                    namedf.extend(['MOTU_'+str(f"{num_motu:02}")]*len(v))
+                    motudf.extend(v)
+                    num_motu += 1 
+                    
+                logging.info("### MOTU totally mismatching the taxonomy ###\n")
+                for k,v in TD.items():
+                    logging.info('Consensus MOTU ' + str(f"{num_motu:02}") + ' [' + k + ']')
+                    logging.info(', '.join(v)+'\n')
+                    namedf.extend(['MOTU_'+str(f"{num_motu:02}")]*len(v))
+                    motudf.extend(v)
+                    num_motu += 1 
+                    
+                logging.info("### MOTUs mostly mismatching the taxonomy ###\n")                    
+                for k,v in MD.items():
+                    logging.info('Consensus MOTU ' + str(f"{num_motu:02}") + ' [' + k + ']')
+                    logging.info(', '.join(v)+'\n')
+                    namedf.extend(['MOTU_'+str(f"{num_motu:02}")]*len(v))
+                    motudf.extend(v)
+                    num_motu += 1 
+                    
+                datas = {"Consensus": namedf}
+                prints = pd.DataFrame(datas, index=motudf)
+                prints=prints.sort_index(ascending=True)                     
+                prints.to_csv( os.path.join(self.path, 'Consensus','MOTU_list.csv'))
+        
+                
+            else:
+                for k,v in sameind.items():
+                    n_used = len(k.strip().split("&"))
                     if n_used == n_analysis:
                         TC[k]=v
                     if n_used < n_analysis and n_used >= (n_analysis/float(2)):
                         MC[k]=v
-                else:
-                    n_used = len(k.strip().split("&"))
-                    if n_used == n_analysis:
-                        TD[k]=v
-                    if n_used < n_analysis and n_used >= n_analysis / float(2):
-                        MD[k]=v 
-           
-            logging.info('### MOTU totally matching the taxonomy ###\n')
-            for k,v in TC.items():
-                logging.info('Consensus MOTU ' + str(f"{num_motu:02}") + ' [' + k + ']')
-                logging.info(', '.join(v)+'\n')
-                namedf.extend(['MOTU_'+str(f"{num_motu:02}")]*len(v))
-                motudf.extend(v)
-                num_motu += 1 
+                logging.info('### MOTU recovered by all analyses ###\n')
+                for k,v in TC.items():
+                    logging.info('Consensus MOTU ' + str(f"{num_motu:02}") + ' [' + k + ']')
+                    logging.info(', '.join(v)+'\n') 
+                    namedf.extend(['MOTU_'+str(f"{num_motu:02}")]*len(v))
+                    motudf.extend(v)
+                    num_motu += 1 
+                    
+                logging.info('### MOTU recovered by most of the analyses ###\n')            
+                for k,v in MC.items():
+                    logging.info('Consensus MOTU ' + str(f"{num_motu:02}") + ' [' + k + ']')
+                    logging.info(', '.join(v)+'\n')
+                    namedf.extend(['MOTU_'+str(f"{num_motu:02}")]*len(v))
+                    motudf.extend(v)      
+                    num_motu += 1 
+                    
+                datas = {"Consensus": namedf}
+                prints = pd.DataFrame(datas, index=motudf)  
+                prints=prints.sort_index(ascending=True)                  
+                prints.to_csv( os.path.join(self.path, 'Consensus','MOTU_list.csv'))
                 
-            logging.info('### MOTU mostly matching the taxonomy ###\n') 
-            for k,v in MC.items():
-                logging.info('Consensus MOTU ' + str(f"{num_motu:02}") + ' [' + k + ']')
-                logging.info(', '.join(v)+'\n')
-                namedf.extend(['MOTU_'+str(f"{num_motu:02}")]*len(v))
-                motudf.extend(v)
-                num_motu += 1 
-                
-            logging.info("### MOTU totally mismatching the taxonomy ###\n")
-            for k,v in TD.items():
-                logging.info('Consensus MOTU ' + str(f"{num_motu:02}") + ' [' + k + ']')
-                logging.info(', '.join(v)+'\n')
-                namedf.extend(['MOTU_'+str(f"{num_motu:02}")]*len(v))
-                motudf.extend(v)
-                num_motu += 1 
-                
-            logging.info("### MOTUs mostly mismatching the taxonomy ###\n")                    
-            for k,v in MD.items():
-                logging.info('Consensus MOTU ' + str(f"{num_motu:02}") + ' [' + k + ']')
-                logging.info(', '.join(v)+'\n')
-                namedf.extend(['MOTU_'+str(f"{num_motu:02}")]*len(v))
-                motudf.extend(v)
-                num_motu += 1 
-                
-            datas = {"Consensus": namedf}
-            prints = pd.DataFrame(datas, index=motudf)
-            prints=prints.sort_index(ascending=True)                     
-            prints.to_csv( os.path.join(self.path, 'Consensus','MOTU_list.csv'))
-
-            
-        else:
-            for k,v in sameind.items():
-                n_used = len(k.strip().split("&"))
-                if n_used == n_analysis:
-                    TC[k]=v
-                if n_used < n_analysis and n_used >= (n_analysis/float(2)):
-                    MC[k]=v
-            logging.info('### MOTU recovered by all analyses ###\n')
-            for k,v in TC.items():
-                logging.info('Consensus MOTU ' + str(f"{num_motu:02}") + ' [' + k + ']')
-                logging.info(', '.join(v)+'\n') 
-                namedf.extend(['MOTU_'+str(f"{num_motu:02}")]*len(v))
-                motudf.extend(v)
-                num_motu += 1 
-                
-            logging.info('### MOTU recovered by most of the analyses ###\n')            
-            for k,v in MC.items():
-                logging.info('Consensus MOTU ' + str(f"{num_motu:02}") + ' [' + k + ']')
-                logging.info(', '.join(v)+'\n')
-                namedf.extend(['MOTU_'+str(f"{num_motu:02}")]*len(v))
-                motudf.extend(v)      
-                num_motu += 1 
-                
-            datas = {"Consensus": namedf}
-            prints = pd.DataFrame(datas, index=motudf)  
-            prints=prints.sort_index(ascending=True)                  
-            prints.to_csv( os.path.join(self.path, 'Consensus','MOTU_list.csv'))
-            
-        try:
-            AllMOTUs_df['Consensus']=prints
-        except ValueError:
-            logging.info("\n ### WARNING: overlapping MOTUS. Please add more delimiation analysis. Consensus MOTUs don't generated ###\n")     
+            try:
+                AllMOTUs_df['Consensus']=prints
+            except ValueError:
+                logging.info("\n ### WARNING: overlapping MOTUS. Please add more delimiation analysis. Consensus MOTUs don't generated ###\n")     
         return AllMOTUs_df
        
     def MOTU_renameFasta_Compare(self):
@@ -666,14 +672,14 @@ def plot_compare_tree(path, tree, motudf, nocons=False, names=True, save=False):
     tree = tree.mod.node_scale_root_height(2 * len(AllMOTUs_dict))
     tips = (tree.get_tip_labels())
     canvas, axes, mark = tree.draw(
-        width=800,
+        width=800+2 * len(AllMOTUs_dict),
         height=30 * len(tips),
         tip_labels=False,  # hide labels
         tip_labels_align=True,
         tip_labels_style={"-toyplot-anchor-shift": "80px"},
         scalebar=True,
     );
-    xsep = 0.5
+    xsep = 0.1* len(AllMOTUs_dict)
     n = 0
     # add rectangles for delimitation
     for k in AllMOTUs_dict:
@@ -689,26 +695,26 @@ def plot_compare_tree(path, tree, motudf, nocons=False, names=True, save=False):
         coor_end.append(coord[len(tips) - 1][1])
         for i in range(len(coor_start)):
             if k == 'Nominal':
-                axes.rectangle(xsep * n, xsep * n + 0.2,
+                axes.rectangle(xsep * n, xsep * n + 0.05* len(AllMOTUs_dict),
                                coor_start[i] - 0.35,
                                coor_end[i] + 0.35,
                                color='#0000ff',
                                );
             elif k == 'Consensus':
-                axes.rectangle(xsep * n, xsep * n + 0.2,
+                axes.rectangle(xsep * n, xsep * n + 0.05* len(AllMOTUs_dict),
                                coor_start[i] - 0.35,
                                coor_end[i] + 0.35,
                                color='#ff0000',
                                );
             else:
-                axes.rectangle(xsep * n, xsep * n + 0.2,
+                axes.rectangle(xsep * n, xsep * n + 0.05* len(AllMOTUs_dict),
                                coor_start[i] - 0.35,
                                coor_end[i] + 0.35,
                                color='#00000',
                                );
     # add tip labels
     ypos = range(len(tree))
-    xpos = [xsep * n + 0.5] * len(tips)
+    xpos = [xsep * (n+0.5) + 0.05* len(AllMOTUs_dict)] * len(tips)
 
     tipstyle = {"font-size": "12px",
                 "text-anchor": "start",
@@ -721,7 +727,7 @@ def plot_compare_tree(path, tree, motudf, nocons=False, names=True, save=False):
     tipstyle = {"text-anchor": "start", "-toyplot-anchor-shift": "0"}
     for i in labels:
         axes.text(
-            [(x + 1) * xsep + 0.1 for x in range(len(labels))],
+            [(x + 1) * xsep + (len(AllMOTUs_dict)/40) for x in range(len(labels))],
             [len(tips)] * len(labels),
             labels,
             angle=90,
@@ -780,6 +786,7 @@ def run_nominal(basepath,inputs,gen=1,sp=2,dis='k'):
 def run_PTP(basepath,inputs,gen=1,sp=2,dis='k'):
     sys.argv = [sys.argv[0]]
     ptp(basepath, inputs.tree)
+    logging.info('HERE')
     PTP_df=MOTU_listPTP(os.path.join(basepath, 'PTP'),os.path.join(basepath,'PTP/PTP.PTPhSupportPartition.txt'),'PTP')
     distances=dict_to_matrian(basepath,PTP_df,inputs.fasta,gen,sp,dis)
     return distances
@@ -802,7 +809,7 @@ def run_mPTP(basepath,inputs,gen=1,sp=2,dis='k'):
 def run_GMYC(basepath,inputs,gen=1,sp=2,dis='k'):
     sys.argv = [sys.argv[0]]
     gmyc_run(basepath,inputs.tree)
-    GMYC_df=MOTU_listGMYC(os.path.join(basepath, 'GMYC'),os.path.join(basepath,'GMYC/GMYC_MOTU.rec.spart'),'GMYC')
+    GMYC_df=MOTU_listGMYC(os.path.join(basepath, 'GMYC'),os.path.join(basepath,'GMYC/GMYC_MOTU.txt'),'GMYC')
     distances=dict_to_matrian(basepath,GMYC_df,inputs.fasta,gen,sp,dis) 
     return distances
 
@@ -836,7 +843,7 @@ def run_ASAP(basepath,inputs,gen=1,sp=2,dis='k',P=None,cmd=False,diagnostic=Fals
     file=file.split('name=')[1].split('mode=')[0]
     file=file.replace("'","").rstrip()  
     subprocess.call(['asap', '-d', d, '-o',os.path.join(basepath, 'ASAP'), file])    
-    ABGD_df=MOTU_listASAP(os.path.join(basepath, 'ASAP',os.path.splitext(os.path.basename(file))[0][:20]+'.spart'),P)
+    ABGD_df=MOTU_listASAP(os.path.join(basepath, 'ASAP',os.path.basename(file)[:20]+'.spart'),P)
     if P== 'all':
         csv=True
     else:
@@ -871,9 +878,9 @@ def run_csvList(basepath,inputs,XList,gen=1,sp=2,dis='k',cmd=False,diagnostic=Fa
     return distances
 
 def run_comparison(basepath,inputs,CompList,nocons=False,gen=1,sp=2,dis='k'):
-    logging.info('\n#####################\n Consensus MOTUs\n#####################\n')
-    comp_analize = Compare(basepath, inputs.fasta, CompList)
+    comp_analize = Compare(basepath, inputs.fasta, CompList,nocons)
     if 'Consensus' in comp_analize.compared.columns:
+        logging.info('\n#####################\n Consensus MOTUs\n#####################\n')
         comp_analize.MOTU_renameFasta_Compare()
         distances=Matrian.main(os.path.join(basepath, 'Consensus/'), os.path.join(basepath, 'Consensus','MOTU_sorted.fasta'), gen, sp, dis)
         return comp_analize.compared,distances
@@ -888,82 +895,82 @@ def run(fasta,a,tree,CODE=None,dis='k',niter='10000',sample='100',burnin='0.1',g
     if 'n' in a:
         distances=run_nominal(basepath,inputs,gen,sp,dis)
         distances.print_sum()
-        distances.plot_max_min()
-        distances.plot_freq()
-        distances.plot_heatmap()
+        distances.plot_max_min(cmd=True)
+        distances.plot_freq(cmd=True)
+        distances.plot_heatmap(cmd=True)
         if diagnostic==True:
             datas=diagnostics_cmd(basepath,'Nominal',specList,n_ind)
             logging.info(datas[0])
     if 'P' in a:
         distances=run_PTP(basepath,inputs,gen,sp,dis)
         distances.print_sum()
-        distances.plot_max_min()
-        distances.plot_freq()
-        distances.plot_heatmap()
+        distances.plot_max_min(cmd=True)
+        distances.plot_freq(cmd=True)
+        distances.plot_heatmap(cmd=True)
         if diagnostic==True:
             diagnostics_cmd(basepath,'PTP',specList,n_ind)
     if 'T' in a:
         distances=run_bPTP(basepath,inputs,niter,sample,burnin,gen,sp,dis)
         distances.print_sum()
-        distances.plot_max_min()
-        distances.plot_freq()
-        distances.plot_heatmap()
+        distances.plot_max_min(cmd=True)
+        distances.plot_freq(cmd=True)
+        distances.plot_heatmap(cmd=True)
         if diagnostic==True:
             diagnostics_cmd(basepath,'bPTP',specList,n_ind)
     if 'M' in a:
         distances=run_mPTP(basepath,inputs,gen,sp,dis)
         distances.print_sum()
-        distances.plot_max_min()
-        distances.plot_freq()
-        distances.plot_heatmap()
+        distances.plot_max_min(cmd=True)
+        distances.plot_freq(cmd=True)
+        distances.plot_heatmap(cmd=True)
         if diagnostic==True:
             diagnostics_cmd(basepath,'mPTP',specList,n_ind)            
     if 'G' in a:
         distances=run_GMYC(basepath,inputs,gen,sp,dis)
         distances.print_sum()
-        distances.plot_max_min()
-        distances.plot_freq()
-        distances.plot_heatmap()
+        distances.plot_max_min(cmd=True)
+        distances.plot_freq(cmd=True)
+        distances.plot_heatmap(cmd=True)
         if diagnostic==True:
             diagnostics_cmd(basepath,'GMYC',specList,n_ind)      
     if 'A' in a:
         distances=run_ABGD(basepath,inputs,gen,sp,dis)
         distances.print_sum()
-        distances.plot_max_min()
-        distances.plot_freq()
-        distances.plot_heatmap()
+        distances.plot_max_min(cmd=True)
+        distances.plot_freq(cmd=True)
+        distances.plot_heatmapcmd=True
         if diagnostic==True:
             diagnostics_cmd(basepath,'ABGD',specList,n_ind)   
     if 'S' in a:
         distances=run_ASAP(basepath,inputs,gen,sp,dis)
         distances.print_sum()
-        distances.plot_max_min()
-        distances.plot_freq()
-        distances.plot_heatmap()
+        distances.plot_max_min(cmd=True)
+        distances.plot_freq(cmd=True)
+        distances.plot_heatmap(cmd=True)
         if diagnostic==True:
             diagnostics_cmd(basepath,'ASAP',specList,n_ind)               
     if 'p' in a: #to do: check individual file
         distances=run_PTPList(basepath,inputs,PTPList,gen,sp,dis)
         distances.print_sum()
-        distances.plot_max_min()
-        distances.plot_freq()
-        distances.plot_heatmap()
+        distances.plot_max_min(cmd=True)
+        distances.plot_freq(cmd=True)
+        distances.plot_heatmap(cmd=True)
         if diagnostic==True:
             diagnostics_cmd(basepath,'PTP',specList,n_ind)
     if 't' in a: #to do: check individual file
         distances=run_bPTPList(basepath,inputs,bPTPList,gen,sp,dis)
         distances.print_sum()
-        distances.plot_max_min()
-        distances.plot_freq()
-        distances.plot_heatmap()
+        distances.plot_max_min(cmd=True)
+        distances.plot_freq(cmd=True)
+        distances.plot_heatmap(cmd=True)
         if diagnostic==True:
             diagnostics_cmd(basepath,'bPTP',specList,n_ind)
     if 'g' in a: #to do: check individual file
         distances=run_GMYCList(basepath,inputs,GMYCList,gen,sp,dis)         
         distances.print_sum()
-        distances.plot_max_min()
-        distances.plot_freq()
-        distances.plot_heatmap()
+        distances.plot_max_min(cmd=True)
+        distances.plot_freq(cmd=True)
+        distances.plot_heatmap(cmd=True)
         if diagnostic==True:
             diagnostics_cmd(basepath,'GMYC',specList,n_ind)
     if 'x' in a:
@@ -973,9 +980,9 @@ def run(fasta,a,tree,CODE=None,dis='k',niter='10000',sample='100',burnin='0.1',g
         if inputs.tree != None:
             plot_compare_tree(basepath, inputs.tree, distances[0],nocons,save=True)            
         distances[1].print_sum()
-        distances[1].plot_max_min()
-        distances[1].plot_freq()
-        distances[1].plot_heatmap()
+        distances[1].plot_max_min(cmd=True)
+        distances[1].plot_freq(cmd=True)
+        distances[1].plot_heatmap(cmd=True)
         if diagnostic==True:
             diagnostics_cmd(basepath,'Consensus',specList,n_ind)
             
