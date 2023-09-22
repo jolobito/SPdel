@@ -843,7 +843,10 @@ def run_ASAP(basepath,inputs,gen=1,sp=2,dis='k',P=None,cmd=False,diagnostic=Fals
     file=file.split('name=')[1].split('mode=')[0]
     file=file.replace("'","").rstrip()  
     subprocess.call(['asap', '-d', d, '-o',os.path.join(basepath, 'ASAP'), file])    
-    ABGD_df=MOTU_listASAP(os.path.join(basepath, 'ASAP',os.path.basename(file)[:20]+'.spart'),P)
+    try:
+        ABGD_df=MOTU_listASAP(os.path.join(basepath, 'ASAP',os.path.basename(file)[:20]+'.spart'),P)
+    except:
+        ABGD_df=MOTU_listASAP(os.path.join(basepath, 'ASAP',os.path.basename(file)+'.spart'),P)
     if P== 'all':
         csv=True
     else:
