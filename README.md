@@ -44,11 +44,11 @@ SPdel.py path/LA_nominal.fasta -B path/LA_BinList.txt -t path/LA_nominal.nwk
 ```
 Compare analyses previously calculated
 ```
-SPdel.py path/LA_nominal.fasta -C n,a,s,p,t,g -t path/LA_nominal.nwk
+SPdel.py path/LA_nominal.fasta -C Nominal,ABGD,ASAP,PTP,bPTP,GMYC -t path/LA_nominal.nwk
 ```
 Calculate all analyses and compare the results
 ```
-SPdel.py path/LA_nominal.fasta -n -A -S -P -T -G -B path/LA_BinList.txt -t path/LA_nominal.nwk -C n,a,s,p,t,g,b
+SPdel.py path/LA_nominal.fasta -n -A -S -P -T -G -B path/LA_BinList.txt -t path/LA_nominal.nwk -C Nominal,ABGD,ASAP,PTP,bPTP,GMYC,BIN
 ```
 
 Options:   
