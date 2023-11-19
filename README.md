@@ -32,23 +32,23 @@ In this example we will use the LA_nominal.fasta dataset included in data folder
 
 Calculates genetic distances for nominal species
 ```
-SPdel.py path/LA_nominal.fasta -n
+SPdel.py path/Megaleporinus_COI.fasta -n
 ```
 Calculate ABGD, ASAP, PTP, bPTP and GMYC locally and perfom genetic distances analyses
 ```
-SPdel.py path/LA_nominal.fasta -n -A -S -P -T -G -t path/LA_nominal.nwk
+SPdel.py path/Megaleporinus_COI.fasta -n -A -S -P -T -G -t path/Megaleporinus_tree.nwk
 ```
 Calculates genetics distances from MOTUs delimited for BIN using outfiles calculated outside the pipeline
 ```
-SPdel.py path/LA_nominal.fasta -B path/LA_BinList.txt -t path/LA_nominal.nwk
+SPdel.py path/Megaleporinus_COI.fasta -B path/BIN_List.txt -t path/Megaleporinus_tree.nwk
 ```
 Compare analyses previously calculated
 ```
-SPdel.py path/LA_nominal.fasta -C Nominal,ABGD,ASAP,PTP,bPTP,GMYC -t path/LA_nominal.nwk
+SPdel.py path/Megaleporinus_COI.fasta -C Nominal,ABGD,ASAP,PTP,bPTP,GMYC -t path/Megaleporinus_tree.nwk
 ```
 Calculate all analyses and compare the results
 ```
-SPdel.py path/LA_nominal.fasta -n -A -S -P -T -G -B path/LA_BinList.txt -t path/LA_nominal.nwk -C Nominal,ABGD,ASAP,PTP,bPTP,GMYC,BIN
+SPdel.py path/Megaleporinus_COI.fasta -n -A -S -P -T -G -B path/BIN_List.txt -t path/Megaleporinus_tree.nwk -C Nominal,ABGD,ASAP,PTP,bPTP,GMYC,BIN
 ```
 
 Options:   
