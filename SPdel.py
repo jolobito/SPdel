@@ -809,9 +809,21 @@ def run_bPTP(basepath,inputs,niter='10000',sample='100',burnin='0.1',gen=1,sp=2,
     return distances
 
 def run_mPTP(basepath,inputs,gen=1,sp=2,dis='k'):
+    myos = sys.platform
+    
+    if myos == 'darwin':
+        mptp_bin = 'mptp_darwin'
+
+    elif myos in ['linux', 'linux2']:
+        mptp_bin = 'mptp_linux'
+
+    elif myos == 'win32':
+        mptp_bin = 'mptp'
+
     if not os.path.exists(os.path.join(basepath, 'mPTP')):
-        os.makedirs(os.path.join(basepath, 'mPTP'))     
-    subprocess.call(['mptp', '--ml', '--multi', '--tree_file', inputs.tree, '--output_file',os.path.join(basepath, 'mPTP/out_mptp')])
+        os.makedirs(os.path.join(basepath, 'mPTP'))  
+
+    subprocess.call([ mptp_bin, '--ml', '--multi', '--tree_file', inputs.tree, '--output_file',os.path.join(basepath, 'mPTP/out_mptp')])
     mPTP_df=MOTU_listmPTP(os.path.join(basepath, 'mPTP'),os.path.join(basepath, 'mPTP/out_mptp.txt'),'mPTP')
     distances=dict_to_matrian(basepath,mPTP_df,inputs.fasta,gen,sp,dis)
     return distances
@@ -824,6 +836,17 @@ def run_GMYC(basepath,inputs,gen=1,sp=2,dis='k'):
     return distances
 
 def run_ABGD(basepath,inputs,gen=1,sp=2,dis='k',pmin=0.001,Pmax=0.1,P=0.01,cmd=False,diagnostic=False,n_ind=3):
+    myos = sys.platform
+
+    if myos == 'darwin':
+        abgd_bin = 'abgd_darwin'
+
+    elif myos in ['linux', 'linux2']:
+        abgd_bin = 'abgd_linux'
+
+    elif myos == 'win32':
+        abgd_bin = 'abgd'
+
     if dis=='k':
         d='0'
     elif dis=='jc':
@@ -833,7 +856,8 @@ def run_ABGD(basepath,inputs,gen=1,sp=2,dis='k',pmin=0.001,Pmax=0.1,P=0.01,cmd=F
     file=str(inputs.fasta)
     file=file.split('name=')[1].split('mode=')[0]
     file=file.replace("'","").rstrip()
-    subprocess.call(['abgd', '-a', '-d', d, '-p', str(pmin), '-P', str(Pmax), '-o',os.path.join(basepath, 'ABGD'), file])
+    
+    subprocess.call([abgd_bin, '-a', '-d', d, '-p', str(pmin), '-P', str(Pmax), '-o',os.path.join(basepath, 'ABGD'), file])
     ABGD_df=MOTU_listABGD(os.path.join(basepath,'ABGD',os.path.splitext(os.path.basename(file))[0]+'.rec.spart'),P)
     if P== 'all':
         csv=True
@@ -843,6 +867,16 @@ def run_ABGD(basepath,inputs,gen=1,sp=2,dis='k',pmin=0.001,Pmax=0.1,P=0.01,cmd=F
     return distances
 
 def run_ASAP(basepath,inputs,gen=1,sp=2,dis='k',P=None,cmd=False,diagnostic=False,n_ind=3):
+    myos = sys.platform
+    if myos == 'darwin':
+        asap_bin = 'asap_darwin'
+
+    elif myos in ['linux', 'linux2']:
+        asap_bin = 'asap_linux'
+
+    elif myos == 'win32':
+        asap_bin = 'asap'
+
     if dis=='k':
         d='0'
     elif dis=='jc':
@@ -852,7 +886,7 @@ def run_ASAP(basepath,inputs,gen=1,sp=2,dis='k',P=None,cmd=False,diagnostic=Fals
     file=str(inputs.fasta)
     file=file.split('name=')[1].split('mode=')[0]
     file=file.replace("'","").rstrip()  
-    subprocess.call(['asap', '-d', d, '-o',os.path.join(basepath, 'ASAP'), file])    
+    subprocess.call([asap_bin, '-d', d, '-o',os.path.join(basepath, 'ASAP'), file])    
     try:
         ABGD_df=MOTU_listASAP(os.path.join(basepath, 'ASAP',os.path.basename(file)[:20]+'.spart'),P)
     except:
