@@ -695,7 +695,7 @@ def plot_compare_tree(path, tree, motudf, nocons=False, names=True, save=False):
     # add rectangles for delimitation
     for k in AllMOTUs_dict:
         n += 1
-        coord = tree.tree.get_tip_data()[["height","idx"]].values.tolist()
+        coord = tree.get_tip_data()[["height","idx"]].values.tolist()
         coor_start = [coord[0][1]]
         coor_end = []
         for i, j in enumerate(tips):
