@@ -212,7 +212,7 @@ class Matrian:
             title_x=0.5,
             autosize=False, width=700, height=700
         )
-        fig.write_image(os.path.join(self.path, "min_max.pdf"))
+        fig.write_html(os.path.join(self.path, "min_max.html"))
         if cmd==False:
             fig.show()
 
@@ -254,7 +254,7 @@ class Matrian:
             hovermode="x")
 
         fig.update_traces(opacity=0.75, xbins_size=0.25)
-        fig.write_image(os.path.join(self.path, "barcoding_gap.pdf"))
+        fig.write_html(os.path.join(self.path, "barcoding_gap.html"))
         if cmd==False:
             fig.show()
 
@@ -313,7 +313,7 @@ class Matrian:
               x0=sppos[i]-0.3, y0=-1, x1=spinf[i]+0.3, y1=-1,
               line=dict(color='darksalmon',width=8)      
           )
-        fig.write_image(os.path.join(self.path, "heatmap.pdf"))
+        fig.write_html(os.path.join(self.path, "heatmap.html"))
         if cmd==False:
             fig.show()
                 
