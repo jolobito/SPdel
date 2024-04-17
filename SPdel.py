@@ -670,9 +670,9 @@ def plot_compare_tree(path, tree, motudf, nocons=False, names=True, save=False):
             del motudf['Consensus']
     AllMOTUs_dict = motudf.to_dict()
 
-    true_width=tree.treenode.get_farthest_leaf()[1]
+    true_width=tree.treenode.height
     false_width=2 * len(AllMOTUs_dict)
-    tree = tree.mod.node_scale_root_height(2 * len(AllMOTUs_dict))
+    tree = tree.mod.edges_scale_to_root_height(2 * len(AllMOTUs_dict))
     tips = (tree.get_tip_labels())
     canvas, axes, mark = tree.draw(
         width=800+2 * len(AllMOTUs_dict),
@@ -695,7 +695,7 @@ def plot_compare_tree(path, tree, motudf, nocons=False, names=True, save=False):
     # add rectangles for delimitation
     for k in AllMOTUs_dict:
         n += 1
-        coord = tree.get_tip_coordinates()
+        coord = tree.tree.get_tip_data()[["height","idx"]].values.tolist()
         coor_start = [coord[0][1]]
         coor_end = []
         for i, j in enumerate(tips):
@@ -724,7 +724,7 @@ def plot_compare_tree(path, tree, motudf, nocons=False, names=True, save=False):
                                color='#00000',
                                );
     # add tip labels
-    ypos = range(len(tree))
+    ypos = range(tree.ntips)
     xpos = [xsep * (n+0.5) + 0.05* len(AllMOTUs_dict)] * len(tips)
 
     tipstyle = {"font-size": "12px",
